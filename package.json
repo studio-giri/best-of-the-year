@@ -1,5 +1,6 @@
 {
   "name": "best-of-the-year",
+  "private": true,
   "dependencies": {},
   "devDependencies": {
     "turbo": "2.8.14"

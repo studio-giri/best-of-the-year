@@ -1,3 +1,3 @@
-const name: string = 'world'
+const name: string = "world";
 
-console.log(`hello ${name}!`)
+console.log(`hello ${name}!`);

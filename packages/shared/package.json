@@ -1,0 +1,13 @@
+{
+	"name": "@boty/shared",
+	"exports": {
+		"./schemas/*": "./src/schemas/*.ts",
+		"./errors/*": "./src/errors/*.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"effect": "3.19.19"
+	}
+}

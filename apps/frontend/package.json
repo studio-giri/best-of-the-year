@@ -6,19 +6,22 @@
 		"#/*": "./src/*"
 	},
 	"scripts": {
-		"dev": "vite dev --port 3000",
+		"dev": "vite dev --port 3001",
 		"build": "vite build",
 		"preview": "vite preview",
 		"test": "vitest run"
 	},
 	"dependencies": {
+		"@boty/shared": "workspace:*",
 		"@tailwindcss/vite": "4.1.18",
 		"@tanstack/react-devtools": "0.9.10",
+		"@tanstack/react-query": "5.90.21",
 		"@tanstack/react-router": "1.166.2",
 		"@tanstack/react-router-devtools": "1.166.2",
 		"@tanstack/react-router-ssr-query": "1.166.2",
 		"@tanstack/react-start": "1.166.2",
 		"@tanstack/router-plugin": "1.132.0",
+		"effect": "3.19.19",
 		"lucide-react": "0.545.0",
 		"react": "19.2.0",
 		"react-dom": "19.2.0",

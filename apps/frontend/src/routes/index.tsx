@@ -1,7 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { List } from "#/components/List/List.component";
 
-export const Route = createFileRoute("/")({ component: App });
+export const Route = createFileRoute("/")({ component: HomePage });
 
-function App() {
-	return <main>Homepage</main>;
+function HomePage() {
+	return (
+		<main>
+			<h1>Homepage</h1>
+			<List id={1} />
+		</main>
+	);
 }

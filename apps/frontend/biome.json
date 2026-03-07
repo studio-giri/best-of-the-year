@@ -1,7 +1,7 @@
 {
 	"$schema": "https://biomejs.dev/schemas/latest/schema.json",
 	"root": false,
-	"extends": "//",
+	"extends": ["../../biome.json"],
 	"files": {
 		"includes": ["**", "!src/routeTree.gen.ts"]
 	},

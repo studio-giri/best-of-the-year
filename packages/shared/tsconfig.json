@@ -4,7 +4,11 @@
 		"paths": {},
 		"module": "ESNext",
 		"moduleResolution": "Bundler",
-		"strict": true
+		"strict": true,
+		"target": "ESNext",
+		"declaration": true,
+		"declarationMap": true,
+		"skipLibCheck": true
 	},
 	"include": ["src"]
 }

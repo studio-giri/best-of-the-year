@@ -1,4 +1,3 @@
-import { createServer } from "node:http";
 import {
 	HttpApiBuilder,
 	HttpApiSwagger,
@@ -18,5 +17,5 @@ export const Server = HttpApiBuilder.serve(HttpMiddleware.logger).pipe(
 	Layer.provide(HttpApiBuilder.middlewareCors()),
 	Layer.provide(ApiLive),
 	HttpServer.withLogAddress,
-	Layer.provide(BunHttpServer.layer(createServer)),
+	Layer.provide(BunHttpServer.layer({})),
 );

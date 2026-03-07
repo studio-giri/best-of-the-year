@@ -1,5 +1,6 @@
 {
 	"name": "@boty/shared",
+	"private": true,
 	"exports": {
 		"./schemas/*": "./src/schemas/*.ts",
 		"./errors/*": "./src/errors/*.ts"

@@ -9,7 +9,8 @@
 		"dev": "bun run --hot src/main.ts",
 		"typecheck": "tsgo --noEmit",
 		"check": "biome check .",
-		"fix": "biome check --write ."
+		"fix": "biome check --write .",
+		"db:seed": "bun run src/db/seed.ts"
 	},
 	"dependencies": {
 		"@boty/shared": "workspace:*",

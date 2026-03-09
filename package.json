@@ -13,7 +13,8 @@
 		"typecheck": "turbo typecheck",
 		"db:up": "docker compose up",
 		"db:down": "docker compose down",
-		"db:logs": "docker compose logs -f db"
+		"db:logs": "docker compose logs -f db",
+		"db:seed": "bun run --cwd apps/backend db:seed"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.6",

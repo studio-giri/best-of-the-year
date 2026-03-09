@@ -9,7 +9,9 @@ import { Layer } from "effect";
 import { Api } from "./api";
 import { HttpListsLive } from "./lists/handlers";
 
-const ApiLive = Layer.provide(HttpApiBuilder.api(Api), [HttpListsLive]);
+const ApiLive = Layer.provide(HttpApiBuilder.api(Api), [
+	HttpListsLive,
+]);
 
 export const Server = HttpApiBuilder.serve(HttpMiddleware.logger).pipe(
 	Layer.provide(HttpApiSwagger.layer()),

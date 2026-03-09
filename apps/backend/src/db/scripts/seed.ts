@@ -2,7 +2,7 @@ import { BunRuntime } from "@effect/platform-bun";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Config, Console, Effect } from "effect";
 import { Pool } from "pg";
-import { rankingsTable } from "./schema.js";
+import { rankingsTable } from "../schema.js";
 
 const program = Effect.gen(function* () {
 	/**
@@ -11,6 +11,7 @@ const program = Effect.gen(function* () {
 	const databaseUrl = yield* Config.string("DATABASE_URL");
 	const pool = new Pool({
 		connectionString: databaseUrl,
+		idleTimeoutMillis: 0,
 	});
 	const db = drizzle(pool);
 

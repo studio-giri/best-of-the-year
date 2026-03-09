@@ -14,7 +14,11 @@ export class ListsApi extends HttpApiGroup.make(endpoint)
 	.prefix(`/${endpoint}`)
 	.add(
 		HttpApiEndpoint.get("findById", `/${endpoint}/:id`)
-			.setPath(Schema.Struct({ id: Schema.NumberFromString }))
+			.setPath(
+				Schema.Struct({
+					id: Schema.NumberFromString,
+				}),
+			)
 			.addSuccess(List),
 	)
 	.annotate(OpenApi.Title, "Lists")

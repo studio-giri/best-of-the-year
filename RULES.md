@@ -2,7 +2,7 @@
 
 - Indentation: tabs, size 2
 - Line endings: LF, final newline
-- Quote style: single
+- Quote style: double
 - Semicolons: always
 
 ## Effect-specific patterns

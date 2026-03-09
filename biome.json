@@ -19,6 +19,9 @@
 			"recommended": true,
 			"nursery": {
 				"recommended": true
+			},
+			"suspicious": {
+				"noExplicitAny": "error"
 			}
 		}
 	},

@@ -15,10 +15,16 @@
 		"@boty/shared": "workspace:*",
 		"@effect/platform": "0.94.5",
 		"@effect/platform-bun": "0.87.1",
-		"effect": "3.19.19"
+		"@effect/sql-pg": "0.50.3",
+		"drizzle-orm": "0.45.1",
+		"effect": "3.19.19",
+		"pg": "8.20.0"
 	},
 	"devDependencies": {
 		"@types/bun": "1.3.10",
-		"@typescript/native-preview": "7.0.0-dev.20260306.1"
+		"@types/pg": "8.18.0",
+		"@typescript/native-preview": "7.0.0-dev.20260306.1",
+		"drizzle-kit": "0.31.9",
+		"tsx": "4.21.0"
 	}
 }

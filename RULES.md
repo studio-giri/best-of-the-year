@@ -2,7 +2,8 @@
 
 - Indentation: tabs, size 2
 - Line endings: LF, final newline
-- Quote style, semicolons
+- Quote style: single
+- Semicolons: always
 
 ## Effect-specific patterns
 
@@ -13,9 +14,9 @@
 Code must be organized into **logical blocks** — each preceded by a comment, separated by a blank line.
 
 **Rules:**
-- One block = one logical step. If you can't summarize it in a line, extract a function.
+- One block = one logical step. The block can consist of several instructions if they fit well together.
 - Comments describe *intent*, not mechanics. `// fetch the user` → bad. `// Fetch user to validate session ownership` → good.
-- Agents writing or modifying code must follow this structure without exception.
+- Agents writing or modifying code must follow this structure as closely as possible.
 
 **Example:**
 ```ts

@@ -1,12 +1,12 @@
 # Code style & rules
 
-Are under `RULES.md`
+See `RULES.md` for the repository coding standards and style rules.
 
 # Project structure
 
 Bun monorepo managed with Turborepo.
 
-```
+```text
 best-of-the-year/
 ├── apps/
 │   ├── backend/      # Bun + Effect HTTP server (@effect/platform-bun)

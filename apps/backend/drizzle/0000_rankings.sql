@@ -18,3 +18,6 @@ CREATE TRIGGER rankings_set_updated_at
 BEFORE UPDATE ON rankings
 FOR EACH ROW
 EXECUTE FUNCTION set_updated_at();
+
+-- Filtering on deleted_at IS NULL is a common soft-delete pattern: adding a partial index improves query performance
+CREATE INDEX idx_rankings_active ON rankings (id) WHERE deleted_at IS NULL;

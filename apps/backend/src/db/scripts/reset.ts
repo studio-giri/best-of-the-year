@@ -19,6 +19,16 @@ const program = Effect.gen(function* () {
 	}
 
 	/**
+	 * User confirmation
+	 */
+	const confirmation = yield* Effect.sync(() =>
+		prompt(`Type "reset" to confirm (ENV=${nodeEnv}):`),
+	);
+	if (confirmation !== "reset") {
+		yield* Effect.fail(new Error("Reset cancelled"));
+	}
+
+	/**
 	 * Connect to PostgreSQL and create a Drizzle client
 	 */
 	const databaseUrl = yield* Config.string("DATABASE_URL");

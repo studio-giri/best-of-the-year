@@ -11,7 +11,9 @@
 		"check": "biome check .",
 		"fix": "biome check --write .",
 		"db:seed": "bun run src/db/scripts/seed.ts",
-		"db:reset": "bun run src/db/scripts/reset.ts"
+		"db:reset": "bun run src/db/scripts/reset.ts",
+		"db:migration:generate": "npx drizzle-kit generate",
+		"db:migration:run": "npx drizzle-kit migrate"
 	},
 	"dependencies": {
 		"@boty/shared": "workspace:*",

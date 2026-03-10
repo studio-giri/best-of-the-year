@@ -20,8 +20,7 @@ export const rankingsTable = pgTable("rankings", {
 		precision: 3,
 	})
 		.notNull()
-		.defaultNow()
-		.$onUpdate(() => new Date()),
+		.defaultNow(),
 
 	deletedAt: timestamp("deleted_at", {
 		mode: "date",

@@ -2,7 +2,8 @@ import { BunRuntime } from "@effect/platform-bun";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Config, Console, Effect } from "effect";
 import { Pool } from "pg";
-import { rankingsTable } from "../schema.js";
+import { rankingsTable } from "../schema";
+import { ranking1 } from "./seed-values";
 
 const program = Effect.gen(function* () {
 	/**
@@ -25,7 +26,7 @@ const program = Effect.gen(function* () {
 				 * Insert a seed ranking and log its generated id
 				 */
 				yield* Effect.tryPromise({
-					try: () => db.insert(rankingsTable).values({}),
+					try: () => db.insert(rankingsTable).values(ranking1),
 					catch: (cause) =>
 						new Error(`Failed to seed ranking: ${String(cause)}`),
 				});

@@ -4,7 +4,7 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { reset } from "drizzle-seed";
 import { Config, Console, Effect } from "effect";
 import { Pool } from "pg";
-import * as schema from "../schema.js";
+import * as schema from "../schema";
 
 const program = Effect.gen(function* () {
 	/**

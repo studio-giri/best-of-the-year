@@ -44,4 +44,7 @@ return yield* Schema.decodeUnknown(MySchema)(json);
 ## Prohibitions (what not to do)
 - No any, no as casts without justification
 - No raw promise-based code outside of Effect wrappers
-- No business logic in route handlers
+
+## Dependencies
+
+All dependencies in package.json must be pinned (bun must be run with --exact when installing)

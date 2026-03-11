@@ -5,9 +5,12 @@
 		"./schemas/*": "./src/schemas/*.ts"
 	},
 	"scripts": {
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsgo --noEmit"
 	},
 	"dependencies": {
 		"effect": "3.19.19"
+	},
+	"devDependencies": {
+		"@typescript/native-preview": "7.0.0-dev.20260306.1"
 	}
 }

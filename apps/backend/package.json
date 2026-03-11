@@ -19,6 +19,7 @@
 		"@boty/shared": "workspace:*",
 		"@effect/platform": "0.94.5",
 		"@effect/platform-bun": "0.87.1",
+		"@effect/sql-drizzle": "0.48.1",
 		"@effect/sql-pg": "0.50.3",
 		"drizzle-orm": "0.45.1",
 		"effect": "3.19.19",

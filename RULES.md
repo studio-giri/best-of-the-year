@@ -47,4 +47,4 @@ return yield* Schema.decodeUnknown(MySchema)(json);
 
 ## Dependencies
 
-All dependencies in package.json must be pinned (bun must be run with --exact when installing)
+All dependencies in package.json (except workspace:*) must be pinned (bun must be run with --exact when installing)

@@ -68,6 +68,9 @@ export async function makeTestEnv() {
 	 * no need to SET search_path manually on each query.
 	 */
 	const testUrl = new URL(databaseUrl);
+	if (testUrl.searchParams.get("options")) {
+		throw new Error("Database URL already have options");
+	}
 	testUrl.searchParams.set("options", `-c search_path=${schemaName},public`);
 	const TestDbLive = makePgClientLayer(Redacted.make(testUrl.toString()));
 

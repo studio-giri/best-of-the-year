@@ -1,31 +1,16 @@
-import { afterAll, beforeAll, describe, expect, test } from "bun:test";
+import { describe, expect, test } from "bun:test";
 import { PgDrizzle } from "@effect/sql-drizzle/Pg";
 import { Effect } from "effect";
 import { rankingsTable } from "../../src/db/schema.ts";
 import { newRanking } from "../fixtures/ranking.fixture.ts";
-import { makeTestEnv } from "../setup/make-test-env.ts";
+import { withTestEnv } from "../setup/with-test-env.ts";
 
-let handler: (request: Request) => Promise<Response>;
-let runDb: Awaited<ReturnType<typeof makeTestEnv>>["runDb"];
-let cleanup: () => Promise<void>;
-
-beforeAll(async () => {
-	const env = await makeTestEnv();
-
-	/**
-	 * Unpack the test environment into module-level variables so all tests can access them
-	 */
-	handler = env.handler;
-	runDb = env.runDb;
-	cleanup = env.cleanup;
-});
-
-afterAll(async () => {
-	await cleanup();
-});
+const getEnv = withTestEnv();
 
 describe("GET /rankings/:id", () => {
 	test("returns 200 with the ranking for a valid existing id", async () => {
+		const { handler, runDb } = getEnv();
+
 		/**
 		 * Seed one ranking row for the happy-path tests
 		 */
@@ -68,6 +53,7 @@ describe("GET /rankings/:id", () => {
 	});
 
 	test("returns 404 for a valid UUID that does not exist", async () => {
+		const { handler } = getEnv();
 		const nonExistentId = "00000000-0000-0000-0000-000000000000";
 		const res = await handler(
 			new Request(`http://localhost/rankings/${nonExistentId}`),
@@ -77,6 +63,7 @@ describe("GET /rankings/:id", () => {
 	});
 
 	test("returns 404 for a malformed (non-UUID) id", async () => {
+		const { handler } = getEnv();
 		const res = await handler(
 			new Request("http://localhost/rankings/not-a-uuid"),
 		);
@@ -85,8 +72,10 @@ describe("GET /rankings/:id", () => {
 	});
 
 	test("returns 404 for a soft-deleted ranking", async () => {
+		const { handler, runDb } = getEnv();
+
 		/**
-		 * Seed a dedicated row for this test so the shared seededId is never mutated
+		 * Seed a dedicated row so this test is fully isolated
 		 */
 		const [row] = await runDb(
 			Effect.gen(function* () {
@@ -110,8 +99,6 @@ describe("GET /rankings/:id", () => {
 		const res = await handler(
 			new Request(`http://localhost/rankings/${row.id}`),
 		);
-		expect(res).toMatchObject({
-			status: 404,
-		});
+		expect(res.status).toBe(404);
 	});
 });

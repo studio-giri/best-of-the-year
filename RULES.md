@@ -48,3 +48,11 @@ return yield* Schema.decodeUnknown(MySchema)(json);
 ## Dependencies
 
 All dependencies in package.json (except workspace:*) must be pinned (bun must be run with --exact when installing)
+
+## File structure
+
+Prefer many small, focused files over large catch-all modules.
+
+- One exported function / class / constant per file when it makes sense
+- No `helpers.ts`, `utils.ts`, or `common.ts` dumping grounds — name files after what they do (`format-date.ts`, `parse-ocpi-response.ts`)
+- Colocate files with their consumers rather than grouping by type (e.g. avoid a flat `/utils` folder at the root, unless there are shared utils)

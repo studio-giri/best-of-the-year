@@ -3,21 +3,21 @@ import { PgDrizzle } from "@effect/sql-drizzle/Pg";
 import { Effect } from "effect";
 import { rankingsTable } from "../../src/db/schema.ts";
 import { newRanking } from "../fixtures/ranking.fixture.ts";
-import { makeTestEnv } from "../setup/make-test-env.ts";
+import { makeTestCtx } from "../setup/make-test-ctx.ts";
 
 describe("GET /rankings/:id", () => {
-	let env: Awaited<ReturnType<typeof makeTestEnv>>;
+	let ctx: Awaited<ReturnType<typeof makeTestCtx>>;
 
 	beforeAll(async () => {
-		env = await makeTestEnv();
+		ctx = await makeTestCtx();
 	});
 
 	afterAll(async () => {
-		await env?.cleanup();
+		await ctx?.cleanup();
 	});
 
 	test("returns 200 with the ranking for a valid existing id", async () => {
-		const { handler, runDb } = env;
+		const { handler, runDb } = ctx;
 
 		/**
 		 * Seed one ranking row for the happy-path tests
@@ -61,7 +61,7 @@ describe("GET /rankings/:id", () => {
 	});
 
 	test("returns 404 for a valid UUID that does not exist", async () => {
-		const { handler } = env;
+		const { handler } = ctx;
 		const nonExistentId = "00000000-0000-0000-0000-000000000000";
 		const res = await handler(
 			new Request(`http://localhost/rankings/${nonExistentId}`),
@@ -71,7 +71,7 @@ describe("GET /rankings/:id", () => {
 	});
 
 	test("returns 404 for a malformed (non-UUID) id", async () => {
-		const { handler } = env;
+		const { handler } = ctx;
 		const res = await handler(
 			new Request("http://localhost/rankings/not-a-uuid"),
 		);
@@ -80,7 +80,7 @@ describe("GET /rankings/:id", () => {
 	});
 
 	test("returns 404 for a soft-deleted ranking", async () => {
-		const { handler, runDb } = env;
+		const { handler, runDb } = ctx;
 
 		/**
 		 * Seed a dedicated row so this test is fully isolated

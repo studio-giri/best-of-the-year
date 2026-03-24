@@ -23,7 +23,7 @@ const MIGRATIONS_DIR = join(import.meta.dir, "../../drizzle");
  * Isolation guarantee: because every suite gets its own schema, test suites can
  * run in parallel without interfering with each other or the development database.
  */
-export async function makeTestEnv() {
+export async function makeTestCtx() {
 	// biome-ignore lint/complexity/useLiteralKeys: noPropertyAccessFromIndexSignature requires bracket notation
 	const databaseUrl = process.env["DATABASE_URL"];
 	if (!databaseUrl) throw new Error("DATABASE_URL is not set");

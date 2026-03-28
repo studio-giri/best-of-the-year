@@ -1,2 +1,7 @@
 @import "tailwindcss";
+@import "./fonts.css";
 @plugin "@tailwindcss/typography";
+
+@theme {
+	--font-sans: "Cronos Pro", ui-serif, serif;
+}

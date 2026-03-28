@@ -7,9 +7,9 @@ export const Route = createFileRoute("/_layout/")({
 
 function HomePage() {
 	return (
-		<main>
+		<section>
 			<h1>Homepage</h1>
 			<List id={1} />
-		</main>
-	)
+		</section>
+	);
 }

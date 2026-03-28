@@ -5,5 +5,5 @@ export const Route = createFileRoute("/_layout/about")({
 });
 
 function About() {
-	return <main>About!</main>;
+	return <section>About!</section>;
 }

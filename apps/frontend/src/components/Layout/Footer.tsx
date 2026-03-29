@@ -10,7 +10,7 @@ export function Footer() {
 					className="underline"
 					href="https://github.com/studio-giri/best-of-the-year"
 				>
-					Github
+					GitHub
 				</a>
 			</p>
 		</footer>

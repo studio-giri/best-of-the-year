@@ -1,4 +1,4 @@
-import { HorizontalRule } from "../HorizontalRule";
+import { HorizontalRule } from "#/components/HorizontalRule";
 
 interface Props {
 	year: string;

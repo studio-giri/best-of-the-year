@@ -5,6 +5,10 @@
 			"persistent": true,
 			"cache": false
 		},
-		"typecheck": {}
+		"typecheck": {},
+		"test:unit": {},
+		"test:e2e": {
+			"cache": false
+		}
 	}
 }

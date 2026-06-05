@@ -1,28 +1,37 @@
-import {
-	HttpApiBuilder,
-	HttpApiSwagger,
-	HttpMiddleware,
-	HttpServer,
-} from "@effect/platform";
 import { BunHttpServer } from "@effect/platform-bun";
-import { layer as PgDrizzleLayer } from "@effect/sql-drizzle/Pg";
 import { Layer } from "effect";
+import { HttpRouter, HttpServer } from "effect/unstable/http";
+import { HttpApiSwagger } from "effect/unstable/httpapi";
+import { Api } from "./api";
 import { PgClientLive } from "./db/PgClient";
+import { PgDrizzleLive } from "./db/PgDrizzle";
 import { Env } from "./env";
 import { HttpApiHandlersLive } from "./http";
 
 const DbLive = PgClientLive.pipe(Layer.provide(Env.Live));
 
+/**
+ * Handler dependencies (PgDrizzle) are request-scoped in v4's HttpRouter, so
+ * they must be provided with HttpRouter.provideRequest rather than
+ * Layer.provide. The PgClient itself is a regular (global) layer.
+ */
 const ApiLive = HttpApiHandlersLive.pipe(
-	Layer.provide(PgDrizzleLayer),
+	HttpRouter.provideRequest(PgDrizzleLive),
 	Layer.provide(DbLive),
 );
 
-export const Server = HttpApiBuilder.serve(HttpMiddleware.logger).pipe(
-	Layer.provide(HttpApiSwagger.layer()),
-	Layer.provide(HttpApiBuilder.middlewareOpenApi()),
-	Layer.provide(HttpApiBuilder.middlewareCors()),
-	Layer.provide(ApiLive),
+/**
+ * Everything that registers routes into the HttpRouter: the typed API
+ * handlers, the Swagger UI and the CORS middleware. Request logging is
+ * enabled by default in v4's HttpRouter.serve.
+ */
+const AppLive = Layer.mergeAll(
+	ApiLive,
+	HttpApiSwagger.layer(Api),
+	HttpRouter.cors(),
+);
+
+export const Server = HttpRouter.serve(AppLive).pipe(
 	HttpServer.withLogAddress,
 	Layer.provide(BunHttpServer.layer({})),
 );

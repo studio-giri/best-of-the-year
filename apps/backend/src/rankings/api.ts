@@ -1,6 +1,11 @@
 import { Ranking } from "@boty/shared/schemas/Ranking.schema";
-import { HttpApiEndpoint, HttpApiGroup, OpenApi } from "@effect/platform";
 import { Schema } from "effect";
+import {
+	HttpApiEndpoint,
+	HttpApiGroup,
+	HttpApiSchema,
+	OpenApi,
+} from "effect/unstable/httpapi";
 import { RankingNotFound } from "./errors.ts";
 
 /**
@@ -11,19 +16,15 @@ const endpoint = "rankings" as const;
 /**
  * API routes
  */
-export class RankingsApi extends HttpApiGroup.make(endpoint)
-	.prefix(`/${endpoint}`)
+export const RankingsApi = HttpApiGroup.make(endpoint)
 	.add(
-		HttpApiEndpoint.get("findById", `/${endpoint}/:id`)
-			.setPath(
-				Schema.Struct({
-					id: Schema.String,
-				}),
-			)
-			.addSuccess(Ranking)
-			.addError(RankingNotFound, {
-				status: 404,
-			}),
+		HttpApiEndpoint.get("findById", `/${endpoint}/:id`, {
+			params: {
+				id: Schema.String,
+			},
+			success: Ranking,
+			error: HttpApiSchema.status(404)(RankingNotFound),
+		}),
 	)
 	.annotate(OpenApi.Title, "Rankings")
-	.annotate(OpenApi.Description, "Manage Rankings") {}
+	.annotate(OpenApi.Description, "Manage Rankings");

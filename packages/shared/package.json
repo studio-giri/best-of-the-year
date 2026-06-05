@@ -8,9 +8,9 @@
 		"typecheck": "tsgo --noEmit"
 	},
 	"dependencies": {
-		"effect": "3.19.19"
+		"effect": "4.0.0-beta.78"
 	},
 	"devDependencies": {
-		"@typescript/native-preview": "7.0.0-dev.20260306.1"
+		"@typescript/native-preview": "7.0.0-dev.20260603.1"
 	}
 }

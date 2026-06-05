@@ -4,7 +4,7 @@ interface EnvShape {
 	readonly databaseUrl: URL;
 }
 
-export class Env extends Context.Tag("Env")<Env, EnvShape>() {
+export class Env extends Context.Service<Env, EnvShape>()("Env") {
 	static readonly Live = Layer.effect(
 		Env,
 		Effect.gen(function* () {

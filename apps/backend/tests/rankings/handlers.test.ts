@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
-import { PgDrizzle } from "@effect/sql-drizzle/Pg";
 import { Effect } from "effect";
-import { rankingsTable } from "../../src/db/schema.ts";
+import { PgDrizzle } from "../../src/db/PgDrizzle.ts";
+import { rankingItemsTable, rankingsTable } from "../../src/db/schema.ts";
 import { newRanking } from "../fixtures/ranking.fixture.ts";
 import { makeTestCtx } from "../setup/make-test-ctx.ts";
 
@@ -16,16 +16,17 @@ describe("GET /rankings/:id", () => {
 		await ctx?.cleanup();
 	});
 
-	test("returns 200 with the ranking for a valid existing id", async () => {
+	test("returns 200 with the ranking and its items for a valid existing id", async () => {
 		const { handler, runDb } = ctx;
 
 		/**
-		 * Seed one ranking row for the happy-path tests
+		 * Seed one ranking row and two ranking items for the happy-path test
 		 */
-		const [row] = await runDb(
+		const { ranking, items } = await runDb(
 			Effect.gen(function* () {
 				const db = yield* PgDrizzle;
-				return yield* db
+
+				const [rankingRow] = yield* db
 					.insert(rankingsTable)
 					.values({
 						...newRanking(),
@@ -34,16 +35,45 @@ describe("GET /rankings/:id", () => {
 					})
 					.returning({
 						id: rankingsTable.id,
-					})
-					.pipe(Effect.orDie);
+					});
+				if (!rankingRow) {
+					return yield* Effect.die("Failed to seed ranking row");
+				}
+
+				const itemRows = yield* db
+					.insert(rankingItemsTable)
+					.values([
+						{
+							rankingId: rankingRow.id,
+							year: 2021,
+							name: "It Takes Two",
+						},
+						{
+							rankingId: rankingRow.id,
+							year: 2023,
+							name: "Baldur's Gate 3",
+						},
+						{
+							rankingId: rankingRow.id,
+							year: 2022,
+							name: "Elden Ring",
+						},
+					])
+					.returning({
+						id: rankingItemsTable.id,
+						year: rankingItemsTable.year,
+						name: rankingItemsTable.name,
+					});
+
+				return {
+					ranking: rankingRow,
+					items: itemRows,
+				};
 			}),
 		);
-		if (!row) {
-			throw new Error("Failed to seed ranking row");
-		}
 
 		const res = await handler(
-			new Request(`http://localhost/rankings/${row.id}`),
+			new Request(`http://localhost/rankings/${ranking.id}`),
 		);
 
 		expect(res.status).toBe(200);
@@ -52,12 +82,25 @@ describe("GET /rankings/:id", () => {
 			id: string;
 			author: string;
 			updatedAt: string;
+			items: {
+				id: string;
+				year: number;
+				name: string;
+			}[];
 		};
 		expect(body).toEqual({
-			id: row.id,
+			id: ranking.id,
 			author: "the-author",
 			updatedAt: "2020-01-01T00:00:00.000Z",
+			items: expect.arrayContaining(
+				items.map((item) => ({
+					id: item.id,
+					year: item.year,
+					name: item.name,
+				})),
+			),
 		});
+		expect(body.items).toHaveLength(3);
 	});
 
 	test("returns 404 for a valid UUID that does not exist", async () => {
@@ -96,8 +139,7 @@ describe("GET /rankings/:id", () => {
 					})
 					.returning({
 						id: rankingsTable.id,
-					})
-					.pipe(Effect.orDie);
+					});
 			}),
 		);
 		if (!row) {

@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-export class RankingNotFound extends Schema.TaggedError<RankingNotFound>()(
+export class RankingNotFound extends Schema.TaggedErrorClass<RankingNotFound>()(
 	"RankingNotFound",
 	{
 		id: Schema.String,

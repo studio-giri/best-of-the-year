@@ -1,14 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { HttpApiBuilder, HttpServer } from "@effect/platform";
-import {
-	type PgDrizzle,
-	layer as PgDrizzleLayer,
-} from "@effect/sql-drizzle/Pg";
 import { Effect, Layer, Redacted } from "effect";
+import { HttpRouter, HttpServer } from "effect/unstable/http";
 import { Pool } from "pg";
 import { makePgClientLayer } from "../../src/db/PgClient.ts";
+import { type PgDrizzle, PgDrizzleLive } from "../../src/db/PgDrizzle.ts";
 import { HttpApiHandlersLive } from "../../src/http.ts";
 
 const MIGRATIONS_DIR = join(import.meta.dir, "../../drizzle");
@@ -52,7 +49,15 @@ export async function makeTestCtx() {
 			.filter((f) => f.endsWith(".sql"))
 			.sort();
 		for (const file of sqlFiles) {
-			await client.query(readFileSync(join(MIGRATIONS_DIR, file), "utf-8"));
+			/**
+			 * Drizzle-kit qualifies FK references with "public" which bypasses
+			 * search_path — rewrite them to target the isolated test schema
+			 */
+			const sql = readFileSync(join(MIGRATIONS_DIR, file), "utf-8").replaceAll(
+				'"public".',
+				`"${schemaName}".`,
+			);
+			await client.query(sql);
 		}
 	} finally {
 		// Always release the client and close the pool, even if migrations fail,
@@ -75,16 +80,14 @@ export async function makeTestCtx() {
 	const TestDbLive = makePgClientLayer(Redacted.make(testUrl.toString()));
 
 	/**
-	 * Assemble the full application Layer: provide the test DB layer to all
-	 * handlers, then add HttpServer.layerContext so the Layer has everything it
-	 * needs to handle requests (request/response context, etc.).
+	 * Assemble the full application Layer: PgDrizzle is request-scoped in v4's
+	 * HttpRouter (provideRequest), the PgClient and platform services
+	 * (HttpServer.layerServices) are regular layers.
 	 */
-	const TestAppLayer = Layer.mergeAll(
-		HttpApiHandlersLive.pipe(
-			Layer.provide(PgDrizzleLayer),
-			Layer.provide(TestDbLive),
-		),
-		HttpServer.layerContext,
+	const TestAppLayer = HttpApiHandlersLive.pipe(
+		HttpRouter.provideRequest(PgDrizzleLive),
+		Layer.provide(TestDbLive),
+		Layer.provide(HttpServer.layerServices),
 	);
 
 	/**
@@ -92,7 +95,9 @@ export async function makeTestCtx() {
 	 * accepts a standard Request and returns a Response, so tests can call it
 	 * directly without spinning up a real HTTP server.
 	 */
-	const app = HttpApiBuilder.toWebHandler(TestAppLayer);
+	const app = HttpRouter.toWebHandler(TestAppLayer, {
+		disableLogger: true,
+	});
 
 	/**
 	 * Helper that lets tests run arbitrary Drizzle effects against the isolated
@@ -102,7 +107,7 @@ export async function makeTestCtx() {
 	 */
 	const runDb = <A, E>(effect: Effect.Effect<A, E, PgDrizzle>) =>
 		effect.pipe(
-			Effect.provide(PgDrizzleLayer),
+			Effect.provide(PgDrizzleLive),
 			Effect.provide(TestDbLive),
 			Effect.runPromise,
 		);

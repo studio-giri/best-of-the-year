@@ -10,6 +10,8 @@
 		"dev": "turbo dev",
 		"check": "biome check .",
 		"fix": "biome check --write .",
+		"test:unit": "turbo test:unit",
+		"test:e2e": "turbo test:e2e",
 		"typecheck": "turbo typecheck",
 		"db:up": "docker compose up",
 		"db:down": "docker compose down",
@@ -20,7 +22,7 @@
 		"db:migration:run": "bun run --cwd apps/backend db:migration:run"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "2.4.6",
-		"turbo": "2.8.14"
+		"@biomejs/biome": "2.4.16",
+		"turbo": "2.9.16"
 	}
 }

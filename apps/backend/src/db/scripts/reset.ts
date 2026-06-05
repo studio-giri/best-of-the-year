@@ -42,7 +42,9 @@ const program = Effect.gen(function* () {
 				}),
 		),
 		(pool) => {
-			const db = drizzle(pool);
+			const db = drizzle({
+				client: pool,
+			});
 			return Effect.gen(function* () {
 				/**
 				 * Terminate other connections so locks don't block the reset

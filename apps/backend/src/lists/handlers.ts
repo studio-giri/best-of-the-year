@@ -1,11 +1,11 @@
-import { HttpApiBuilder } from "@effect/platform";
 import { Effect } from "effect";
+import { HttpApiBuilder } from "effect/unstable/httpapi";
 import { Api } from "../api";
 
 export const HttpListsLive = HttpApiBuilder.group(Api, "lists", (handlers) =>
-	handlers.handle("findById", ({ path }) =>
+	handlers.handle("findById", ({ params }) =>
 		Effect.succeed({
-			id: path.id,
+			id: params.id,
 			author: "Gerard",
 		}),
 	),

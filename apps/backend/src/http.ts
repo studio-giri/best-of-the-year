@@ -1,7 +1,6 @@
+import { Api } from "@boty/shared/api/Api";
 import { Layer } from "effect";
 import { HttpApiBuilder } from "effect/unstable/httpapi";
-import { Api } from "./api.ts";
-import { HttpListsLive } from "./lists/handlers.ts";
 import { HttpRankingsLive } from "./rankings/handlers.ts";
 
 /**
@@ -14,5 +13,5 @@ export const HttpApiHandlersLive = Layer.provide(
 	HttpApiBuilder.layer(Api, {
 		openapiPath: "/openapi.json",
 	}),
-	Layer.mergeAll(HttpListsLive, HttpRankingsLive),
+	Layer.mergeAll(HttpRankingsLive),
 );

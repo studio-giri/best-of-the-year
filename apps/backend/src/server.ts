@@ -1,8 +1,8 @@
+import { Api } from "@boty/shared/api/Api";
 import { BunHttpServer } from "@effect/platform-bun";
 import { Layer } from "effect";
 import { HttpRouter, HttpServer } from "effect/unstable/http";
 import { HttpApiSwagger } from "effect/unstable/httpapi";
-import { Api } from "./api";
 import { PgClientLive } from "./db/PgClient";
 import { PgDrizzleLive } from "./db/PgDrizzle";
 import { Env } from "./env";

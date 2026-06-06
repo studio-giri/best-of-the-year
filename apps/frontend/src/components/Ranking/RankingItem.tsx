@@ -1,7 +1,7 @@
 import { HorizontalRule } from "#/components/HorizontalRule";
 
 interface Props {
-	year: string;
+	year: number;
 	game: string;
 }
 export function RankingItem({ year, game }: Props) {

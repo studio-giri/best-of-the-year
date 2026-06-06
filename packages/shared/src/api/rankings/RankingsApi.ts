@@ -1,4 +1,3 @@
-import { Ranking } from "@boty/shared/schemas/Ranking.schema";
 import { Schema } from "effect";
 import {
 	HttpApiEndpoint,
@@ -6,7 +5,8 @@ import {
 	HttpApiSchema,
 	OpenApi,
 } from "effect/unstable/httpapi";
-import { RankingNotFound } from "./errors.ts";
+import { Ranking } from "../../schemas/Ranking.schema.ts";
+import { RankingNotFound } from "./RankingNotFound.ts";
 
 /**
  * Endpoint

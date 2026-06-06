@@ -1,10 +1,10 @@
+import { Api } from "@boty/shared/api/Api";
+import { RankingNotFound } from "@boty/shared/api/rankings/RankingNotFound";
 import { and, eq, isNull } from "drizzle-orm";
 import { Effect, Schema } from "effect";
 import { HttpApiBuilder } from "effect/unstable/httpapi";
-import { Api } from "../api.ts";
 import { PgDrizzle } from "../db/PgDrizzle.ts";
 import { rankingItemsTable, rankingsTable } from "../db/schema.ts";
-import { RankingNotFound } from "./errors.ts";
 
 const UUID = Schema.String.pipe(Schema.check(Schema.isUUID()));
 

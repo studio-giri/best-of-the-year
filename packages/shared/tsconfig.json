@@ -3,10 +3,10 @@
 		"paths": {},
 		"module": "ESNext",
 		"moduleResolution": "Bundler",
+		"allowImportingTsExtensions": true,
+		"noEmit": true,
 		"strict": true,
 		"target": "ESNext",
-		"declaration": true,
-		"declarationMap": true,
 		"skipLibCheck": true
 	},
 	"include": [

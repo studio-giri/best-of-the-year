@@ -30,7 +30,11 @@
 		"**/routeTree.gen.ts": true
 	},
 	"files.associations": {
-		"*.css": "tailwindcss"
+		"*.css": "tailwindcss",
+		// turbo.json is JSONC (Turborepo officially supports comments) but VS Code's
+		// built-in JSON validator only knows a hardcoded list of JSONC files —
+		// without this it reports "Comments are not permitted in JSON".
+		"turbo.json": "jsonc"
 	},
 	"cSpell.words": [
 		"boty",

@@ -1,14 +1,59 @@
 {
 	"$schema": "https://turborepo.dev/schema.json",
 	"tasks": {
+		// Dev servers: long-running processes — nothing to cache, never "done".
 		"dev": {
 			"persistent": true,
 			"cache": false
 		},
-		"typecheck": {},
-		"test:unit": {},
+
+		// Cache-correctness link ("transit node" pattern, from the Turborepo docs).
+		//
+		// Problem it solves: a task's cache hash only covers its own package's
+		// files. @boty/shared is consumed as raw TS source, so without a link,
+		// editing a shared schema does NOT invalidate backend/frontend typecheck
+		// or test caches — turbo replays a stale green result (verified before
+		// this fix: shared change → backend:typecheck "cache hit").
+		//
+		// How it works: "transit" matches no script in any package.json, so it
+		// EXECUTES NOTHING. But "^transit" ("this task in my workspace
+		// dependencies") creates a graph edge package → its dependencies, and a
+		// task's hash includes the hash of every task it depends on. Tasks below
+		// that declare "dependsOn": ["transit"] therefore inherit their
+		// dependencies' source files into their cache key — invalidation without
+		// any execution coupling (unlike "^typecheck", which would also force
+		// shared's typecheck to run and pass before app tasks).
+		"transit": {
+			"dependsOn": [
+				"^transit"
+			]
+		},
+
+		// Typecheck is hermetic (pure function of source files) → safe to cache.
+		// The transit link extends the cache key to @boty/shared's sources.
+		"typecheck": {
+			"dependsOn": [
+				"transit"
+			]
+		},
+
+		// Unit tests must stay hermetic (no DB, no network) → safe to cache,
+		// same transit link so shared changes re-run them.
+		"test:unit": {
+			"dependsOn": [
+				"transit"
+			]
+		},
+
+		// E2e tests hit a real Postgres — external state turbo cannot hash, so a
+		// cached "pass" could replay against a broken/changed DB. Never cache.
+		// The transit link is a no-op today (no cache to bust, nothing executes)
+		// but keeps the hash honest if caching is ever enabled here.
 		"test:e2e": {
-			"cache": false
+			"cache": false,
+			"dependsOn": [
+				"transit"
+			]
 		}
 	}
 }

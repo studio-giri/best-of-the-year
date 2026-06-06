@@ -49,6 +49,14 @@ return yield* Schema.decodeUnknown(MySchema)(json);
 
 All dependencies in package.json (except workspace:*) must be pinned (bun must be run with --exact when installing)
 
+### TanStack packages bump as a constellation
+
+TanStack versions its packages independently — there is no single version number to align on (e.g. the latest `react-router-devtools` can be 1.167.x while the latest `react-router` is 1.170.x; that skew is normal). The invariant that matters: **`@tanstack/react-start`'s internals pin exact versions of `@tanstack/react-router` and `@tanstack/router-plugin`**, so:
+
+- Never bump `react-router` (or `router-plugin`) alone — bun would install a second copy of the router core and break React context identity at runtime.
+- To upgrade, pick the target `react-start` version first, then pin `react-router` to whatever it dictates (`npm view @tanstack/react-start@<version> dependencies`).
+- After any TanStack bump, verify a single resolution: `bun why @tanstack/router-core` must show exactly one version.
+
 ## File structure
 
 Prefer many small, focused files over large catch-all modules.

@@ -1,7 +1,10 @@
 services:
   db:
     image: postgres:18
-    restart: unless-stopped
+    # Dev DB must not outlive dev sessions: no auto-start on boot, no
+    # resurrection by the Docker daemon. Bring it up explicitly with
+    # `bun db:up`. (Quotes are required: unquoted `no` is YAML for false.)
+    restart: "no"
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}

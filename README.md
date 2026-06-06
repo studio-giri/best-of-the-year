@@ -6,6 +6,7 @@ Bun monorepo (Turborepo): `apps/backend` (Effect + Drizzle), `apps/frontend` (Re
 
 ```bash
 bun install
+cp .env.example .env       # root: read by docker compose (POSTGRES_*)
 cp apps/backend/.env.example apps/backend/.env
 cp apps/frontend/.env.example apps/frontend/.env
 bun db:up                  # start PostgreSQL (Docker)
@@ -18,6 +19,8 @@ bun db:seed                # seed data
 ```bash
 bun dev                    # all apps in parallel
 ```
+
+The DB container does not auto-start (`restart: "no"`): after a reboot or a `bun db:down`, run `bun db:up` before `bun dev`.
 
 ## Checks
 
@@ -32,7 +35,7 @@ bun test:e2e               # e2e tests
 ## Database
 
 ```bash
-bun db:up                  # start PostgreSQL
+bun db:up                  # start PostgreSQL (detached, waits until healthy)
 bun db:down                # stop
 bun db:logs                # tail logs
 bun db:migration:generate  # generate Drizzle migration

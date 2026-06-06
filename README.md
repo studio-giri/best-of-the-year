@@ -38,5 +38,5 @@ bun db:logs                # tail logs
 bun db:migration:generate  # generate Drizzle migration
 bun db:migration:run       # apply migrations
 bun db:seed                # seed
-bun db:reset               # reset (asks confirmation)
+bun db:truncate            # truncate all tables (asks confirmation)
 ```

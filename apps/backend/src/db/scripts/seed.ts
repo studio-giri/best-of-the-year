@@ -30,12 +30,16 @@ const program = Effect.gen(function* () {
 				yield* Effect.tryPromise({
 					try: () => db.insert(rankingsTable).values(rankings),
 					catch: (cause) =>
-						new Error(`Failed to seed rankings: ${String(cause)}`),
+						new Error("Failed to seed rankings", {
+							cause,
+						}),
 				});
 				yield* Effect.tryPromise({
 					try: () => db.insert(rankingItemsTable).values(rankingItems),
 					catch: (cause) =>
-						new Error(`Failed to seed ranking items: ${String(cause)}`),
+						new Error("Failed to seed ranking items", {
+							cause,
+						}),
 				});
 				yield* Console.info("Seed successful");
 			});

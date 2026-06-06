@@ -63,8 +63,15 @@ bun db:logs                  # tail DB logs
 bun db:migration:generate    # generate a new Drizzle migration
 bun db:migration:run         # apply pending migrations
 bun db:seed                  # seed the database
-bun db:reset                 # reset the database (asks for confirmation)
+bun db:truncate              # truncate all tables (asks for confirmation)
 
-# Testing (frontend only, vitest)
-bun test                     # run from apps/frontend or use --filter frontend
+# Testing (via Turbo)
+bun test:unit                # unit tests, all packages (backend: bun test, frontend: vitest)
+bun test:e2e                 # backend e2e tests (requires the DB: bun db:up)
 ```
+
+# Testing
+
+- **Backend** uses Bun's built-in test runner: unit tests are colocated in `src/` (`bun test src`), e2e tests live in `tests/` (`bun test tests`) and hit a real PostgreSQL — start it first with `bun db:up`.
+- **Frontend** uses vitest (`vitest.config.ts`, jsdom): unit tests are colocated in `src/` as `*.test.tsx?`.
+- Inside a package, run tests with `bun run test:unit` — NOT plain `bun test`, which invokes Bun's own test runner regardless of package scripts (wrong runner for the frontend).

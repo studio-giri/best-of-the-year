@@ -1,4 +1,4 @@
-import { HorizontalRule } from "#/components/HorizontalRule";
+import { HorizontalRule } from "#/ui/HorizontalRule";
 
 export function Footer() {
 	return (

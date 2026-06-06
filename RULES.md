@@ -56,3 +56,21 @@ Prefer many small, focused files over large catch-all modules.
 - One exported function / class / constant per file when it makes sense
 - No `helpers.ts`, `utils.ts`, or `common.ts` dumping grounds — name files after what they do (`format-date.ts`, `parse-ocpi-response.ts`)
 - Colocate files with their consumers rather than grouping by type (e.g. avoid a flat `/utils` folder at the root, unless there are shared utils)
+
+## Frontend file organization
+
+`apps/frontend/src/` is organized by page, mirroring the URL structure — not by type, not by domain.
+
+```text
+src/
+├── routes/      # framework-owned (TanStack Router), thin wiring ONLY: route definition, loader, param→prop plumbing
+├── pages/       # mirrors the URL tree: pages/home/, pages/game/ranking/ (= /game/$rankingId)
+├── layout/      # app shell (Layout, Header, Footer) — used by routes, not a page
+├── ui/          # shared, domain-less primitives (e.g. HorizontalRule)
+└── lib/         # infra (API client)
+```
+
+- A page folder holds everything the page needs: components, queries, hooks (e.g. `pages/game/ranking/{RankingPage,Ranking,RankingItem,RankingNotFound}.tsx`, `useRanking.query.ts`)
+- **No sibling imports between page folders** — `pages/home/` never imports from `pages/game/`. Wanting to is the promotion signal: move the file to `ui/` (generic primitive) or a purpose-named shared folder, created at that moment, not before (promote on second use)
+- **Routes import pages, never the reverse** — a URL refactor is then a folder move plus one import update
+- No barrel files (`index.ts`) — import files directly

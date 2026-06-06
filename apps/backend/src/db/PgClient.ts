@@ -1,5 +1,5 @@
 import { PgClient } from "@effect/sql-pg";
-import { Effect, Layer, Redacted } from "effect";
+import { Effect, Layer, type Redacted } from "effect";
 import { Env } from "../env.js";
 
 /**
@@ -22,6 +22,6 @@ export const PgClientLive = Layer.unwrap(
 		 * Resolve the database URL from the environment and build the PgClient layer
 		 */
 		const { databaseUrl } = yield* Env;
-		return makePgClientLayer(Redacted.make(databaseUrl.toString()));
+		return makePgClientLayer(databaseUrl);
 	}),
 );

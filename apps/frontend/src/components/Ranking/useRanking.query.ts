@@ -1,14 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { Effect } from "effect";
 import { client } from "#/lib/api/client";
 
-export function useRanking(id: string) {
-	return useQuery({
+export function rankingQueryOptions(id: string) {
+	return queryOptions({
 		queryKey: [
 			"ranking",
 			id,
 		],
-		enabled: Boolean(id),
 		retry: false,
 		queryFn: () =>
 			Effect.runPromise(
@@ -19,4 +18,8 @@ export function useRanking(id: string) {
 				}),
 			),
 	});
+}
+
+export function useRanking(id: string) {
+	return useSuspenseQuery(rankingQueryOptions(id));
 }

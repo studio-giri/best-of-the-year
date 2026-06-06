@@ -1,23 +1,32 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { HorizontalRule } from "#/components/HorizontalRule";
 import { Ranking } from "#/components/Ranking/Ranking";
-import { useRanking } from "#/components/Ranking/useRanking.query";
+import {
+	rankingQueryOptions,
+	useRanking,
+} from "#/components/Ranking/useRanking.query";
 
 export const Route = createFileRoute("/_layout/game/$rankingId")({
+	loader: async ({ context, params }) => {
+		try {
+			await context.queryClient.ensureQueryData(
+				rankingQueryOptions(params.rankingId),
+			);
+		} catch {
+			throw notFound();
+		}
+	},
 	component: RouteComponent,
+	notFoundComponent: NotFoundComponent,
 });
+
+function NotFoundComponent() {
+	return <p className="text-white text-center">Ranking not found</p>;
+}
 
 function RouteComponent() {
 	const { rankingId } = Route.useParams();
-	const { data, error } = useRanking(rankingId);
-
-	if (error) {
-		return <p className="text-white text-center">Ranking not found</p>;
-	}
-
-	if (!data) {
-		return <p className="text-white text-center">Loading...</p>;
-	}
+	const { data } = useRanking(rankingId);
 
 	return (
 		<div>

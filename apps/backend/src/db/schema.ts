@@ -27,7 +27,8 @@ export const rankingsTable = pgTable("rankings", {
 		precision: 3,
 	})
 		.notNull()
-		.defaultNow(),
+		.defaultNow()
+		.$onUpdate(() => new Date()),
 
 	deletedAt: timestamp("deleted_at", {
 		mode: "date",
@@ -64,7 +65,8 @@ export const rankingItemsTable = pgTable(
 			precision: 3,
 		})
 			.notNull()
-			.defaultNow(),
+			.defaultNow()
+			.$onUpdate(() => new Date()),
 	},
 	(table) => [
 		unique().on(table.rankingId, table.year),

@@ -12,8 +12,10 @@
 		"fix": "biome check --write .",
 		"db:seed": "bun run src/db/scripts/seed.ts",
 		"db:truncate": "bun run src/db/scripts/truncate.ts",
-		"db:migration:generate": "npx drizzle-kit generate",
-		"db:migration:run": "npx drizzle-kit migrate",
+		"db:drop": "bun run src/db/scripts/drop.ts",
+		"db:reset": "bun run db:drop && bun run db:migration:run",
+		"db:migration:generate": "bunx drizzle-kit generate",
+		"db:migration:run": "bunx drizzle-kit migrate",
 		"test:unit": "bun test src",
 		"test:e2e": "bun test tests"
 	},

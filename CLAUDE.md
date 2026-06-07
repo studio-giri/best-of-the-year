@@ -64,6 +64,8 @@ bun db:migration:generate    # generate a new Drizzle migration
 bun db:migration:run         # apply pending migrations
 bun db:seed                  # seed the database
 bun db:truncate              # truncate all tables (asks for confirmation)
+bun db:drop                  # drop everything — tables, enums, migration journal (asks for confirmation)
+bun db:reset                 # db:drop + db:migration:run
 
 # Testing (via Turbo)
 bun test:unit                # unit tests, all packages (backend: bun test, frontend: vitest)

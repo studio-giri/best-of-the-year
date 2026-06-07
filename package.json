@@ -18,6 +18,8 @@
 		"db:logs": "docker compose logs -f db",
 		"db:seed": "bun run --cwd apps/backend db:seed",
 		"db:truncate": "bun run --cwd apps/backend db:truncate",
+		"db:drop": "bun run --cwd apps/backend db:drop",
+		"db:reset": "bun run --cwd apps/backend db:reset",
 		"db:migration:generate": "bun run --cwd apps/backend db:migration:generate",
 		"db:migration:run": "bun run --cwd apps/backend db:migration:run"
 	},

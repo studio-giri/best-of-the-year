@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
+import { spawnTestScript } from "./spawn-test-script";
 
 /**
  * Black-box process tests — deliberately closer to integration tests than
@@ -20,44 +21,12 @@ import { join } from "node:path";
 
 const SCRIPT = join(import.meta.dir, "truncate.ts");
 
-/**
- * Spawn the real script with a controlled NODE_ENV and closed stdin, and
- * capture everything it says. runMain may log failures to stdout or stderr
- * depending on the logger, so assertions read the combined output.
- */
-async function runTruncateScript(nodeEnv: string) {
-	const proc = Bun.spawn(
-		[
-			"bun",
-			SCRIPT,
-		],
-		{
-			env: {
-				...process.env,
-				NODE_ENV: nodeEnv,
-			},
-			stdin: "ignore",
-			stdout: "pipe",
-			stderr: "pipe",
-		},
-	);
-	const [exitCode, stdout, stderr] = await Promise.all([
-		proc.exited,
-		new Response(proc.stdout).text(),
-		new Response(proc.stderr).text(),
-	]);
-	return {
-		exitCode,
-		output: stdout + stderr,
-	};
-}
-
 describe("db:truncate safety guards", () => {
 	test.each([
 		"production",
 		"prod",
 	])("refuses to run when NODE_ENV=%s", async (nodeEnv) => {
-		const { exitCode, output } = await runTruncateScript(nodeEnv);
+		const { exitCode, output } = await spawnTestScript(SCRIPT, nodeEnv);
 		expect(exitCode).not.toBe(0);
 		expect(output).toContain("cannot be run in production");
 	});
@@ -67,7 +36,7 @@ describe("db:truncate safety guards", () => {
 		 * stdin is closed ("ignore"), so prompt() returns null — anything but
 		 * the literal "truncate" must cancel before DATABASE_URL is even read
 		 */
-		const { exitCode, output } = await runTruncateScript("test");
+		const { exitCode, output } = await spawnTestScript(SCRIPT, "test");
 		expect(exitCode).not.toBe(0);
 		expect(output).toContain("Truncate cancelled");
 	});

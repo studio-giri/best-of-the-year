@@ -1,3 +1,4 @@
+import { RankingNotFound as RankingNotFoundError } from "@boty/shared/api/rankings/RankingNotFound";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { RankingNotFound } from "#/pages/game/ranking/RankingNotFound";
 import { RankingPage } from "#/pages/game/ranking/RankingPage";
@@ -9,8 +10,11 @@ export const Route = createFileRoute("/_layout/game/$rankingId")({
 			await context.queryClient.ensureQueryData(
 				rankingQueryOptions(params.rankingId),
 			);
-		} catch {
-			throw notFound();
+		} catch (error) {
+			if (error instanceof RankingNotFoundError) {
+				throw notFound();
+			}
+			throw error;
 		}
 	},
 	component: RouteComponent,

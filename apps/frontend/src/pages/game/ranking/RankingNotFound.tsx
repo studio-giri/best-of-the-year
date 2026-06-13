@@ -4,11 +4,8 @@ export function RankingNotFound({ data }: NotFoundRouteProps) {
 	const isMalformed =
 		typeof data === "object" &&
 		data !== null &&
-		(
-			data as {
-				reason?: unknown;
-			}
-		).reason === "malformed";
+		"reason" in data &&
+		data.reason === "malformed";
 
 	return (
 		<p className="text-white text-center">

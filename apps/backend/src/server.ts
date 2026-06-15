@@ -33,13 +33,9 @@ const AppLive = Layer.mergeAll(
 
 export const Server = HttpRouter.serve(AppLive).pipe(
 	HttpServer.withLogAddress,
-	/**
-	 * Listen port is declared and overridable via PORT (default 3000, the value
-	 * the frontend's VITE_API_URL hardcodes), rather than relying on Bun's
-	 * implicit framework default.
-	 */
 	Layer.provide(
 		BunHttpServer.layerConfig({
+			// Listen port is declared and overridable via PORT (default 3000)
 			port: Config.withDefault(Config.number("PORT"), 3000),
 		}),
 	),

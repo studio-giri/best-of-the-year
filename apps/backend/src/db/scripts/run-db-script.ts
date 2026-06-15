@@ -1,7 +1,8 @@
 import { sql } from "drizzle-orm";
-import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
-import { Config, Effect, String as Str } from "effect";
-import { Pool } from "pg";
+import { Config, Effect, Layer, String as Str } from "effect";
+import { Env } from "../../env";
+import { PgClientLive } from "../PgClient";
+import { PgDrizzle, PgDrizzleLive } from "../PgDrizzle";
 
 interface DbScriptConfig {
 	/** Script name used in error messages, e.g. "db:truncate" */
@@ -11,13 +12,24 @@ interface DbScriptConfig {
 }
 
 /**
- * Shared lifecycle for destructive DB scripts (db:truncate, db:drop).
- * The safety guards and connection handling live here so the scripts can't
- * drift apart — each script only provides its SQL via `body`.
+ * The same Effect/sql-pg stack the app uses (PgDrizzle on PgClient, configured
+ * from the redacted Env). The PgClient layer owns the connection lifecycle, so
+ * the scripts no longer open or release a raw pool of their own.
  */
-export const runDbScript = (
+const DbLive = PgDrizzleLive.pipe(
+	Layer.provide(PgClientLive),
+	Layer.provide(Env.Live),
+);
+
+/**
+ * Shared lifecycle for destructive DB scripts (db:truncate, db:drop).
+ * The safety guards live here so the scripts can't drift apart — each script
+ * only provides its SQL via `body`, which reads the PgDrizzle service from
+ * context (provided here, only after the guards pass).
+ */
+export const runDbScript = <E>(
 	{ name, confirmWord }: DbScriptConfig,
-	body: (db: NodePgDatabase) => Effect.Effect<void, Error>,
+	body: Effect.Effect<void, E, PgDrizzle>,
 ) =>
 	Effect.gen(function* () {
 		/**
@@ -42,40 +54,16 @@ export const runDbScript = (
 		}
 
 		/**
-		 * Connect to PostgreSQL, run the script body, then release the pool —
-		 * the release runs even if the body fails.
+		 * Connect (only now, after the guards), terminate other connections so
+		 * locks don't block the script, then run the body. DbLive is provided
+		 * here so the connection pool is acquired and released around just this
+		 * block.
 		 */
-		const databaseUrl = yield* Config.string("DATABASE_URL");
-		yield* Effect.acquireUseRelease(
-			Effect.sync(
-				() =>
-					new Pool({
-						connectionString: databaseUrl,
-						idleTimeoutMillis: 0,
-					}),
-			),
-			(pool) => {
-				const db = drizzle({
-					client: pool,
-				});
-				return Effect.gen(function* () {
-					/**
-					 * Terminate other connections so locks don't block the script
-					 */
-					yield* Effect.tryPromise({
-						try: () =>
-							db.execute(
-								sql`SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_pid()`,
-							),
-						catch: (cause) =>
-							new Error("Failed to terminate connections", {
-								cause,
-							}),
-					});
-
-					yield* body(db);
-				});
-			},
-			(pool) => Effect.promise(() => pool.end()),
-		);
+		yield* Effect.gen(function* () {
+			const db = yield* PgDrizzle;
+			yield* db.execute(
+				sql`SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_pid()`,
+			);
+			yield* body;
+		}).pipe(Effect.provide(DbLive));
 	});

@@ -2,9 +2,9 @@ import { RankingNotFound as RankingNotFoundError } from "@boty/shared/api/rankin
 import { Uuid } from "@boty/shared/schemas/Uuid.schema";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Schema } from "effect";
-import { RankingNotFound } from "#/pages/game/ranking/RankingNotFound";
-import { RankingPage } from "#/pages/game/ranking/RankingPage";
-import { rankingQueryOptions } from "#/pages/game/ranking/useRanking.query";
+import { RankingNotFound } from "#/pages/game/ranking/RankingNotFound.tsx";
+import { RankingPage } from "#/pages/game/ranking/RankingPage.tsx";
+import { rankingQueryOptions } from "#/pages/game/ranking/useRanking.query.ts";
 
 export const Route = createFileRoute("/_layout/game/$rankingId")({
 	loader: async ({ context, params }) => {

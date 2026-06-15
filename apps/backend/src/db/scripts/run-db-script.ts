@@ -1,8 +1,8 @@
 import { sql } from "drizzle-orm";
 import { Config, Effect, Layer, String as Str } from "effect";
-import { Env } from "../../env";
-import { PgClientLive } from "../PgClient";
-import { PgDrizzle, PgDrizzleLive } from "../PgDrizzle";
+import { Env } from "../../env.ts";
+import { PgClientLive } from "../PgClient.ts";
+import { PgDrizzle, PgDrizzleLive } from "../PgDrizzle.ts";
 
 interface DbScriptConfig {
 	/** Script name used in error messages, e.g. "db:truncate" */

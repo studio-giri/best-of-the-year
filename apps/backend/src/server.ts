@@ -3,10 +3,10 @@ import { BunHttpServer } from "@effect/platform-bun";
 import { Layer } from "effect";
 import { HttpRouter, HttpServer } from "effect/unstable/http";
 import { HttpApiSwagger } from "effect/unstable/httpapi";
-import { PgClientLive } from "./db/PgClient";
-import { PgDrizzleLive } from "./db/PgDrizzle";
-import { Env } from "./env";
-import { HttpApiHandlersLive } from "./http";
+import { PgClientLive } from "./db/PgClient.ts";
+import { PgDrizzleLive } from "./db/PgDrizzle.ts";
+import { Env } from "./env.ts";
+import { HttpApiHandlersLive } from "./http.ts";
 
 const DbLive = PgClientLive.pipe(Layer.provide(Env.Live));
 

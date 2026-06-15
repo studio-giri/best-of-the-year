@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
-import { spawnTestScript } from "./spawn-test-script";
+import { spawnTestScript } from "./spawn-test-script.ts";
 
 /**
  * Black-box process tests — deliberately closer to integration tests than

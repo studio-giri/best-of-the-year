@@ -1,6 +1,6 @@
-import { HorizontalRule } from "#/ui/HorizontalRule";
-import { Ranking } from "./Ranking";
-import { useRanking } from "./useRanking.query";
+import { HorizontalRule } from "#/ui/HorizontalRule.tsx";
+import { Ranking } from "./Ranking.tsx";
+import { useRanking } from "./useRanking.query.ts";
 
 interface Props {
 	rankingId: string;

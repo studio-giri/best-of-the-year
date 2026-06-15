@@ -1,6 +1,6 @@
 import backgroundUrl from "./background.jpg";
-import { Footer } from "./Footer";
-import { Header } from "./Header";
+import { Footer } from "./Footer.tsx";
+import { Header } from "./Header.tsx";
 
 interface LayoutProps {
 	children: React.ReactNode;

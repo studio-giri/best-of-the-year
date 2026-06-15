@@ -1,4 +1,4 @@
-import { randomString } from "./helpers/random";
+import { randomString } from "./helpers/random.ts";
 
 export function newRanking() {
 	return {

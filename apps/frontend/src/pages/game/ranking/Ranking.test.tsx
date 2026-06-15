@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { expect, test } from "vitest";
-import { Ranking } from "./Ranking";
+import { Ranking } from "./Ranking.tsx";
 
 test("renders one row per item, mapping year and name as received", () => {
 	/**

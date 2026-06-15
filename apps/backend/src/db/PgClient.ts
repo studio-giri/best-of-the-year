@@ -1,6 +1,6 @@
 import { PgClient } from "@effect/sql-pg";
 import { Effect, Layer, type Redacted } from "effect";
-import { Env } from "../env.js";
+import { Env } from "../env.ts";
 
 /**
  * Build a PgClient Layer for a given database URL. Accepting the URL as an

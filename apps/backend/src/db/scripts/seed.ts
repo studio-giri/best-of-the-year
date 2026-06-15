@@ -1,10 +1,10 @@
 import { BunRuntime } from "@effect/platform-bun";
 import { Console, Effect, Layer } from "effect";
-import { Env } from "../../env";
-import { PgClientLive } from "../PgClient";
-import { PgDrizzle, PgDrizzleLive } from "../PgDrizzle";
-import { rankingItemsTable, rankingsTable } from "../schema";
-import { rankingItems, rankings } from "./seed-values";
+import { Env } from "../../env.ts";
+import { PgClientLive } from "../PgClient.ts";
+import { PgDrizzle, PgDrizzleLive } from "../PgDrizzle.ts";
+import { rankingItemsTable, rankingsTable } from "../schema.ts";
+import { rankingItems, rankings } from "./seed-values.ts";
 
 /**
  * The same Effect/sql-pg stack the app uses: PgDrizzle on top of PgClient,

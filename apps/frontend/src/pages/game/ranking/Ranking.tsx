@@ -1,5 +1,5 @@
 import type { Ranking as RankingData } from "@boty/shared/schemas/Ranking.schema";
-import { RankingItem } from "./RankingItem";
+import { RankingItem } from "./RankingItem.tsx";
 
 interface Props {
 	items: RankingData["items"];

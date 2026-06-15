@@ -1,4 +1,4 @@
-import { HorizontalRule } from "#/ui/HorizontalRule";
+import { HorizontalRule } from "#/ui/HorizontalRule.tsx";
 
 interface Props {
 	year: number;

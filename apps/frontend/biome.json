@@ -10,13 +10,6 @@
 			"!src/routeTree.gen.ts"
 		]
 	},
-	"linter": {
-		"rules": {
-			"correctness": {
-				"useImportExtensions": "off"
-			}
-		}
-	},
 	"css": {
 		"parser": {
 			"tailwindDirectives": true

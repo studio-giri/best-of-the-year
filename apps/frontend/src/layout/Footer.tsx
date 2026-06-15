@@ -1,4 +1,4 @@
-import { HorizontalRule } from "#/ui/HorizontalRule";
+import { HorizontalRule } from "#/ui/HorizontalRule.tsx";
 
 export function Footer() {
 	return (

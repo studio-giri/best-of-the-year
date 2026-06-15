@@ -1,15 +1,10 @@
 {
-	"compilerOptions": {
-		"paths": {},
-		"module": "ESNext",
-		"moduleResolution": "Bundler",
-		"allowImportingTsExtensions": true,
-		"noEmit": true,
-		"strict": true,
-		"target": "ESNext",
-		"skipLibCheck": true
-	},
+	"extends": "../../tsconfig.base.json",
 	"include": [
 		"src"
-	]
+	],
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext"
+	}
 }

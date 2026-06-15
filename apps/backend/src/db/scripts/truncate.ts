@@ -2,9 +2,9 @@ import { BunRuntime } from "@effect/platform-bun";
 import { is, sql } from "drizzle-orm";
 import { getTableConfig, PgTable } from "drizzle-orm/pg-core";
 import { Console, Effect } from "effect";
-import { PgDrizzle } from "../PgDrizzle";
-import * as schema from "../schema";
-import { runDbScript } from "./run-db-script";
+import { PgDrizzle } from "../PgDrizzle.ts";
+import * as schema from "../schema.ts";
+import { runDbScript } from "./run-db-script.ts";
 
 const program = runDbScript(
 	{

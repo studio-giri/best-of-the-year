@@ -1,4 +1,4 @@
-import type { rankingItemsTable, rankingsTable } from "../schema";
+import type { rankingItemsTable, rankingsTable } from "../schema.ts";
 
 const RANKING_1_ID = "019d6984-10ef-787c-926f-a7e02b5ca80a";
 

@@ -1,4 +1,3 @@
-import { Schema } from "effect";
 import {
 	HttpApiEndpoint,
 	HttpApiGroup,
@@ -6,6 +5,7 @@ import {
 	OpenApi,
 } from "effect/unstable/httpapi";
 import { Ranking } from "../../schemas/Ranking.schema.ts";
+import { Uuid } from "../../schemas/Uuid.schema.ts";
 import { RankingNotFound } from "./RankingNotFound.ts";
 
 /**
@@ -20,7 +20,7 @@ export const RankingsApi = HttpApiGroup.make(endpoint)
 	.add(
 		HttpApiEndpoint.get("findById", `/${endpoint}/:id`, {
 			params: {
-				id: Schema.String,
+				id: Uuid,
 			},
 			success: Ranking,
 			error: HttpApiSchema.status(404)(RankingNotFound),

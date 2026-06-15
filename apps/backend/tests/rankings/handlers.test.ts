@@ -113,13 +113,13 @@ describe("GET /rankings/:id", () => {
 		expect(res.status).toBe(404);
 	});
 
-	test("returns 404 for a malformed (non-UUID) id", async () => {
+	test("returns 400 for a malformed (non-UUID) id", async () => {
 		const { handler } = ctx;
 		const res = await handler(
 			new Request("http://localhost/rankings/not-a-uuid"),
 		);
 
-		expect(res.status).toBe(404);
+		expect(res.status).toBe(400);
 	});
 
 	test("returns 404 for a soft-deleted ranking", async () => {

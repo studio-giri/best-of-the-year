@@ -31,6 +31,8 @@ API specs (`HttpApi` groups) live in `packages/shared/src/api/` so both sides sh
 
 The frontend calls the API exclusively through that derived client. Effect runtime usage (`Effect.runPromise`, `Effect.provide`) is confined to `lib/api/client.ts` and inside TanStack Query `queryFn`s — components and hooks expose plain Promises/data via TanStack Query. Do not introduce broader Effect runtime patterns (`Effect.gen`, `Layer` composition, services) in the frontend.
 
+The restriction is on the Effect **runtime**, not on Effect **Schema**. Pure synchronous schema ops reusing a `@boty/shared` schema are allowed anywhere (e.g. `Schema.is`/`Schema.decodeUnknown` — decoding responses, or guarding a param against the shared `Uuid` schema rather than a hand-rolled regex). Never define domain schemas frontend-side.
+
 # Database
 
 The backend uses two complementary libraries:

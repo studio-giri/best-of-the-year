@@ -1,12 +1,10 @@
 import { Api } from "@boty/shared/api/Api";
 import { RankingNotFound } from "@boty/shared/api/rankings/RankingNotFound";
 import { and, eq, isNull } from "drizzle-orm";
-import { Effect, Schema } from "effect";
+import { Effect } from "effect";
 import { HttpApiBuilder } from "effect/unstable/httpapi";
 import { PgDrizzle } from "../db/PgDrizzle.ts";
 import { rankingItemsTable, rankingsTable } from "../db/schema.ts";
-
-const UUID = Schema.String.pipe(Schema.check(Schema.isUUID()));
 
 export const HttpRankingsLive = HttpApiBuilder.group(
 	Api,
@@ -15,19 +13,7 @@ export const HttpRankingsLive = HttpApiBuilder.group(
 		handlers.handle("findById", ({ params }) =>
 			Effect.gen(function* () {
 				/**
-				 * Validate UUID format — invalid IDs are treated as not found (404)
-				 */
-				const id = yield* Schema.decodeEffect(UUID)(params.id).pipe(
-					Effect.mapError(
-						() =>
-							new RankingNotFound({
-								id: params.id,
-							}),
-					),
-				);
-
-				/**
-				 * Fetch the ranking
+				 * Fetch the ranking — params.id is a validated UUID (enforced by the contract)
 				 */
 				const db = yield* PgDrizzle;
 				const [rankingRow] = yield* db
@@ -37,13 +23,18 @@ export const HttpRankingsLive = HttpApiBuilder.group(
 						updatedAt: rankingsTable.updatedAt,
 					})
 					.from(rankingsTable)
-					.where(and(eq(rankingsTable.id, id), isNull(rankingsTable.deletedAt)))
+					.where(
+						and(
+							eq(rankingsTable.id, params.id),
+							isNull(rankingsTable.deletedAt),
+						),
+					)
 					.pipe(Effect.orDie);
 
 				if (!rankingRow) {
 					return yield* Effect.fail(
 						new RankingNotFound({
-							id,
+							id: params.id,
 						}),
 					);
 				}

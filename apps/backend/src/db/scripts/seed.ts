@@ -1,51 +1,31 @@
 import { BunRuntime } from "@effect/platform-bun";
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Config, Console, Effect } from "effect";
-import { Pool } from "pg";
+import { Console, Effect, Layer } from "effect";
+import { Env } from "../../env";
+import { PgClientLive } from "../PgClient";
+import { PgDrizzle, PgDrizzleLive } from "../PgDrizzle";
 import { rankingItemsTable, rankingsTable } from "../schema";
 import { rankingItems, rankings } from "./seed-values";
 
+/**
+ * The same Effect/sql-pg stack the app uses: PgDrizzle on top of PgClient,
+ * configured from the redacted Env. The PgClient layer owns the connection
+ * lifecycle, so there is no manual pool to open or release here.
+ */
+const DbLive = PgDrizzleLive.pipe(
+	Layer.provide(PgClientLive),
+	Layer.provide(Env.Live),
+);
+
 const program = Effect.gen(function* () {
+	const db = yield* PgDrizzle;
+
 	/**
-	 * Connect to PostgreSQL, run the seed, then release the pool —
-	 * the release runs even if the seed fails.
+	 * Insert seed rankings and their items
 	 */
-	const databaseUrl = yield* Config.string("DATABASE_URL");
-	yield* Effect.acquireUseRelease(
-		Effect.sync(
-			() =>
-				new Pool({
-					connectionString: databaseUrl,
-					idleTimeoutMillis: 0,
-				}),
-		),
-		(pool) => {
-			const db = drizzle({
-				client: pool,
-			});
-			return Effect.gen(function* () {
-				/**
-				 * Insert seed rankings and their items
-				 */
-				yield* Effect.tryPromise({
-					try: () => db.insert(rankingsTable).values(rankings),
-					catch: (cause) =>
-						new Error("Failed to seed rankings", {
-							cause,
-						}),
-				});
-				yield* Effect.tryPromise({
-					try: () => db.insert(rankingItemsTable).values(rankingItems),
-					catch: (cause) =>
-						new Error("Failed to seed ranking items", {
-							cause,
-						}),
-				});
-				yield* Console.info("Seed successful");
-			});
-		},
-		(pool) => Effect.promise(() => pool.end()),
-	);
+	yield* db.insert(rankingsTable).values(rankings);
+	yield* db.insert(rankingItemsTable).values(rankingItems);
+
+	yield* Console.info("Seed successful");
 });
 
-BunRuntime.runMain(program);
+BunRuntime.runMain(program.pipe(Effect.provide(DbLive)));

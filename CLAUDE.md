@@ -41,6 +41,8 @@ The backend uses two complementary libraries:
 
 Do not use raw `pg` or promise-based queries directly. All DB access must go through the `@effect/sql-pg` client wrapped in Effect.
 
+The one sanctioned exception is **test bootstrap** (`tests/setup/make-test-ctx.ts`): it creates/drops a per-suite isolated schema and replays migration `.sql` files *before* the Effect runtime exists, and tears it down *after* the handler is disposed. That work is categorically pre/post-runtime, so it uses a raw `pg` Pool by necessity — which is also why `pg` remains a direct dependency. Application and dev-script DB access has no such constraint and must use the Effect stack.
+
 # Commands
 
 Run from the repo root unless noted.

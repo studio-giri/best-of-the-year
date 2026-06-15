@@ -7,7 +7,7 @@ Bun monorepo (Turborepo): `apps/backend` (Effect + Drizzle), `apps/frontend` (Re
 ```bash
 bun install
 cp .env.example .env       # root: read by docker compose (POSTGRES_*)
-cp apps/backend/.env.example apps/backend/.env   # DATABASE_URL; PORT (optional, default 3000)
+cp apps/backend/.env.example apps/backend/.env
 cp apps/frontend/.env.example apps/frontend/.env
 bun db:up                  # start PostgreSQL (Docker)
 bun db:migration:run       # apply migrations

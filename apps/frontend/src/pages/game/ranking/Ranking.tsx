@@ -6,15 +6,11 @@ interface Props {
 }
 export function Ranking({ items }: Props) {
 	/**
-	 * Render items newest-first — the API does not guarantee an order
+	 * Items arrive newest-first — the API owns the ordering guarantee
 	 */
-	const sortedItems = [
-		...items,
-	].sort((a, b) => b.year - a.year);
-
 	return (
 		<>
-			{sortedItems.map((item) => (
+			{items.map((item) => (
 				<RankingItem key={item.id} year={item.year} game={item.name} />
 			))}
 		</>

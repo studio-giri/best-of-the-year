@@ -1,10 +1,8 @@
 import { Api } from "@boty/shared/api/Api";
 import { RankingNotFound } from "@boty/shared/api/rankings/RankingNotFound";
-import { and, eq, isNull } from "drizzle-orm";
 import { Effect } from "effect";
 import { HttpApiBuilder } from "effect/unstable/httpapi";
 import { PgDrizzle } from "../db/PgDrizzle.ts";
-import { rankingItemsTable, rankingsTable } from "../db/schema.ts";
 
 export const HttpRankingsLive = HttpApiBuilder.group(
 	Api,
@@ -13,25 +11,41 @@ export const HttpRankingsLive = HttpApiBuilder.group(
 		handlers.handle("findById", ({ params }) =>
 			Effect.gen(function* () {
 				/**
-				 * Fetch the ranking — params.id is a validated UUID (enforced by the contract)
+				 * Fetch the ranking and its items in a single round trip via the
+				 * defined relations. params.id is a validated UUID (enforced by the
+				 * contract); columns are projected to the contract shape, and items
+				 * are ordered newest-first — the API owns the ordering guarantee.
 				 */
 				const db = yield* PgDrizzle;
-				const [rankingRow] = yield* db
-					.select({
-						id: rankingsTable.id,
-						author: rankingsTable.author,
-						updatedAt: rankingsTable.updatedAt,
+				const ranking = yield* db.query.rankingsTable
+					.findFirst({
+						columns: {
+							id: true,
+							author: true,
+							updatedAt: true,
+						},
+						where: {
+							id: params.id,
+							deletedAt: {
+								isNull: true,
+							},
+						},
+						with: {
+							items: {
+								columns: {
+									id: true,
+									year: true,
+									name: true,
+								},
+								orderBy: {
+									year: "desc",
+								},
+							},
+						},
 					})
-					.from(rankingsTable)
-					.where(
-						and(
-							eq(rankingsTable.id, params.id),
-							isNull(rankingsTable.deletedAt),
-						),
-					)
 					.pipe(Effect.orDie);
 
-				if (!rankingRow) {
+				if (!ranking) {
 					return yield* Effect.fail(
 						new RankingNotFound({
 							id: params.id,
@@ -39,23 +53,7 @@ export const HttpRankingsLive = HttpApiBuilder.group(
 					);
 				}
 
-				/**
-				 * Fetch items for the ranking
-				 */
-				const items = yield* db
-					.select({
-						id: rankingItemsTable.id,
-						year: rankingItemsTable.year,
-						name: rankingItemsTable.name,
-					})
-					.from(rankingItemsTable)
-					.where(eq(rankingItemsTable.rankingId, rankingRow.id))
-					.pipe(Effect.orDie);
-
-				return {
-					...rankingRow,
-					items,
-				};
+				return ranking;
 			}),
 		),
 );

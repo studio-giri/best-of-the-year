@@ -88,19 +88,27 @@ describe("GET /rankings/:id", () => {
 				name: string;
 			}[];
 		};
+		/**
+		 * Items were seeded scrambled (2021, 2023, 2022); the API guarantees
+		 * newest-first, so assert the exact order here.
+		 */
+		const seeded = (year: number) => {
+			const item = items.find((i) => i.year === year);
+			if (!item) {
+				throw new Error(`missing seeded item for ${year}`);
+			}
+			return item;
+		};
 		expect(body).toEqual({
 			id: ranking.id,
 			author: "the-author",
 			updatedAt: "2020-01-01T00:00:00.000Z",
-			items: expect.arrayContaining(
-				items.map((item) => ({
-					id: item.id,
-					year: item.year,
-					name: item.name,
-				})),
-			),
+			items: [
+				seeded(2023),
+				seeded(2022),
+				seeded(2021),
+			],
 		});
-		expect(body.items).toHaveLength(3);
 	});
 
 	test("returns 404 for a valid UUID that does not exist", async () => {

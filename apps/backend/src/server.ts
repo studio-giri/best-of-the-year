@@ -1,6 +1,6 @@
 import { Api } from "@boty/shared/api/Api";
 import { BunHttpServer } from "@effect/platform-bun";
-import { Layer } from "effect";
+import { Config, Layer } from "effect";
 import { HttpRouter, HttpServer } from "effect/unstable/http";
 import { HttpApiSwagger } from "effect/unstable/httpapi";
 import { PgClientLive } from "./db/PgClient.ts";
@@ -33,5 +33,14 @@ const AppLive = Layer.mergeAll(
 
 export const Server = HttpRouter.serve(AppLive).pipe(
 	HttpServer.withLogAddress,
-	Layer.provide(BunHttpServer.layer({})),
+	/**
+	 * Listen port is declared and overridable via PORT (default 3000, the value
+	 * the frontend's VITE_API_URL hardcodes), rather than relying on Bun's
+	 * implicit framework default.
+	 */
+	Layer.provide(
+		BunHttpServer.layerConfig({
+			port: Config.withDefault(Config.number("PORT"), 3000),
+		}),
+	),
 );

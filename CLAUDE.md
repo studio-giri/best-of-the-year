@@ -23,7 +23,7 @@ Frontend path alias: `#/*` → `./src/*` (use for all internal imports in the fr
 
 The backend uses [Effect](https://effect.website/) (v4 beta). Write idiomatic Effect code:
 - Model domain errors as typed failures (`Effect.fail`, tagged errors)
-- Use `Effect.gen` for sequencing
+- Use `Effect.gen` for sequencing (prefer it over `pipe`)
 - Prefer Effect's built-in utilities over manual async/promise patterns
 - Use `Layer` for dependency injection and service composition
 

@@ -1,14 +1,3 @@
-## Formatting
-
-- Indentation: tabs, size 2
-- Line endings: LF, final newline
-- Quote style: double
-- Semicolons: always
-
-## Effect-specific patterns
-
-- Use Effect.gen over pipe
-
 ## Code Style: Comment Blocks
 
 Code must be organized into **logical blocks** — each preceded by a comment, separated by a blank line.
@@ -43,7 +32,6 @@ return yield* Schema.decodeUnknown(MySchema)(json);
 
 ## Prohibitions (what not to do)
 - No any, no as casts without justification
-- No raw promise-based code outside of Effect wrappers
 
 ## Dependencies
 

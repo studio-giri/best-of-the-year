@@ -1,28 +1,34 @@
 import { defineRelations, sql } from "drizzle-orm";
 import {
 	integer,
-	pgTable,
+	snakeCase,
 	timestamp,
 	unique,
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
 
+// Column names are derived from camelCase keys via snake_case (createdAt ->
+// created_at, rankingId -> ranking_id, ...), so we never spell them out by hand.
+// In drizzle v1 the casing is bound to the table builder rather than the db
+// instance, so we build every table through `snakeCase.table`.
+const pgTable = snakeCase.table;
+
 export const rankingsTable = pgTable("rankings", {
-	id: uuid("id").primaryKey().default(sql`uuidv7()`),
+	id: uuid().primaryKey().default(sql`uuidv7()`),
 
 	author: varchar({
 		length: 30,
 	}).notNull(),
 
-	createdAt: timestamp("created_at", {
+	createdAt: timestamp({
 		mode: "date",
 		precision: 3,
 	})
 		.notNull()
 		.defaultNow(),
 
-	updatedAt: timestamp("updated_at", {
+	updatedAt: timestamp({
 		mode: "date",
 		precision: 3,
 	})
@@ -30,7 +36,7 @@ export const rankingsTable = pgTable("rankings", {
 		.defaultNow()
 		.$onUpdate(() => new Date()),
 
-	deletedAt: timestamp("deleted_at", {
+	deletedAt: timestamp({
 		mode: "date",
 		precision: 3,
 	}),
@@ -39,28 +45,28 @@ export const rankingsTable = pgTable("rankings", {
 export const rankingItemsTable = pgTable(
 	"ranking_items",
 	{
-		id: uuid("id").primaryKey().default(sql`uuidv7()`),
+		id: uuid().primaryKey().default(sql`uuidv7()`),
 
-		rankingId: uuid("ranking_id")
+		rankingId: uuid()
 			.notNull()
 			.references(() => rankingsTable.id, {
 				onDelete: "cascade",
 			}),
 
-		year: integer("year").notNull(),
+		year: integer().notNull(),
 
-		name: varchar("name", {
+		name: varchar({
 			length: 255,
 		}).notNull(),
 
-		createdAt: timestamp("created_at", {
+		createdAt: timestamp({
 			mode: "date",
 			precision: 3,
 		})
 			.notNull()
 			.defaultNow(),
 
-		updatedAt: timestamp("updated_at", {
+		updatedAt: timestamp({
 			mode: "date",
 			precision: 3,
 		})

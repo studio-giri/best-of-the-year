@@ -16,8 +16,6 @@ export default defineConfig({
 	out: "./drizzle",
 	schema: "./src/db/schema.ts",
 	dialect: "postgresql",
-	// No `casing` here: column names are baked into the table objects by
-	// `snakeCase.table` in schema.ts, which drizzle-kit reads directly.
 	dbCredentials: {
 		url: databaseUrl,
 	},

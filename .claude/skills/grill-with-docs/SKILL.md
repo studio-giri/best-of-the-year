@@ -4,9 +4,9 @@ description: Grilling session that challenges your plan against the existing dom
 ---
 
 <what-to-do>
-Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Everything the user has suggested (architecture, naming, ...) can be reconsidered. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
+Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. Nothing is off-limits to challenge: specific choices, the global design, or the underlying premise of what the user is trying to achieve.
 
-Ask the questions one at a time.
+Ask the questions one at a time. Don't use AskUserQuestion tool: ask questions conversationally. For each question, provide your recommended answer. Don't go to the next question until the user has explicitly agreed on a resolution.
 
 If a question can be answered by exploring the codebase, explore the codebase instead.
 </what-to-do>

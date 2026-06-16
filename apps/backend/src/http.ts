@@ -13,5 +13,5 @@ export const HttpApiHandlersLive = Layer.provide(
 	HttpApiBuilder.layer(Api, {
 		openapiPath: "/openapi.json",
 	}),
-	Layer.mergeAll(HttpRankingsLive),
+	HttpRankingsLive,
 );

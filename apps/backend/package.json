@@ -2,9 +2,6 @@
 	"name": "backend",
 	"private": true,
 	"type": "module",
-	"exports": {
-		".": "./src/main.ts"
-	},
 	"scripts": {
 		"dev": "bun run --hot src/main.ts",
 		"typecheck": "tsgo --noEmit",

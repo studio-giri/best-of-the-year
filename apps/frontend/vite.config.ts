@@ -3,16 +3,12 @@ import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
 
+// The `#/*` alias is declared in package.json `imports` (Node subpath
+// imports), which Vite resolves natively — no path-mapping plugin needed.
 const config = defineConfig({
 	plugins: [
 		devtools(),
-		tsconfigPaths({
-			projects: [
-				"./tsconfig.json",
-			],
-		}),
 		tailwindcss(),
 		tanstackStart(),
 		viteReact(),

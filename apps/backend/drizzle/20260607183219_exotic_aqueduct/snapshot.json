@@ -117,7 +117,7 @@
 			"default": null,
 			"generated": null,
 			"identity": null,
-			"name": "author",
+			"name": "username",
 			"entityType": "columns",
 			"schema": "public",
 			"table": "rankings"
@@ -209,6 +209,17 @@
 			"entityType": "uniques",
 			"schema": "public",
 			"table": "ranking_items"
+		},
+		{
+			"nameExplicit": false,
+			"columns": [
+				"username"
+			],
+			"nullsNotDistinct": false,
+			"name": "rankings_username_unique",
+			"entityType": "uniques",
+			"schema": "public",
+			"table": "rankings"
 		}
 	],
 	"renames": []

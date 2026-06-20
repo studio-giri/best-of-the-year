@@ -17,9 +17,11 @@ const pgTable = snakeCase.table;
 export const rankingsTable = pgTable("rankings", {
 	id: uuid().primaryKey().default(sql`uuidv7()`),
 
-	author: varchar({
+	username: varchar({
 		length: 30,
-	}).notNull(),
+	})
+		.notNull()
+		.unique(),
 
 	createdAt: timestamp({
 		mode: "date",

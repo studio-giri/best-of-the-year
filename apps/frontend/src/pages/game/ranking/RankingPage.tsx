@@ -13,7 +13,7 @@ export function RankingPage({ rankingId }: Props) {
 		<div>
 			<HorizontalRule size="small" />
 			<h2 className="text-white text-center font-semibold  p-8 pt-2">
-				By {data.author}
+				By {data.username}
 			</h2>
 			<HorizontalRule />
 			<Ranking items={data.items} />

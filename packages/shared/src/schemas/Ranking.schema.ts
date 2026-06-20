@@ -10,7 +10,7 @@ export type RankingItem = Schema.Schema.Type<typeof RankingItem>;
 
 export const Ranking = Schema.Struct({
 	id: Schema.String,
-	author: Schema.String,
+	username: Schema.String,
 	updatedAt: Schema.DateFromString,
 	items: Schema.Array(RankingItem),
 });

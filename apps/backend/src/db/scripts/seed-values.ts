@@ -5,7 +5,7 @@ const RANKING_1_ID = "019d6984-10ef-787c-926f-a7e02b5ca80a";
 export const rankings: (typeof rankingsTable.$inferInsert)[] = [
 	{
 		id: RANKING_1_ID,
-		author: "My Username",
+		username: "My Username",
 	},
 ];
 

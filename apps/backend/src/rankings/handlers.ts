@@ -21,7 +21,7 @@ export const HttpRankingsLive = HttpApiBuilder.group(
 					.findFirst({
 						columns: {
 							id: true,
-							author: true,
+							username: true,
 							updatedAt: true,
 						},
 						where: {

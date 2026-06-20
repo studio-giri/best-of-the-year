@@ -10,10 +10,11 @@ CREATE TABLE "ranking_items" (
 --> statement-breakpoint
 CREATE TABLE "rankings" (
 	"id" uuid PRIMARY KEY DEFAULT uuidv7(),
-	"author" varchar(30) NOT NULL,
+	"username" varchar(30) NOT NULL,
 	"created_at" timestamp(3) DEFAULT now() NOT NULL,
 	"updated_at" timestamp(3) DEFAULT now() NOT NULL,
-	"deleted_at" timestamp(3)
+	"deleted_at" timestamp(3),
+	CONSTRAINT "rankings_username_unique" UNIQUE("username")
 );
 --> statement-breakpoint
 ALTER TABLE "ranking_items" ADD CONSTRAINT "ranking_items_ranking_id_rankings_id_fkey" FOREIGN KEY ("ranking_id") REFERENCES "rankings"("id") ON DELETE CASCADE;

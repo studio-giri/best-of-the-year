@@ -30,7 +30,7 @@ describe("GET /rankings/:id", () => {
 					.insert(rankingsTable)
 					.values({
 						...newRanking(),
-						author: "the-author",
+						username: "the-username",
 						updatedAt: new Date("2020-01-01T00:00:00.000Z"),
 					})
 					.returning({
@@ -80,7 +80,7 @@ describe("GET /rankings/:id", () => {
 
 		const body = (await res.json()) as {
 			id: string;
-			author: string;
+			username: string;
 			updatedAt: string;
 			items: {
 				id: string;
@@ -101,7 +101,7 @@ describe("GET /rankings/:id", () => {
 		};
 		expect(body).toEqual({
 			id: ranking.id,
-			author: "the-author",
+			username: "the-username",
 			updatedAt: "2020-01-01T00:00:00.000Z",
 			items: [
 				seeded(2023),

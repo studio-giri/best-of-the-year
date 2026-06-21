@@ -37,10 +37,13 @@
 		"turbo.json": "jsonc"
 	},
 	"cSpell.words": [
+		"accountless",
 		"boty",
 		"bunx",
 		"cronos",
+		"demoable",
 		"httpapi",
+		"varchar",
 		"vite"
 	]
 }

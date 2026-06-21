@@ -1,6 +1,6 @@
 ---
 name: grill-with-docs
-description: Grilling session that challenges your plan against the existing domain model, sharpens terminology, and updates documentation (CONTEXT.md, ADRs) inline as decisions crystallise. Use when user wants to stress-test a plan against their project's language and documented decisions.
+description: Grilling session that challenges your plan against the existing domain model, sharpens terminology, and updates documentation (CONTEXT.md, ADRs) inline as decisions crystallize. Use when user wants to stress-test a plan against their project's language and documented decisions.
 ---
 
 <what-to-do>
@@ -24,8 +24,10 @@ During codebase exploration, also look for existing documentation:
 ├── CONTEXT.md
 ├── docs/
 │   └── adr/
-│       ├── 0001-event-sourced-orders.md
-│       └── 0002-postgres-for-write-model.md
+│       ├── 001-event-sourced-orders.ard.md
+│       └── 0002-postgres-for-write-model.ard.md
+│   └── prd/
+│       └── 001-ranking-ownership-without-sign-up.prd.md
 └── src/
 ```
 
@@ -55,9 +57,13 @@ When a term is resolved, update `CONTEXT.md` right there. Don't batch these up �
 
 `CONTEXT.md` should be totally devoid of implementation details. Do not treat `CONTEXT.md` as a spec, a scratch pad, or a repository for implementation decisions. It is a glossary and nothing else.
 
+### Separate behavior from mechanism (PRD vs ADR)
+
+A grilling session yields material for two artifacts at different altitudes: the **PRD** (owns user-observable behavior and product scope, written via the `to-prd` skill) and the **ADR** (owns only the invisible mechanism). Apply the bright-line test in [PRD-ADR-BOUNDARY.md](../PRD-ADR-BOUNDARY.md) — *if a user could notice it, product owns it* — before recording any decision, so behavior never leaks into an ADR. When unsure which altitude a decision lives at, ask before recording it.
+
 ### Offer ADRs sparingly
 
-Only offer to create an ADR when all three are true:
+Offer an ADR only for residual **pure-mechanism** decisions (per [PRD-ADR-BOUNDARY.md](../PRD-ADR-BOUNDARY.md)), and only when all three are true:
 
 1. **Hard to reverse** — the cost of changing your mind later is meaningful
 2. **Surprising without context** — a future reader will wonder "why did they do it this way?"

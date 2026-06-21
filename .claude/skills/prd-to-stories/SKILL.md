@@ -27,7 +27,7 @@ A slice passes **both** tests:
 
 4. **Checkpoint — stop for approval, write nothing.** Present conversationally — never via the AskUserQuestion tool: the ordered Story list (ID, title, `Depends on`, `Satisfies`); a line confirming every REQ is claimed; the **judgment calls** you made; and the gaps (below). A *blocking* gap must be resolved with the user before slicing past it.
 
-5. **Write** one file per approved Story via [STORY-FORMAT.md](./STORY-FORMAT.md), into `docs/stories/<prd-slug>/NN-slug.story.md` (slug = PRD filename without `.prd.md`). *Done when:* every approved Story is on disk and coverage still holds.
+5. **Write** one file per approved Story via [STORY-FORMAT.md](./STORY-FORMAT.md), into `docs/stories/<prd-slug>/NN-slug.story.md` (slug = PRD filename without `.prd.md`), each born at `Status: Needs refinement`. *Done when:* every approved Story is on disk and coverage still holds.
 
 ## Self-challenge
 
@@ -37,7 +37,7 @@ The independent audit of step 3 — re-examine the draft against each check, not
 - **Not transcribed** — one Story per one REQ is fine individually, but a *uniformly* one-Story-per-REQ plan with nothing cross-cutting or bundled means the REQ list was copied, not sliced. Re-examine (guideline, not a hard rule).
 - **Bounds** — no "and"-joined title; no horizontal task undemoable alone; broken-out edges all independently demoable; each slice cuts every layer it needs.
 - **INVEST**, teeth on **Valuable** (observable value, not plumbing) and **Testable** (you can write its acceptance criteria).
-- **Test-ready AC** — each Given/When/Then concrete enough to become a failing test as written (implementation is TDD; vague = unbuildable).
+- **Test-ready AC** — each Given/When/Then concrete enough to become a failing test as written (implementation is TDD; vague = unbuildable), and stated as **observable behavior, not mechanism** (no token/storage/endpoint phrasing — that's the ADR's, and it leaves the AC valid while mechanism is undecided).
 - **Dependencies** — no cycles; each Story buildable from only its declared `Depends on`; every root truly has no prerequisite; `NN` a valid topological order.
 
 ## Gaps & ambiguities

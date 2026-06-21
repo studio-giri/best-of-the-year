@@ -6,6 +6,7 @@ The template for one Story file, written by [`prd-to-stories`](./SKILL.md) into 
 # <Title — the one demoable sentence that defines the slice>
 
 **ID:** S-<prd>-<NN>
+**Status:** Needs refinement
 
 ## Story
 
@@ -13,7 +14,7 @@ As a <actor>, I want <capability>, so that <benefit>.
 
 ## Acceptance Criteria
 
-Given/When/Then, each concrete enough to become a failing test as written — a specific trigger and a specific observable outcome.
+Given/When/Then, each concrete enough to become a failing test as written — a specific trigger and a specific observable outcome. State **observable behavior, never the mechanism** that realizes it — the PRD/ADR bright line applied to the slice. The mechanism lives in the ADR; behavioral phrasing also keeps the AC valid while that mechanism is still undecided or later changes.
 
 - **Given** <context>, **when** <action>, **then** <observable outcome>.
 - **Given** <context>, **when** <action>, **then** <observable outcome>.
@@ -43,6 +44,16 @@ Given/When/Then, each concrete enough to become a failing test as written — a 
 
 Governed by the global [Definition of Done](../../DEFINITION-OF-DONE.md), on top of the Acceptance Criteria above.
 ```
+
+## Status
+
+The Story's position in the pipeline, updated in place as it moves:
+
+- **Needs refinement** — sliced, `Open questions` still open; awaiting `refine-story`. (Set at birth by `prd-to-stories`.)
+- **Ready** — `Open questions` drained to empty; implementation-ready. (Set by `refine-story`.)
+- **In progress** — being built.
+- **Done** — meets the Definition of Done.
+- **Blocked** — a PRD-requirement gap was surfaced and escalated to `to-prd`; frozen until resolved. (Set by `refine-story`.)
 
 ## Stable IDs
 

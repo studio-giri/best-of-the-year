@@ -1,6 +1,7 @@
 # Click a valid recovery link and land in edit mode on a new browser
 
 **ID:** S-001-04
+**Status:** Needs refinement
 
 ## Story
 

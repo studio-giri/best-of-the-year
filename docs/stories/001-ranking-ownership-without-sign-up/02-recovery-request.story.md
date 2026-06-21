@@ -1,6 +1,7 @@
 # Request recovery by email and get an honest, existence-aware response
 
 **ID:** S-001-02
+**Status:** Needs refinement
 
 ## Story
 

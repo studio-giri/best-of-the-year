@@ -1,6 +1,7 @@
 # Be refused a duplicate email at claim time, with a clear path into recovery
 
 **ID:** S-001-03
+**Status:** Needs refinement
 
 ## Story
 

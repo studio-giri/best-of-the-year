@@ -1,6 +1,7 @@
 # Be told a used or expired link no longer works, while other valid links keep working
 
 **ID:** S-001-05
+**Status:** Needs refinement
 
 ## Story
 

@@ -10,7 +10,7 @@ A PRD owns **product intent only** — what must be built and why, from the user
 
 ## Process
 
-1. Explore the repo to understand the current state of the codebase, if you haven't already. Use the project's domain glossary vocabulary throughout the PRD, and respect any ADRs in the area you're touching.
+1. Explore the repo to understand the current state of the codebase, if you haven't already. Use the project's [glossary](../../../CONTEXT.md) (`CONTEXT.md`) vocabulary throughout the PRD, and respect any ADRs in the area you're touching.
 
 2. Write the PRD using the template below into the folder `docs/prd/` (example: `docs/prd/001-ranking-ownership-without-sign-up.prd.md`)
 

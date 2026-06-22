@@ -1,6 +1,6 @@
 # Story format
 
-The template for one Story file, written by [`prd-to-stories`](./SKILL.md) into `docs/stories/<prd-slug>/NN-slug.story.md`. One Story = one **vertical slice**.
+The template for one Story file, written by [`prd-to-stories`](../../.claude/skills/prd-to-stories/SKILL.md) into `docs/stories/<prd-slug>/NN-slug.story.md`. One Story = one **vertical slice**.
 
 ```markdown
 # <Title — the one demoable sentence that defines the slice>

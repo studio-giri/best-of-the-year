@@ -16,7 +16,7 @@ Exactly one Story file (`docs/stories/<prd-slug>/NN-slug.story.md`). If which St
 
 ## Process
 
-1. **Ground.** Read the Story, its PRD, every ADR it links, and the code it touches. *Done when:* you can state the Story's behavior, the `REQ`s it satisfies, and the mechanism its ADR provides.
+1. **Ground.** Read the Story, its PRD, every ADR it links, the [glossary](../../../CONTEXT.md) (`CONTEXT.md`), and the code it touches. *Done when:* you can state the Story's behavior in the project's terms, the `REQ`s it satisfies, and the mechanism its ADR provides.
 
 2. **Edge sweep.** Before draining, put on the tester's hat and pass the Story's acceptance criteria under each [edge lens](#edge-lenses) once, adding any important, answerable-now question the PRD never enumerated to `Open questions`. A bounded sweep for cheap-now/expensive-later cases — not an attempt to enumerate everything. *Done when:* every lens has been weighed against this Story and each gap it surfaced is in `Open questions`.
 
@@ -27,7 +27,7 @@ Exactly one Story file (`docs/stories/<prd-slug>/NN-slug.story.md`). If which St
 Each resolved answer goes to exactly one home, decided by the **bright line** ([PRD-ADR-BOUNDARY.md](../PRD-ADR-BOUNDARY.md)) applied one level down, to a slice:
 
 - **Product-altitude** (user-observable: error wording, field limits, a behavioral choice) → fold **up into the acceptance criteria** as a test-ready Given/When/Then. State observable behavior, never the mechanism that realizes it — behavioral AC stay valid while the mechanism is decided in the ADR. ("This browser can now edit; a different browser cannot," never "a bearer token is stored in localStorage.")
-- **Mechanism-altitude** (invisible: token transport, endpoint shape, table layout) → record in the **ADR** (create or update under `docs/adr/`, per [`ADR-FORMAT.md`](../grill-with-docs/ADR-FORMAT.md)); replace the open question with a reference to the ADR rather than copying mechanism into the Story.
+- **Mechanism-altitude** (invisible: token transport, endpoint shape, table layout) → record in the **ADR** (create or update under `docs/adr/`, per [`FORMAT.md`](../../../docs/adr/FORMAT.md)); replace the open question with a reference to the ADR rather than copying mechanism into the Story.
 - **PRD-requirement gap** (not a slice detail — an undecided product *requirement*, a contradiction between REQs, or a missing flow branch) → **do not patch it into the Story.** Set the Story's `Status` to `Blocked`, fix it upstream via [`to-prd`](../to-prd/SKILL.md), and don't build it until resolved.
 
 ## Edge lenses

@@ -3,10 +3,10 @@
 How a feature goes from idea to merged code. Five steps, each a skill except the last.
 
 ```
-grill  →  to-prd  →  prd-to-stories  →  refine-story  →  implement (TDD)
+grill  →  to-prd  →  prd-to-stories  →  refine-story  →  implement-story (TDD)
 ```
 
-Each Story carries a **Status** tracking its place in this pipeline — `Needs refinement → Ready → In progress → Done`, or `Blocked`. Values are defined in [`STORY-FORMAT.md`](../.claude/skills/prd-to-stories/STORY-FORMAT.md); the steps below note who sets each.
+Each Story carries a **Status** tracking its place in this pipeline — `Needs refinement → Ready → In progress → Done`, or `Blocked`. Values are defined in [`FORMAT.md`](./stories/FORMAT.md); the steps below note who sets each.
 
 ## 1. Grill (`grill-with-docs`)
 
@@ -24,11 +24,9 @@ Slice the PRD into **vertical Stories** (`docs/stories/`) — the smallest end-t
 
 Just-in-time, one Story at a time: **drain** its `Open questions` to empty. An edge sweep first surfaces the cheap-now/expensive-later cases; then each answer is routed — product → acceptance criteria, mechanism → ADR, PRD gap → back to `to-prd`. Drains the *known* questions; it does not chase a zero-ambiguity spec. On drain-to-empty the Story flips to `Ready`; a PRD gap flips it to `Blocked`.
 
-## 5. Implement (TDD) — *WIP*
+## 5. Implement (`implement-story`)
 
-> Not yet finalized: whether this step is a skill, and its specific rules (including the build-time ambiguity protocol below), are not written yet.
-
-Acceptance criteria are the failing-test list. When a behavioral ambiguity surfaces mid-build, classify it by the bright line: mechanism → decide and note in the ADR; **product → stop and ask, never silently guess** — then fold the answer back into the AC/PRD. The Story moves to `In progress` while building and to `Done` once it meets the global [Definition of Done](./DEFINITION-OF-DONE.md).
+TDD behind a **firewall**. A *resolve* phase drains every question the codebase raises — surfaced by a read-only scout, routed by the bright line exactly as refinement does — then a *build* phase runs test-first in a **fresh context** seeded only by the refined Story, its ADR, and a file map, so the builder stays efficient (its window never carries the resolve conversation). Acceptance criteria are the failing-test list. A mid-build ambiguity is classified by the bright line: mechanism → decide and note in the ADR; **product → the builder stops and surfaces it, never silently guesses** — the answer folds back into the AC/PRD and the build resumes. The Story moves to `In progress` while building and to `Done` once it meets the global [Definition of Done](./DEFINITION-OF-DONE.md).
 
 ## Principles
 

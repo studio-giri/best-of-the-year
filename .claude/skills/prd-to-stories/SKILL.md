@@ -19,7 +19,7 @@ A slice passes **both** tests:
 
 ## Process
 
-1. **Read** the PRD, every ADR it links, and the codebase it touches — existing endpoints/tables make slices thinner; the ADR's mechanism shows the slice seams. *Done when:* you can state every `REQ-N` and the mechanism realizing it.
+1. **Read** the PRD, every ADR it links, the [glossary](../../../CONTEXT.md) (`CONTEXT.md`), and the codebase it touches — existing endpoints/tables make slices thinner; the ADR's mechanism shows the slice seams. *Done when:* you can state every `REQ-N` and the mechanism realizing it, in the project's terms.
 
 2. **Slice.** Derive the user-facing behaviors and flows from the *whole* PRD + ADR, then cut them by the two bounds above. Requirements are a **coverage checklist distributed across Stories, never transcribed one-to-one** — one Story usually satisfies several REQs, and a cross-cutting REQ ("email never shown publicly") is satisfied by several Stories. Give each Story an ID (`S-<prd>-<NN>`), `Depends on` (Story IDs or `None`), and `Satisfies` (its REQs). Find the **root(s)** always; add a thin walking-skeleton root only when the feature introduces genuinely new end-to-end plumbing. Log gaps as slicing exposes them (see below). *Done when:* every Story has ID + `Depends on` + `Satisfies`, and every REQ is claimed by ≥1 Story.
 
@@ -27,7 +27,7 @@ A slice passes **both** tests:
 
 4. **Checkpoint — stop for approval, write nothing.** Present conversationally — never via the AskUserQuestion tool: the ordered Story list (ID, title, `Depends on`, `Satisfies`); a line confirming every REQ is claimed; the **judgment calls** you made; and the gaps (below). A *blocking* gap must be resolved with the user before slicing past it.
 
-5. **Write** one file per approved Story via [STORY-FORMAT.md](./STORY-FORMAT.md), into `docs/stories/<prd-slug>/NN-slug.story.md` (slug = PRD filename without `.prd.md`), each born at `Status: Needs refinement`. *Done when:* every approved Story is on disk and coverage still holds.
+5. **Write** one file per approved Story via [FORMAT.md](../../../docs/stories/FORMAT.md), into `docs/stories/<prd-slug>/NN-slug.story.md` (slug = PRD filename without `.prd.md`), each born at `Status: Needs refinement`. *Done when:* every approved Story is on disk and coverage still holds.
 
 ## Self-challenge
 

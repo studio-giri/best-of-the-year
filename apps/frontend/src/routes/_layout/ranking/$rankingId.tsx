@@ -2,11 +2,11 @@ import { RankingNotFound as RankingNotFoundError } from "@boty/shared/api/rankin
 import { Uuid } from "@boty/shared/schemas/Uuid.schema";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Schema } from "effect";
-import { RankingNotFound } from "#/pages/game/ranking/RankingNotFound.tsx";
-import { RankingPage } from "#/pages/game/ranking/RankingPage.tsx";
-import { rankingQueryOptions } from "#/pages/game/ranking/useRanking.query.ts";
+import { RankingNotFound } from "#/pages/ranking/detail/RankingNotFound.tsx";
+import { RankingPage } from "#/pages/ranking/detail/RankingPage.tsx";
+import { rankingQueryOptions } from "#/pages/ranking/detail/useRanking.query.ts";
 
-export const Route = createFileRoute("/_layout/game/$rankingId")({
+export const Route = createFileRoute("/_layout/ranking/$rankingId")({
 	loader: async ({ context, params }) => {
 		// Validate the id against the shared contract schema *before* hitting the
 		// query: a malformed id makes the typed client reject synchronously with a

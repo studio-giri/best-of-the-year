@@ -12,7 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutAboutRouteImport } from './routes/_layout/about'
-import { Route as LayoutGameRankingIdRouteImport } from './routes/_layout/game/$rankingId'
+import { Route as LayoutRankingRankingIdRouteImport } from './routes/_layout/ranking/$rankingId'
 
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
@@ -28,40 +28,40 @@ const LayoutAboutRoute = LayoutAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutGameRankingIdRoute = LayoutGameRankingIdRouteImport.update({
-  id: '/game/$rankingId',
-  path: '/game/$rankingId',
+const LayoutRankingRankingIdRoute = LayoutRankingRankingIdRouteImport.update({
+  id: '/ranking/$rankingId',
+  path: '/ranking/$rankingId',
   getParentRoute: () => LayoutRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
   '/about': typeof LayoutAboutRoute
-  '/game/$rankingId': typeof LayoutGameRankingIdRoute
+  '/ranking/$rankingId': typeof LayoutRankingRankingIdRoute
 }
 export interface FileRoutesByTo {
   '/about': typeof LayoutAboutRoute
   '/': typeof LayoutIndexRoute
-  '/game/$rankingId': typeof LayoutGameRankingIdRoute
+  '/ranking/$rankingId': typeof LayoutRankingRankingIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
   '/_layout/about': typeof LayoutAboutRoute
   '/_layout/': typeof LayoutIndexRoute
-  '/_layout/game/$rankingId': typeof LayoutGameRankingIdRoute
+  '/_layout/ranking/$rankingId': typeof LayoutRankingRankingIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/game/$rankingId'
+  fullPaths: '/' | '/about' | '/ranking/$rankingId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/about' | '/' | '/game/$rankingId'
+  to: '/about' | '/' | '/ranking/$rankingId'
   id:
     | '__root__'
     | '/_layout'
     | '/_layout/about'
     | '/_layout/'
-    | '/_layout/game/$rankingId'
+    | '/_layout/ranking/$rankingId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -91,11 +91,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAboutRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/game/$rankingId': {
-      id: '/_layout/game/$rankingId'
-      path: '/game/$rankingId'
-      fullPath: '/game/$rankingId'
-      preLoaderRoute: typeof LayoutGameRankingIdRouteImport
+    '/_layout/ranking/$rankingId': {
+      id: '/_layout/ranking/$rankingId'
+      path: '/ranking/$rankingId'
+      fullPath: '/ranking/$rankingId'
+      preLoaderRoute: typeof LayoutRankingRankingIdRouteImport
       parentRoute: typeof LayoutRoute
     }
   }
@@ -104,13 +104,13 @@ declare module '@tanstack/react-router' {
 interface LayoutRouteChildren {
   LayoutAboutRoute: typeof LayoutAboutRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
-  LayoutGameRankingIdRoute: typeof LayoutGameRankingIdRoute
+  LayoutRankingRankingIdRoute: typeof LayoutRankingRankingIdRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAboutRoute: LayoutAboutRoute,
   LayoutIndexRoute: LayoutIndexRoute,
-  LayoutGameRankingIdRoute: LayoutGameRankingIdRoute,
+  LayoutRankingRankingIdRoute: LayoutRankingRankingIdRoute,
 }
 
 const LayoutRouteWithChildren =

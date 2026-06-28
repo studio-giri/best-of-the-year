@@ -5,6 +5,10 @@
 	],
 	"compilerOptions": {
 		"target": "ESNext",
-		"module": "ESNext"
+		"module": "ESNext",
+		// Bun's test runner (`bun:test`) types for colocated *.test.ts files
+		"types": [
+			"bun"
+		]
 	}
 }

@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutAboutRouteImport } from './routes/_layout/about'
-import { Route as LayoutRankingRankingIdRouteImport } from './routes/_layout/ranking/$rankingId'
+import { Route as LayoutRankingClaimRouteImport } from './routes/_layout/ranking/claim'
+import { Route as LayoutRankingRankingIdIndexRouteImport } from './routes/_layout/ranking/$rankingId/index'
+import { Route as LayoutRankingRankingIdEditRouteImport } from './routes/_layout/ranking/$rankingId/edit'
 
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
@@ -28,40 +30,70 @@ const LayoutAboutRoute = LayoutAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutRankingRankingIdRoute = LayoutRankingRankingIdRouteImport.update({
-  id: '/ranking/$rankingId',
-  path: '/ranking/$rankingId',
+const LayoutRankingClaimRoute = LayoutRankingClaimRouteImport.update({
+  id: '/ranking/claim',
+  path: '/ranking/claim',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutRankingRankingIdIndexRoute =
+  LayoutRankingRankingIdIndexRouteImport.update({
+    id: '/ranking/$rankingId/',
+    path: '/ranking/$rankingId/',
+    getParentRoute: () => LayoutRoute,
+  } as any)
+const LayoutRankingRankingIdEditRoute =
+  LayoutRankingRankingIdEditRouteImport.update({
+    id: '/ranking/$rankingId/edit',
+    path: '/ranking/$rankingId/edit',
+    getParentRoute: () => LayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
   '/about': typeof LayoutAboutRoute
-  '/ranking/$rankingId': typeof LayoutRankingRankingIdRoute
+  '/ranking/claim': typeof LayoutRankingClaimRoute
+  '/ranking/$rankingId/edit': typeof LayoutRankingRankingIdEditRoute
+  '/ranking/$rankingId/': typeof LayoutRankingRankingIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/about': typeof LayoutAboutRoute
   '/': typeof LayoutIndexRoute
-  '/ranking/$rankingId': typeof LayoutRankingRankingIdRoute
+  '/ranking/claim': typeof LayoutRankingClaimRoute
+  '/ranking/$rankingId/edit': typeof LayoutRankingRankingIdEditRoute
+  '/ranking/$rankingId': typeof LayoutRankingRankingIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
   '/_layout/about': typeof LayoutAboutRoute
   '/_layout/': typeof LayoutIndexRoute
-  '/_layout/ranking/$rankingId': typeof LayoutRankingRankingIdRoute
+  '/_layout/ranking/claim': typeof LayoutRankingClaimRoute
+  '/_layout/ranking/$rankingId/edit': typeof LayoutRankingRankingIdEditRoute
+  '/_layout/ranking/$rankingId/': typeof LayoutRankingRankingIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/ranking/$rankingId'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/ranking/claim'
+    | '/ranking/$rankingId/edit'
+    | '/ranking/$rankingId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/about' | '/' | '/ranking/$rankingId'
+  to:
+    | '/about'
+    | '/'
+    | '/ranking/claim'
+    | '/ranking/$rankingId/edit'
+    | '/ranking/$rankingId'
   id:
     | '__root__'
     | '/_layout'
     | '/_layout/about'
     | '/_layout/'
-    | '/_layout/ranking/$rankingId'
+    | '/_layout/ranking/claim'
+    | '/_layout/ranking/$rankingId/edit'
+    | '/_layout/ranking/$rankingId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -91,11 +123,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAboutRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/ranking/$rankingId': {
-      id: '/_layout/ranking/$rankingId'
+    '/_layout/ranking/claim': {
+      id: '/_layout/ranking/claim'
+      path: '/ranking/claim'
+      fullPath: '/ranking/claim'
+      preLoaderRoute: typeof LayoutRankingClaimRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/ranking/$rankingId/': {
+      id: '/_layout/ranking/$rankingId/'
       path: '/ranking/$rankingId'
-      fullPath: '/ranking/$rankingId'
-      preLoaderRoute: typeof LayoutRankingRankingIdRouteImport
+      fullPath: '/ranking/$rankingId/'
+      preLoaderRoute: typeof LayoutRankingRankingIdIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/ranking/$rankingId/edit': {
+      id: '/_layout/ranking/$rankingId/edit'
+      path: '/ranking/$rankingId/edit'
+      fullPath: '/ranking/$rankingId/edit'
+      preLoaderRoute: typeof LayoutRankingRankingIdEditRouteImport
       parentRoute: typeof LayoutRoute
     }
   }
@@ -104,13 +150,17 @@ declare module '@tanstack/react-router' {
 interface LayoutRouteChildren {
   LayoutAboutRoute: typeof LayoutAboutRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
-  LayoutRankingRankingIdRoute: typeof LayoutRankingRankingIdRoute
+  LayoutRankingClaimRoute: typeof LayoutRankingClaimRoute
+  LayoutRankingRankingIdEditRoute: typeof LayoutRankingRankingIdEditRoute
+  LayoutRankingRankingIdIndexRoute: typeof LayoutRankingRankingIdIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAboutRoute: LayoutAboutRoute,
   LayoutIndexRoute: LayoutIndexRoute,
-  LayoutRankingRankingIdRoute: LayoutRankingRankingIdRoute,
+  LayoutRankingClaimRoute: LayoutRankingClaimRoute,
+  LayoutRankingRankingIdEditRoute: LayoutRankingRankingIdEditRoute,
+  LayoutRankingRankingIdIndexRoute: LayoutRankingRankingIdIndexRoute,
 }
 
 const LayoutRouteWithChildren =

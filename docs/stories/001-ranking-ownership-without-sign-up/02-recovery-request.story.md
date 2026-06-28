@@ -21,7 +21,7 @@ Clicking/consuming a link (S-001-04), and link expiry/single-use enforcement (S-
 
 ## Depends on
 
-S-001-01 — needs the `email` column and existing rankings to check against, and introduces the recovery-link (Edit-link) token table.
+S-001-01 — needs the `email` column and existing rankings to check against, and introduces the recovery-link (Owner-link) token table.
 
 ## Satisfies
 
@@ -30,13 +30,13 @@ REQ-11, REQ-12, REQ-13, REQ-14
 ## Open questions
 
 - **Email dispatch mechanism** — real provider vs a logged/mocked sender in dev/test; the AC asserts a dispatch was invoked with the link to the address, so the seam must be observable/mockable.
-- **Token storage shape** — whether recovery links and edit tokens share one typed table or live in two (the ADR describes both as hashed rows; either satisfies the mechanism).
+- **Token storage shape** — whether recovery links and owner tokens share one typed table or live in two (the ADR describes both as hashed rows; either satisfies the mechanism).
 - **Recovery link URL/route shape** — the path the emailed link points at (resolved together with S-001-04).
 
 ## References
 
 - PRD: [../../prd/001-ranking-ownership-without-sign-up.prd.md](../../prd/001-ranking-ownership-without-sign-up.prd.md) — the what & why
-- ADR: [../../adr/001-accountless-edit-tokens.md](../../adr/001-accountless-edit-tokens.md) — the mechanism
+- ADR: [../../adr/001-accountless-owner-tokens.md](../../adr/001-accountless-owner-tokens.md) — the mechanism
 
 ## Definition of Done
 

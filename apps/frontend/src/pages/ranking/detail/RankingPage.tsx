@@ -1,4 +1,4 @@
-import { HorizontalRule } from "#/ui/HorizontalRule.tsx";
+import { Subtitle } from "#/ui/Subtitle.tsx";
 import { Ranking } from "./Ranking.tsx";
 import { useRanking } from "./useRanking.query.ts";
 
@@ -11,11 +11,7 @@ export function RankingPage({ rankingId }: Props) {
 
 	return (
 		<div>
-			<HorizontalRule size="small" />
-			<h2 className="text-white text-center font-semibold  p-8 pt-2">
-				By {data.username}
-			</h2>
-			<HorizontalRule />
+			<Subtitle>By {data.username}</Subtitle>
 			<Ranking items={data.items} />
 		</div>
 	);

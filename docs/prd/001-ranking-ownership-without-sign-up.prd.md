@@ -1,7 +1,7 @@
 # Ranking ownership without sign-up
 
 > Architecture for how ownership and edit access are realized:
-> [ADR 001 — Account-less edit access via client-side bearer Edit tokens](../adr/001-accountless-edit-tokens.md)
+> [ADR 001 — Account-less edit access via client-side bearer Owner tokens](../adr/001-accountless-owner-tokens.md)
 > Claude conversation: ab4cb6d3-b39d-4f28-9647-771d1969651b
 
 ## Problem Statement

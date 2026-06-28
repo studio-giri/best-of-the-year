@@ -5,3 +5,6 @@ node_modules
 **/.env
 **/.env.*
 !**/.env.example
+
+# implement-story build briefs (transient, deleted on Done)
+*.build-brief.md

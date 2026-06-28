@@ -1,0 +1,141 @@
+import { ClaimRejected } from "@boty/shared/api/rankings/claim/ClaimRejected.error";
+import {
+	validateEmail,
+	validateUsername,
+} from "@boty/shared/api/rankings/claim/claimRules";
+import { useForm } from "@tanstack/react-form";
+import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { Subtitle } from "#/ui/Subtitle.tsx";
+import { claimRejectionMessages } from "./messages.ts";
+import { useClaimRanking } from "./useClaimRanking.mutation.ts";
+
+/**
+ * Claim form: email + username, both required and validated up front.
+ * On success the mutation has already stored the Owner token, so we route
+ * straight into the editable owner view. A server-side username collision
+ * (only knowable at claim time) maps back to its inline message and
+ * keeps the user on the form.
+ */
+export function ClaimRanking() {
+	const navigate = useNavigate();
+	const claimRanking = useClaimRanking();
+
+	// The one rejection that can only come from the server (the case/whitespace-
+	// insensitive uniqueness check at claim time). Held separately from the
+	// field validators so it can be cleared the moment the user edits again.
+	const [serverError, setServerError] = useState<string | null>(null);
+
+	const form = useForm({
+		defaultValues: {
+			email: "",
+			username: "",
+		},
+		onSubmit: async ({ value }) => {
+			setServerError(null);
+			try {
+				const claimed = await claimRanking.mutateAsync(value);
+				await navigate({
+					to: "/ranking/$rankingId/edit",
+					params: {
+						rankingId: claimed.id,
+					},
+				});
+			} catch (error) {
+				// Map a username-taken refusal to its inline message
+				if (error instanceof ClaimRejected) {
+					setServerError(claimRejectionMessages[error.code]);
+					return;
+				}
+				// Anything else (network blip, 5xx) is transient, so show a generic retryable error message
+				setServerError(
+					`Something went wrong, please try again later. (${String(error)})`,
+				);
+				console.error(error);
+			}
+		},
+	});
+
+	return (
+		<>
+			<Subtitle>Claim a ranking</Subtitle>
+			<div className="max-w-xl mx-auto">
+				<form
+					// We own validation messaging: suppress the browser's native validation
+					noValidate
+					className="bg-white rounded-md mx-3 p-6 flex flex-col gap-4"
+					onSubmit={(event) => {
+						event.preventDefault();
+						form.handleSubmit();
+					}}
+				>
+					<form.Field
+						name="email"
+						validators={{
+							onSubmit: ({ value }) => {
+								const code = validateEmail(value);
+								return code ? claimRejectionMessages[code] : undefined;
+							},
+						}}
+					>
+						{(field) => (
+							<label className="flex flex-col gap-1">
+								<span>Email</span>
+								<input
+									type="email"
+									required
+									name={field.name}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(event) => {
+										setServerError(null);
+										field.handleChange(event.target.value);
+									}}
+								/>
+								{field.state.meta.errors.length > 0 ? (
+									<span role="alert">{field.state.meta.errors[0]}</span>
+								) : null}
+							</label>
+						)}
+					</form.Field>
+
+					<form.Field
+						name="username"
+						validators={{
+							onSubmit: ({ value }) => {
+								const code = validateUsername(value);
+								return code ? claimRejectionMessages[code] : undefined;
+							},
+						}}
+					>
+						{(field) => (
+							<label className="flex flex-col gap-1">
+								<span>Username</span>
+								<input
+									type="text"
+									required
+									name={field.name}
+									value={field.state.value}
+									onBlur={field.handleBlur}
+									onChange={(event) => {
+										setServerError(null);
+										field.handleChange(event.target.value);
+									}}
+								/>
+								{field.state.meta.errors.length > 0 ? (
+									<span role="alert">{field.state.meta.errors[0]}</span>
+								) : null}
+							</label>
+						)}
+					</form.Field>
+
+					{serverError ? <span role="alert">{serverError}</span> : null}
+
+					<button type="submit" disabled={claimRanking.isPending}>
+						Claim ranking
+					</button>
+				</form>
+			</div>
+		</>
+	);
+}

@@ -1,4 +1,5 @@
-import type { Ranking as RankingData } from "@boty/shared/schemas/Ranking.schema";
+import type { Ranking as RankingData } from "@boty/shared/api/rankings/Ranking.schema";
+import { HorizontalRule } from "#/ui/HorizontalRule.tsx";
 import { RankingItem } from "./RankingItem.tsx";
 
 interface Props {
@@ -10,6 +11,7 @@ export function Ranking({ items }: Props) {
 	 */
 	return (
 		<>
+			<HorizontalRule />
 			{items.map((item) => (
 				<RankingItem key={item.id} year={item.year} game={item.name} />
 			))}

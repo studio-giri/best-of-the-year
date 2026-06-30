@@ -1,8 +1,14 @@
-import { afterEach, describe, expect, test } from "vitest";
-import { getOwnerToken, hasOwnerToken, setOwnerToken } from "./ownerTokens.ts";
+import { afterEach, describe, expect, test, vi } from "vitest";
+import {
+	getOwnerToken,
+	hasOwnerToken,
+	OwnerTokenNotStored,
+	setOwnerToken,
+} from "./ownerTokens.ts";
 
 afterEach(() => {
 	window.localStorage.clear();
+	vi.restoreAllMocks();
 });
 
 describe("ownerTokens", () => {
@@ -40,5 +46,19 @@ describe("ownerTokens", () => {
 		);
 		expect(hasOwnerToken("a")).toBe(false);
 		expect(getOwnerToken("a")).toBeUndefined();
+	});
+
+	// A failed write (quota exceeded, storage blocked) follows a claim that has
+	// already succeeded, so it surfaces as a typed OwnerTokenNotStored — letting
+	// the caller treat it as terminal rather than a transient, retryable failure.
+	test("raises OwnerTokenNotStored when the write fails", () => {
+		vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+			throw new DOMException("quota exceeded", "QuotaExceededError");
+		});
+		vi.spyOn(console, "error").mockImplementation(() => {});
+
+		expect(() => setOwnerToken("ranking-1", "secret-token")).toThrow(
+			OwnerTokenNotStored,
+		);
 	});
 });

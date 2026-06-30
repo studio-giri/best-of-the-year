@@ -6,8 +6,12 @@ import {
 import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { OwnerTokenNotStored } from "#/lib/ownerTokens.ts";
 import { Subtitle } from "#/ui/Subtitle.tsx";
-import { claimRejectionMessages } from "./messages.ts";
+import {
+	claimRejectionMessages,
+	ownerTokenNotStoredMessage,
+} from "./messages.ts";
 import { useClaimRanking } from "./useClaimRanking.mutation.ts";
 
 /**
@@ -15,7 +19,9 @@ import { useClaimRanking } from "./useClaimRanking.mutation.ts";
  * On success the mutation has already stored the Owner token, so we route
  * straight into the editable owner view. A server-side username collision
  * (only knowable at claim time) maps back to its inline message and
- * keeps the user on the form.
+ * keeps the user on the form. A claim that succeeds but whose token can't be
+ * stored is its own terminal case: we keep the user on the form with an
+ * explanatory message rather than route into a view they can't edit.
  */
 export function ClaimRanking() {
 	const navigate = useNavigate();
@@ -45,6 +51,12 @@ export function ClaimRanking() {
 				// Map a username-taken refusal to its inline message
 				if (error instanceof ClaimRejected) {
 					setServerError(claimRejectionMessages[error.code]);
+					return;
+				}
+				// The claim succeeded but its token couldn't be saved to this browser:
+				// terminal, not retryable, so explain it rather than invite a resubmit
+				if (error instanceof OwnerTokenNotStored) {
+					setServerError(ownerTokenNotStoredMessage);
 					return;
 				}
 				// Anything else (network blip, 5xx) is transient, so show a generic retryable error message

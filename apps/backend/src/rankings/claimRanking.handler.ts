@@ -75,6 +75,10 @@ export function claimRanking(body: typeof ClaimRankingBody.Type) {
 
 		// Mint an Owner token (stored as a hash only), granting this browser owner
 		// access. The raw token is returned exactly once below.
+		//
+		// Intentionally not transactional with the insert above: a failure here leaves
+		// a tokenless ranking, which the email-keyed recovery flow resolves like any
+		// lost token.
 		const ownerToken = yield* mintOwnerToken(ranking.id);
 
 		return {

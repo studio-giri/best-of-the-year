@@ -14,3 +14,12 @@ export const claimRejectionMessages: Record<ClaimRejectionCode, string> = {
 	username_too_long: "Username must be 30 characters or fewer.",
 	username_taken: "Username taken: pick another.",
 };
+
+/**
+ * Shown when a claim succeeded but its Owner token could not be saved to this
+ * browser (storage full or disabled): the ranking exists and is claimed, yet
+ * this browser cannot prove ownership to edit it. Resubmitting would only hit a
+ * username collision, so the wording must not read as retryable.
+ */
+export const ownerTokenNotStoredMessage =
+	"Your ranking was created, but this browser couldn't save your access to it. Open another browser and use the Recover Ranking form to gain access.";

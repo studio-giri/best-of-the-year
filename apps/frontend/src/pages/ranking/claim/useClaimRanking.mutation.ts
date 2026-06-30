@@ -10,7 +10,8 @@ import { setOwnerToken } from "#/lib/ownerTokens.ts";
  * the typed client call is run to a Promise, and a ClaimRejected failure
  * rejects the promise so the form can map its code to a message. On success the
  * Owner token is persisted before the value resolves, so navigation into the
- * owner view always finds the grant already in place.
+ * owner view finds the grant already in place — and a storage failure surfaces
+ * as a typed OwnerTokenNotStored the form handles on its own path.
  */
 async function submitClaim(
 	input: typeof ClaimRankingBody.Type,

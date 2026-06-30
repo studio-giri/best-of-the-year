@@ -4,9 +4,12 @@ import {
 	HttpApiSchema,
 	OpenApi,
 } from "effect/unstable/httpapi";
-import { Ranking } from "../../schemas/Ranking.schema.ts";
-import { Uuid } from "../../schemas/Uuid.schema.ts";
-import { RankingNotFound } from "./RankingNotFound.ts";
+import { Uuid } from "../primitives/Uuid.schema.ts";
+import { ClaimRankingBody } from "./claim/ClaimRankingBody.schema.ts";
+import { ClaimRankingResponse } from "./claim/ClaimRankingResponse.schema.ts";
+import { ClaimRejected } from "./claim/ClaimRejected.error.ts";
+import { Ranking } from "./Ranking.schema.ts";
+import { RankingNotFound } from "./RankingNotFound.error.ts";
 
 /**
  * Endpoint
@@ -24,6 +27,13 @@ export const RankingsApi = HttpApiGroup.make(endpoint)
 			},
 			success: Ranking,
 			error: HttpApiSchema.status(404)(RankingNotFound),
+		}),
+	)
+	.add(
+		HttpApiEndpoint.post("claim", `/${endpoint}`, {
+			payload: ClaimRankingBody,
+			success: ClaimRankingResponse,
+			error: HttpApiSchema.status(422)(ClaimRejected),
 		}),
 	)
 	.annotate(OpenApi.Title, "Rankings")

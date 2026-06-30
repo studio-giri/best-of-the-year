@@ -9,9 +9,7 @@ Code must be organized into **logical blocks** — each preceded by a comment, s
 
 **Example:**
 ```ts
-/**
- * Fetch the remote resource, propagating network errors as FetchError
- */
+// Fetch the remote resource, propagating network errors as FetchError
 const response = yield* Effect.tryPromise({
 	try: () => fetch(...),
 	catch: (...) => new FetchError(...),
@@ -20,9 +18,7 @@ if (!response.ok) {
 	return yield* new FetchError(...);
 }
 
-/**
- * Decode the response body against MySchema, failing fast on shape mismatches
- */
+// Decode the response body against MySchema, failing fast on shape mismatches
 const json = yield* Effect.tryPromise({
 	try: () => response.json(),
 	catch: () => new JsonError(),

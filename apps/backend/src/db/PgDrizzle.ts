@@ -4,9 +4,9 @@ import {
 	makeWithDefaults,
 } from "drizzle-orm/effect-postgres";
 import { Context, Layer } from "effect";
-import * as schema from "./schema.ts";
+import { relations } from "./schema/relations.ts";
 
-type SchemaDb = EffectPgDatabase<typeof schema.relations> & {
+type SchemaDb = EffectPgDatabase<typeof relations> & {
 	$client: PgClient;
 };
 
@@ -22,6 +22,6 @@ export class PgDrizzle extends Context.Service<PgDrizzle, SchemaDb>()(
 export const PgDrizzleLive = Layer.effect(
 	PgDrizzle,
 	makeWithDefaults({
-		relations: schema.relations,
+		relations,
 	}),
 );

@@ -3,7 +3,8 @@ import { Console, Effect, Layer } from "effect";
 import { Env } from "../../env.ts";
 import { PgClientLive } from "../PgClient.ts";
 import { PgDrizzle, PgDrizzleLive } from "../PgDrizzle.ts";
-import { rankingItemsTable, rankingsTable } from "../schema.ts";
+import { rankingItemsTable } from "../schema/ranking-items.table.ts";
+import { rankingsTable } from "../schema/rankings.table.ts";
 import { rankingItems, rankings } from "./seed-values.ts";
 
 /**

@@ -1,11 +1,13 @@
-import type { rankingItemsTable, rankingsTable } from "../schema.ts";
+import type { rankingItemsTable } from "../schema/ranking-items.table.ts";
+import type { rankingsTable } from "../schema/rankings.table.ts";
 
 const RANKING_1_ID = "019d6984-10ef-787c-926f-a7e02b5ca80a";
 
 export const rankings: (typeof rankingsTable.$inferInsert)[] = [
 	{
 		id: RANKING_1_ID,
-		username: "My Username",
+		username: "User 1",
+		email: "user1@email.test",
 	},
 ];
 

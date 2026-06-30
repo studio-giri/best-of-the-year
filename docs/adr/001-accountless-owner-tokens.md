@@ -1,12 +1,12 @@
-# Account-less edit access via client-side bearer Edit tokens
+# Account-less edit access via client-side bearer Owner tokens
 
 Realizes [PRD 001 — Ranking ownership without sign-up](../prd/001-ranking-ownership-without-sign-up.prd.md), which owns all the user-facing behavior and scope. This ADR records only *how* that behavior is implemented; it defines no product behavior itself.
 
 ## Decision
 
-Edit access to a Ranking is carried by a **client-side bearer Edit token**: an opaque random secret stored in the editor's browser, of which the server keeps only a hash. Presenting a token whose hash matches authorizes the edit — there is no server-side session, account, or password store.
+Edit access to a Ranking is carried by a **client-side bearer Owner token**: an opaque random secret stored in the editor's browser, of which the server keeps only a hash. Presenting a token whose hash matches authorizes the edit — there is no server-side session, account, or password store.
 
-- **Recovery** is a single-use, 48h-expiry **Edit link**, implemented as a hashed token row with an expiry timestamp. Consuming the link issues a fresh Edit token row for the requesting browser, then marks the recovery token spent.
+- **Recovery** is a single-use, 48h-expiry **Owner link**, implemented as a hashed token row with an expiry timestamp. Consuming the link issues a fresh Owner token row for the requesting browser, then marks the recovery token spent.
 - **Tokens live in their own table**, many-to-one against `rankings`, so a Ranking can have several concurrent tokens (one per browser) and a future bulk-revocation can delete them as a set.
 - **One-per-email** (a PRD constraint) is enforced with a unique constraint on the Ranking's email column; `username` (public name) and `email` (private) are distinct columns. `username` is unique case- and whitespace-insensitively via a functional unique index on `lower(trim(username))`, while the column itself stores the trimmed value in the chosen casing for public display. That index is the authoritative uniqueness guard at claim time: the handler attempts the insert and translates a unique-violation into the duplicate-username refusal (never a server error), so two concurrent claims of the same name resolve to one success and one refusal without a check-then-insert race. Any input-time availability hint is UX convenience only, not the guard.
 - **Edit-access grant is derived client-side** — a browser holds edit access for a Ranking iff it has a stored token for that Ranking's id; the UI reads that to decide whether to offer the owner view. There is no server-side pre-check endpoint — the server is the real authority and re-validates the token only on the actual edit write. The owner view lives at its own route (`/game/:id/edit`), guarded by that client-side grant and redirecting to the public view when the token is absent.

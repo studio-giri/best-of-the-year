@@ -1,7 +1,7 @@
 # Claim a ranking with email + username and immediately own it for editing on this browser
 
 **ID:** S-001-01
-**Status:** Ready
+**Status:** In progress
 
 ## Story
 
@@ -13,7 +13,7 @@ As a person building a ranking of my own, I want to claim it with just my email 
 - **Given** the creation flow, **when** it is shown, **then** the email field is presented and marked required from the start — not introduced only at save.
 - **Given** a valid email and an unused username, **when** I submit the claim, **then** a ranking is created showing that username and the claiming browser is taken straight to the ranking's editable owner view, with no email round-trip before I can continue.
 - **Given** I claimed on this browser, **when** I return to the ranking on a later visit in the same browser, **then** I can still open its editable owner view with no re-authentication.
-- **Given** a browser that has not claimed or recovered this ranking, **when** it opens the ranking, **then** it gets the public read-only view only; attempting to open the editable owner view is refused — the browser is sent to the public view instead.
+- **Given** a browser that has not claimed or recovered this ranking, **when** it opens the ranking, **then** it gets the public read-only view only; attempting to open the editable owner view is refused — the browser is shown an access-denied message ("You don't have permission to edit this ranking.") with a link to the public read-only view.
 - **Given** a syntactically invalid email (e.g. `foo@`), or one longer than 254 characters, **when** I submit, **then** the claim is refused with **"Email is invalid."** and I stay on the form; no verification or confirmation step occurs.
 - **Given** a blank or whitespace-only email, **when** I submit, **then** the claim is refused with **"Email cannot be empty."** and I stay on the form.
 - **Given** a username already in use (ignoring letter case and surrounding whitespace), **when** I submit, **then** the claim is refused with **"Username taken: pick another."**, I stay on the form, and I am **not** routed into recovery.
@@ -25,11 +25,11 @@ As a person building a ranking of my own, I want to claim it with just my email 
 
 ## Out of scope for this Story
 
-The contents of the ranking (adding/editing/reordering games) and any duplicate-**email** handling — duplicate email is S-001-03.
+The contents of the ranking (adding/editing/reordering games) and any duplicate-**email** handling — duplicate email is S-001-03. Also out: blur-time availability *pre-check* endpoints (is-this-username/email-available, fired before submit) — pure UX convenience, deferred to a later follow-up story; the username-taken refusal *at claim time* stays in this Story.
 
 ## Depends on
 
-None — this is the root. It introduces the `email` column, the edit-tokens table, the first `POST` claim endpoint, browser token storage, and the edit-access authorization seam that later Stories reuse.
+None — this is the root. It introduces the `email` column, the owner-tokens table, the first `POST` claim endpoint, browser token storage, and the edit-access authorization seam that later Stories reuse.
 
 ## Satisfies
 
@@ -38,7 +38,7 @@ REQ-1, REQ-2, REQ-3, REQ-4, REQ-5, REQ-8, REQ-9, REQ-10, REQ-22, REQ-23, REQ-24,
 ## References
 
 - PRD: [../../prd/001-ranking-ownership-without-sign-up.prd.md](../../prd/001-ranking-ownership-without-sign-up.prd.md) — the what & why
-- ADR: [../../adr/001-accountless-edit-tokens.md](../../adr/001-accountless-edit-tokens.md) — the mechanism
+- ADR: [../../adr/001-accountless-owner-tokens.md](../../adr/001-accountless-owner-tokens.md) — the mechanism
 
 ## Definition of Done
 

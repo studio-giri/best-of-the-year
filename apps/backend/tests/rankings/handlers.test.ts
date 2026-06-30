@@ -1,7 +1,8 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { Effect } from "effect";
 import { PgDrizzle } from "../../src/db/PgDrizzle.ts";
-import { rankingItemsTable, rankingsTable } from "../../src/db/schema.ts";
+import { rankingItemsTable } from "../../src/db/schema/ranking-items.table.ts";
+import { rankingsTable } from "../../src/db/schema/rankings.table.ts";
 import { newRanking } from "../fixtures/ranking.fixture.ts";
 import { makeTestCtx } from "../setup/make-test-ctx.ts";
 

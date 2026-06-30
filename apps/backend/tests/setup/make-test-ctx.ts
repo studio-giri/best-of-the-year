@@ -45,15 +45,24 @@ export async function makeTestCtx() {
 	try {
 		await client.query(`CREATE SCHEMA "${schemaName}"`);
 		await client.query(`SET search_path = "${schemaName}", public`);
-		const sqlFiles = readdirSync(MIGRATIONS_DIR)
-			.filter((f) => f.endsWith(".sql"))
+
+		/**
+		 * Drizzle v1 lays each migration out as its own timestamped directory
+		 * containing a `migration.sql`. Apply them in directory-name order, which
+		 * is the timestamp prefix — Drizzle's own ordering convention.
+		 */
+		const migrationFiles = readdirSync(MIGRATIONS_DIR, {
+			withFileTypes: true,
+		})
+			.filter((entry) => entry.isDirectory())
+			.map((entry) => join(MIGRATIONS_DIR, entry.name, "migration.sql"))
 			.sort();
-		for (const file of sqlFiles) {
+		for (const file of migrationFiles) {
 			/**
 			 * Drizzle-kit qualifies FK references with "public" which bypasses
 			 * search_path — rewrite them to target the isolated test schema
 			 */
-			const sql = readFileSync(join(MIGRATIONS_DIR, file), "utf-8").replaceAll(
+			const sql = readFileSync(file, "utf-8").replaceAll(
 				'"public".',
 				`"${schemaName}".`,
 			);

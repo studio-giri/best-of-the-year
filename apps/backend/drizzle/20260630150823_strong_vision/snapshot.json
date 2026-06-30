@@ -1,11 +1,17 @@
 {
 	"version": "8",
 	"dialect": "postgres",
-	"id": "462e6d7b-4801-4669-8023-63f6e3159869",
+	"id": "f73a0a0e-eafb-45de-9bc5-0ebcace9e3ee",
 	"prevIds": [
 		"00000000-0000-0000-0000-000000000000"
 	],
 	"ddl": [
+		{
+			"isRlsEnabled": false,
+			"name": "owner_tokens",
+			"entityType": "tables",
+			"schema": "public"
+		},
 		{
 			"isRlsEnabled": false,
 			"name": "ranking_items",
@@ -17,6 +23,58 @@
 			"name": "rankings",
 			"entityType": "tables",
 			"schema": "public"
+		},
+		{
+			"type": "uuid",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": "uuidv7()",
+			"generated": null,
+			"identity": null,
+			"name": "id",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "owner_tokens"
+		},
+		{
+			"type": "uuid",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "ranking_id",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "owner_tokens"
+		},
+		{
+			"type": "text",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "token_hash",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "owner_tokens"
+		},
+		{
+			"type": "timestamp(3)",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": "now()",
+			"generated": null,
+			"identity": null,
+			"name": "created_at",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "owner_tokens"
 		},
 		{
 			"type": "uuid",
@@ -123,6 +181,19 @@
 			"table": "rankings"
 		},
 		{
+			"type": "varchar(254)",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "email",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "rankings"
+		},
+		{
 			"type": "timestamp(3)",
 			"typeSchema": null,
 			"notNull": true,
@@ -162,6 +233,44 @@
 			"table": "rankings"
 		},
 		{
+			"nameExplicit": true,
+			"columns": [
+				{
+					"value": "lower(trim(\"username\"))",
+					"isExpression": true,
+					"asc": true,
+					"nullsFirst": false,
+					"opclass": null
+				}
+			],
+			"isUnique": true,
+			"where": null,
+			"with": "",
+			"method": "btree",
+			"concurrently": false,
+			"name": "rankings_username_lower_trim_unique",
+			"entityType": "indexes",
+			"schema": "public",
+			"table": "rankings"
+		},
+		{
+			"nameExplicit": false,
+			"columns": [
+				"ranking_id"
+			],
+			"schemaTo": "public",
+			"tableTo": "rankings",
+			"columnsTo": [
+				"id"
+			],
+			"onUpdate": "NO ACTION",
+			"onDelete": "CASCADE",
+			"name": "owner_tokens_ranking_id_rankings_id_fkey",
+			"entityType": "fks",
+			"schema": "public",
+			"table": "owner_tokens"
+		},
+		{
 			"nameExplicit": false,
 			"columns": [
 				"ranking_id"
@@ -177,6 +286,16 @@
 			"entityType": "fks",
 			"schema": "public",
 			"table": "ranking_items"
+		},
+		{
+			"columns": [
+				"id"
+			],
+			"nameExplicit": false,
+			"name": "owner_tokens_pkey",
+			"schema": "public",
+			"table": "owner_tokens",
+			"entityType": "pks"
 		},
 		{
 			"columns": [
@@ -213,13 +332,13 @@
 		{
 			"nameExplicit": false,
 			"columns": [
-				"username"
+				"token_hash"
 			],
 			"nullsNotDistinct": false,
-			"name": "rankings_username_unique",
-			"entityType": "uniques",
+			"name": "owner_tokens_token_hash_key",
 			"schema": "public",
-			"table": "rankings"
+			"table": "owner_tokens",
+			"entityType": "uniques"
 		}
 	],
 	"renames": []

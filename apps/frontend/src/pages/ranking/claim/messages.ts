@@ -12,7 +12,7 @@ export const claimRejectionMessages: Record<ClaimRejectionCode, string> = {
 	username_empty: "Username cannot be empty.",
 	username_too_short: "Username must be at least 2 characters.",
 	username_too_long: "Username must be 30 characters or fewer.",
-	username_taken: "Sry, username taken. Pick another.",
+	username_taken: "Username taken. Pick another.",
 };
 
 /**

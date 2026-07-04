@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import { useId } from "react";
+import { type InputHTMLAttributes, useId } from "react";
 
 export function TextField({
 	label,
@@ -10,7 +10,7 @@ export function TextField({
 }: {
 	label: string;
 	hint?: string;
-	input: React.InputHTMLAttributes<HTMLInputElement>;
+	input: InputHTMLAttributes<HTMLInputElement>;
 	error?: string;
 	icon: LucideIcon;
 }) {

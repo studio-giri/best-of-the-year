@@ -4,4 +4,11 @@
 
 @theme {
 	--font-sans: "Cronos Pro", ui-serif, serif;
+
+	--color-brand: #785f72;
+	--color-brand-hover: #5f4c5a;
+	--color-surface: #251d23;
+	--color-muted: #7f8684; /* icons, placeholders, focus outline */
+	--color-line: #3f383f; /* borders / outlines */
+	--color-danger: #f87171; /* error text */
 }

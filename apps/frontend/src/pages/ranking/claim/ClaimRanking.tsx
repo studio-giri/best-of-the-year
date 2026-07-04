@@ -5,8 +5,11 @@ import {
 } from "@boty/shared/api/rankings/claim/claimRules";
 import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
+import { Mail, User2 } from "lucide-react";
 import { useState } from "react";
 import { OwnerTokenNotStored } from "#/lib/ownerTokens.ts";
+import { Button } from "#/ui/form/Button.tsx";
+import { TextField } from "#/ui/form/TextField.tsx";
 import { Subtitle } from "#/ui/Subtitle.tsx";
 import {
 	claimRejectionMessages,
@@ -70,47 +73,17 @@ export function ClaimRanking() {
 
 	return (
 		<>
-			<Subtitle>Claim a ranking</Subtitle>
+			<Subtitle>New ranking</Subtitle>
 			<div className="max-w-xl mx-auto">
 				<form
 					// We own validation messaging: suppress the browser's native validation
 					noValidate
-					className="bg-white rounded-md mx-3 p-6 flex flex-col gap-4"
+					className="bg-surface/90 rounded-2xl mx-3 p-8 flex flex-col gap-4"
 					onSubmit={(event) => {
 						event.preventDefault();
 						form.handleSubmit();
 					}}
 				>
-					<form.Field
-						name="email"
-						validators={{
-							onSubmit: ({ value }) => {
-								const code = validateEmail(value);
-								return code ? claimRejectionMessages[code] : undefined;
-							},
-						}}
-					>
-						{(field) => (
-							<label className="flex flex-col gap-1">
-								<span>Email</span>
-								<input
-									type="email"
-									required
-									name={field.name}
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(event) => {
-										setServerError(null);
-										field.handleChange(event.target.value);
-									}}
-								/>
-								{field.state.meta.errors.length > 0 ? (
-									<span role="alert">{field.state.meta.errors[0]}</span>
-								) : null}
-							</label>
-						)}
-					</form.Field>
-
 					<form.Field
 						name="username"
 						validators={{
@@ -121,31 +94,69 @@ export function ClaimRanking() {
 						}}
 					>
 						{(field) => (
-							<label className="flex flex-col gap-1">
-								<span>Username</span>
-								<input
-									type="text"
-									required
-									name={field.name}
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(event) => {
-										setServerError(null);
-										field.handleChange(event.target.value);
+							<>
+								<TextField
+									label="Username"
+									hint="Pick carefully: it'll be public, forever. No pressure."
+									icon={User2}
+									error={field.state.meta.errors[0]}
+									input={{
+										type: "text",
+										placeholder: "YourUsername",
+										required: true,
+										name: field.name,
+										value: field.state.value,
+										onBlur: field.handleBlur,
+										onChange: (event) => {
+											setServerError(null);
+											field.handleChange(event.target.value);
+										},
 									}}
 								/>
-								{field.state.meta.errors.length > 0 ? (
-									<span role="alert">{field.state.meta.errors[0]}</span>
-								) : null}
-							</label>
+							</>
 						)}
 					</form.Field>
 
-					{serverError ? <span role="alert">{serverError}</span> : null}
+					<form.Field
+						name="email"
+						validators={{
+							onSubmit: ({ value }) => {
+								const code = validateEmail(value);
+								return code ? claimRejectionMessages[code] : undefined;
+							},
+						}}
+					>
+						{(field) => (
+							<TextField
+								label="Email"
+								hint="So you don't lose your ranking. That's the only reason we ask."
+								icon={Mail}
+								error={field.state.meta.errors[0]}
+								input={{
+									type: "email",
+									required: true,
+									placeholder: "your@email.com",
+									name: field.name,
+									value: field.state.value,
+									onBlur: field.handleBlur,
+									onChange: (event) => {
+										setServerError(null);
+										field.handleChange(event.target.value);
+									},
+								}}
+							/>
+						)}
+					</form.Field>
 
-					<button type="submit" disabled={claimRanking.isPending}>
-						Claim ranking
-					</button>
+					{serverError ? (
+						<span role="alert" className="text-sm text-danger">
+							{serverError}
+						</span>
+					) : null}
+
+					<Button type="submit" loading={claimRanking.isPending}>
+						lezgoo
+					</Button>
 				</form>
 			</div>
 		</>

@@ -19,7 +19,7 @@ export function TextField({
 		<label className="flex flex-col gap-1">
 			<span className="text-white">{label}</span>
 			{hint ? <span className="text-sm text-muted">{hint}</span> : null}
-			<div className="flex items-center rounded-md pl-3 outline-1 -outline-offset-1 outline-line has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-muted">
+			<div className="flex items-center rounded-md pl-3 outline-1 -outline-offset-1 outline-muted has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-white">
 				<div className="shrink-0 select-none">
 					<Icon className="size-4 text-muted" />
 				</div>

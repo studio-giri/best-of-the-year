@@ -1,8 +1,8 @@
 import { randomBytes } from "node:crypto";
 import { Effect } from "effect";
+import { hashToken } from "../crypto/hashToken.ts";
 import { PgDrizzle } from "../db/PgDrizzle.ts";
 import { ownerTokensTable } from "../db/schema/owner-tokens.table.ts";
-import { hashOwnerToken } from "./ownerToken.helper.ts";
 
 /**
  * Mint an Owner token for a ranking: generate the secret, persist only its
@@ -19,7 +19,7 @@ export function mintOwnerToken(rankingId: string) {
 		const ownerToken = randomBytes(32).toString("base64url");
 
 		// Insert in database hashed version
-		const ownerTokenHash = hashOwnerToken(ownerToken);
+		const ownerTokenHash = hashToken(ownerToken);
 		yield* db
 			.insert(ownerTokensTable)
 			.values({

@@ -6,9 +6,15 @@ import { HttpRouter, HttpServer } from "effect/unstable/http";
 import { Pool } from "pg";
 import { makePgClientLayer } from "../../src/db/PgClient.ts";
 import { type PgDrizzle, PgDrizzleLive } from "../../src/db/PgDrizzle.ts";
+import { Env } from "../../src/env.ts";
 import { HttpApiHandlersLive } from "../../src/http.ts";
+import { Mailer, type SendOwnerLinkArgs } from "../../src/mailer/Mailer.ts";
 
 const MIGRATIONS_DIR = join(import.meta.dir, "../../drizzle");
+
+// Fixed frontend origin the test Env hands the handler, so recovery-link URL
+// assertions are deterministic.
+const TEST_APP_BASE_URL = "http://app.test";
 
 /**
  * Spin up a fully isolated test environment for one test suite.
@@ -89,12 +95,37 @@ export async function makeTestCtx() {
 	const TestDbLive = makePgClientLayer(Redacted.make(testUrl.toString()));
 
 	/**
+	 * Test Env: the handler reads only `appBaseUrl` from it (the DB connection
+	 * comes from TestDbLive, not from here), so `databaseUrl` is a placeholder.
+	 * Supplying a hand-built Env keeps the suite off process-level config.
+	 */
+	const TestEnv = Layer.succeed(Env, {
+		databaseUrl: Redacted.make(testUrl.toString()),
+		appBaseUrl: TEST_APP_BASE_URL,
+	});
+
+	/**
+	 * Capturing Mailer: instead of dispatching (or logging) a send, record each
+	 * call so tests can assert the recipient and the composed link URL. The array
+	 * is closed over and returned below.
+	 */
+	const mailerCalls: SendOwnerLinkArgs[] = [];
+	const TestMailer = Layer.succeed(Mailer, {
+		sendOwnerLink: (args) =>
+			Effect.sync(() => {
+				mailerCalls.push(args);
+			}),
+	});
+
+	/**
 	 * Assemble the full application Layer: PgDrizzle is request-scoped in v4's
-	 * HttpRouter (provideRequest), the PgClient and platform services
+	 * HttpRouter (provideRequest); the PgClient, Env, Mailer and platform services
 	 * (HttpServer.layerServices) are regular layers.
 	 */
 	const TestAppLayer = HttpApiHandlersLive.pipe(
-		HttpRouter.provideRequest(PgDrizzleLive),
+		HttpRouter.provideRequest(
+			Layer.mergeAll(PgDrizzleLive, TestEnv, TestMailer),
+		),
 		Layer.provide(TestDbLive),
 		Layer.provide(HttpServer.layerServices),
 	);
@@ -142,5 +173,9 @@ export async function makeTestCtx() {
 		handler: app.handler,
 		runDb,
 		cleanup,
+		// Recovery-request assertions read these: the captured Mailer calls and
+		// the frontend origin the emailed link is built from.
+		mailerCalls,
+		appBaseUrl: TEST_APP_BASE_URL,
 	};
 }

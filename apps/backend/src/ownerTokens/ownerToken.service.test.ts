@@ -1,8 +1,8 @@
 import { describe, expect, mock, test } from "bun:test";
 import { Effect } from "effect";
+import { hashToken } from "../crypto/hashToken.ts";
 import { PgDrizzle } from "../db/PgDrizzle.ts";
 import { ownerTokensTable } from "../db/schema/owner-tokens.table.ts";
-import { hashOwnerToken } from "./ownerToken.helper.ts";
 import { mintOwnerToken } from "./ownerToken.service.ts";
 
 /**
@@ -48,7 +48,7 @@ describe("mintOwnerToken", () => {
 		expect(values).toHaveBeenCalledTimes(1);
 		expect(values).toHaveBeenCalledWith({
 			rankingId,
-			tokenHash: hashOwnerToken(token),
+			tokenHash: hashToken(token),
 		});
 
 		// The raw token comes back as a 32-byte base64url secret (43 chars, no padding).

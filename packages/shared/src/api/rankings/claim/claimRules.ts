@@ -18,7 +18,12 @@ export const MAX_USERNAME_LENGTH = 30;
 
 const isEmail = Schema.is(Email);
 
-export function validateEmail(value: string): ClaimRejectionCode | undefined {
+// Return type is exactly the two email codes (a subset of ClaimRejectionCode):
+// precise enough for the recovery flow, whose RecoveryRejected carries only
+// these, while still assignable where the full claim code set is expected.
+export function validateEmail(
+	value: string,
+): "email_empty" | "email_invalid" | undefined {
 	const trimmed = value.trim();
 	if (trimmed.length === 0) {
 		return "email_empty";

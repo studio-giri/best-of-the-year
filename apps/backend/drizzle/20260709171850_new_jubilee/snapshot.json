@@ -1,0 +1,488 @@
+{
+	"version": "8",
+	"dialect": "postgres",
+	"id": "fd768a43-fb62-4b93-b896-f9d818be2b4c",
+	"prevIds": [
+		"f73a0a0e-eafb-45de-9bc5-0ebcace9e3ee"
+	],
+	"ddl": [
+		{
+			"isRlsEnabled": false,
+			"name": "owner_tokens",
+			"entityType": "tables",
+			"schema": "public"
+		},
+		{
+			"isRlsEnabled": false,
+			"name": "ranking_items",
+			"entityType": "tables",
+			"schema": "public"
+		},
+		{
+			"isRlsEnabled": false,
+			"name": "rankings",
+			"entityType": "tables",
+			"schema": "public"
+		},
+		{
+			"isRlsEnabled": false,
+			"name": "recovery_tokens",
+			"entityType": "tables",
+			"schema": "public"
+		},
+		{
+			"type": "uuid",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": "uuidv7()",
+			"generated": null,
+			"identity": null,
+			"name": "id",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "owner_tokens"
+		},
+		{
+			"type": "uuid",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "ranking_id",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "owner_tokens"
+		},
+		{
+			"type": "text",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "token_hash",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "owner_tokens"
+		},
+		{
+			"type": "timestamp(3)",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": "now()",
+			"generated": null,
+			"identity": null,
+			"name": "created_at",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "owner_tokens"
+		},
+		{
+			"type": "uuid",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": "uuidv7()",
+			"generated": null,
+			"identity": null,
+			"name": "id",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "ranking_items"
+		},
+		{
+			"type": "uuid",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "ranking_id",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "ranking_items"
+		},
+		{
+			"type": "integer",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "year",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "ranking_items"
+		},
+		{
+			"type": "varchar(255)",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "name",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "ranking_items"
+		},
+		{
+			"type": "timestamp(3)",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": "now()",
+			"generated": null,
+			"identity": null,
+			"name": "created_at",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "ranking_items"
+		},
+		{
+			"type": "timestamp(3)",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": "now()",
+			"generated": null,
+			"identity": null,
+			"name": "updated_at",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "ranking_items"
+		},
+		{
+			"type": "uuid",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": "uuidv7()",
+			"generated": null,
+			"identity": null,
+			"name": "id",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "rankings"
+		},
+		{
+			"type": "varchar(30)",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "username",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "rankings"
+		},
+		{
+			"type": "varchar(254)",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "email",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "rankings"
+		},
+		{
+			"type": "timestamp(3)",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": "now()",
+			"generated": null,
+			"identity": null,
+			"name": "created_at",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "rankings"
+		},
+		{
+			"type": "timestamp(3)",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": "now()",
+			"generated": null,
+			"identity": null,
+			"name": "updated_at",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "rankings"
+		},
+		{
+			"type": "timestamp(3)",
+			"typeSchema": null,
+			"notNull": false,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "deleted_at",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "rankings"
+		},
+		{
+			"type": "uuid",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": "uuidv7()",
+			"generated": null,
+			"identity": null,
+			"name": "id",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "recovery_tokens"
+		},
+		{
+			"type": "uuid",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "ranking_id",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "recovery_tokens"
+		},
+		{
+			"type": "text",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "token_hash",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "recovery_tokens"
+		},
+		{
+			"type": "timestamp(3)",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "expires_at",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "recovery_tokens"
+		},
+		{
+			"type": "timestamp(3)",
+			"typeSchema": null,
+			"notNull": false,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "consumed_at",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "recovery_tokens"
+		},
+		{
+			"type": "timestamp(3)",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": "now()",
+			"generated": null,
+			"identity": null,
+			"name": "created_at",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "recovery_tokens"
+		},
+		{
+			"nameExplicit": true,
+			"columns": [
+				{
+					"value": "lower(trim(\"username\"))",
+					"isExpression": true,
+					"asc": true,
+					"nullsFirst": false,
+					"opclass": null
+				}
+			],
+			"isUnique": true,
+			"where": null,
+			"with": "",
+			"method": "btree",
+			"concurrently": false,
+			"name": "rankings_username_lower_trim_unique",
+			"entityType": "indexes",
+			"schema": "public",
+			"table": "rankings"
+		},
+		{
+			"nameExplicit": true,
+			"columns": [
+				{
+					"value": "lower(trim(\"email\"))",
+					"isExpression": true,
+					"asc": true,
+					"nullsFirst": false,
+					"opclass": null
+				}
+			],
+			"isUnique": true,
+			"where": null,
+			"with": "",
+			"method": "btree",
+			"concurrently": false,
+			"name": "rankings_email_lower_trim_unique",
+			"entityType": "indexes",
+			"schema": "public",
+			"table": "rankings"
+		},
+		{
+			"nameExplicit": false,
+			"columns": [
+				"ranking_id"
+			],
+			"schemaTo": "public",
+			"tableTo": "rankings",
+			"columnsTo": [
+				"id"
+			],
+			"onUpdate": "NO ACTION",
+			"onDelete": "CASCADE",
+			"name": "owner_tokens_ranking_id_rankings_id_fkey",
+			"entityType": "fks",
+			"schema": "public",
+			"table": "owner_tokens"
+		},
+		{
+			"nameExplicit": false,
+			"columns": [
+				"ranking_id"
+			],
+			"schemaTo": "public",
+			"tableTo": "rankings",
+			"columnsTo": [
+				"id"
+			],
+			"onUpdate": "NO ACTION",
+			"onDelete": "CASCADE",
+			"name": "ranking_items_ranking_id_rankings_id_fkey",
+			"entityType": "fks",
+			"schema": "public",
+			"table": "ranking_items"
+		},
+		{
+			"nameExplicit": false,
+			"columns": [
+				"ranking_id"
+			],
+			"schemaTo": "public",
+			"tableTo": "rankings",
+			"columnsTo": [
+				"id"
+			],
+			"onUpdate": "NO ACTION",
+			"onDelete": "CASCADE",
+			"name": "recovery_tokens_ranking_id_rankings_id_fkey",
+			"entityType": "fks",
+			"schema": "public",
+			"table": "recovery_tokens"
+		},
+		{
+			"columns": [
+				"id"
+			],
+			"nameExplicit": false,
+			"name": "owner_tokens_pkey",
+			"schema": "public",
+			"table": "owner_tokens",
+			"entityType": "pks"
+		},
+		{
+			"columns": [
+				"id"
+			],
+			"nameExplicit": false,
+			"name": "ranking_items_pkey",
+			"schema": "public",
+			"table": "ranking_items",
+			"entityType": "pks"
+		},
+		{
+			"columns": [
+				"id"
+			],
+			"nameExplicit": false,
+			"name": "rankings_pkey",
+			"schema": "public",
+			"table": "rankings",
+			"entityType": "pks"
+		},
+		{
+			"columns": [
+				"id"
+			],
+			"nameExplicit": false,
+			"name": "recovery_tokens_pkey",
+			"schema": "public",
+			"table": "recovery_tokens",
+			"entityType": "pks"
+		},
+		{
+			"nameExplicit": false,
+			"columns": [
+				"ranking_id",
+				"year"
+			],
+			"nullsNotDistinct": false,
+			"name": "ranking_items_ranking_id_year_unique",
+			"entityType": "uniques",
+			"schema": "public",
+			"table": "ranking_items"
+		},
+		{
+			"nameExplicit": false,
+			"columns": [
+				"token_hash"
+			],
+			"nullsNotDistinct": false,
+			"name": "owner_tokens_token_hash_key",
+			"schema": "public",
+			"table": "owner_tokens",
+			"entityType": "uniques"
+		},
+		{
+			"nameExplicit": false,
+			"columns": [
+				"token_hash"
+			],
+			"nullsNotDistinct": false,
+			"name": "recovery_tokens_token_hash_key",
+			"schema": "public",
+			"table": "recovery_tokens",
+			"entityType": "uniques"
+		}
+	],
+	"renames": []
+}

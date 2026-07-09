@@ -10,6 +10,9 @@ import { ClaimRankingResponse } from "./claim/ClaimRankingResponse.schema.ts";
 import { ClaimRejected } from "./claim/ClaimRejected.error.ts";
 import { Ranking } from "./Ranking.schema.ts";
 import { RankingNotFound } from "./RankingNotFound.error.ts";
+import { RecoveryRejected } from "./recover/RecoveryRejected.error.ts";
+import { RequestRecoveryBody } from "./recover/RequestRecoveryBody.schema.ts";
+import { RequestRecoveryResponse } from "./recover/RequestRecoveryResponse.schema.ts";
 
 /**
  * Endpoint
@@ -34,6 +37,13 @@ export const RankingsApi = HttpApiGroup.make(endpoint)
 			payload: ClaimRankingBody,
 			success: ClaimRankingResponse,
 			error: HttpApiSchema.status(422)(ClaimRejected),
+		}),
+	)
+	.add(
+		HttpApiEndpoint.post("recover", `/${endpoint}/recover`, {
+			payload: RequestRecoveryBody,
+			success: RequestRecoveryResponse,
+			error: HttpApiSchema.status(422)(RecoveryRejected),
 		}),
 	)
 	.annotate(OpenApi.Title, "Rankings")

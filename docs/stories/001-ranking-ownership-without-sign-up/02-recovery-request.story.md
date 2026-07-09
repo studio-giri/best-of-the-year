@@ -19,7 +19,7 @@ As a person who has lost edit access (new browser, cleared storage), I want to e
 
 Clicking/consuming a link (S-001-04), and link expiry/single-use enforcement (S-001-05). This Story only issues links and responds honestly to the request.
 
-This Story adds the functional unique index on `lower(trim(email))` (needed for the loose match, per ADR-001). A known, accepted consequence: a duplicate-**email** claim then hits an index the claim handler does not yet translate, so it surfaces as a 500 until S-001-03 adds the clean duplicate-email refusal. S-001-03's scope is thereby reduced to that handling — the index already exists.
+This Story adds the functional unique index on `lower(trim(email))` (needed for the loose match). A known, accepted consequence: a duplicate-**email** claim then hits an index the claim handler does not yet translate, so it surfaces as a 500 until S-001-03 adds the clean duplicate-email refusal. S-001-03's scope is thereby reduced to that handling — the index already exists.
 
 ## Depends on
 

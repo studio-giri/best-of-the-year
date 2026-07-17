@@ -26,6 +26,15 @@ const json = yield* Effect.tryPromise({
 return yield* Schema.decodeUnknown(MySchema)(json);
 ```
 
+## Timeless comments
+
+Comments state durable facts about the code, not its history.
+
+- No story/ticket references (`S-001-02`, `#123`) — they rot as work items close. ADRs (`docs/adr/NNN-*.md`) are the one exception, as durable decisions rather than work items.
+- No "later story" / "for now" / "TODO" framing — state what's true today, not who does the rest or when.
+- Don't describe behavior owned by another file — it should stay true if that file changes.
+- Don't contrast with an approach the code no longer takes (`instead of X`) — state why the current code is right on its own terms.
+
 ## Prohibitions (what not to do)
 - No any, no as casts without justification
 
@@ -48,6 +57,8 @@ Prefer many small, focused files over large catch-all modules.
 - One exported function / class / constant per file when it makes sense
 - No `helpers.ts`, `utils.ts`, or `common.ts` dumping grounds — name files after what they do (`format-date.ts`, `parse-ocpi-response.ts`)
 - Colocate files with their consumers rather than grouping by type (e.g. avoid a flat `/utils` folder at the root, unless there are shared utils)
+- Group by domain, not type — no parallel `schemas/`, `errors/`, `payloads/` folders; a domain's files sit flat together, distinguished by a `.type.ts` suffix (`.schema.ts`, `.error.ts`, `.endpoint.ts`)
+- Create the domain folder up front, not on second use (cross-domain primitives like `Uuid`/`Email` are a legitimate shared kernel, not a type-grouping exception)
 
 ## Frontend file organization
 

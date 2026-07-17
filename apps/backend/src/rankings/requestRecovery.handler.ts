@@ -25,8 +25,8 @@ export function requestRecovery(
 	PgDrizzle | Env | Mailer
 > {
 	return Effect.gen(function* () {
-		// Reuse the exact claim-time email rule + codes, so message and behavior
-		// match S-001-01. Refuse before any lookup runs.
+		// Reuse the same email validation used at claim time, so rejection codes
+		// and messages match across both flows. Refuse before any lookup runs.
 		const trimmedEmail = body.email.trim();
 		const emailError = validateEmail(trimmedEmail);
 		if (emailError) {

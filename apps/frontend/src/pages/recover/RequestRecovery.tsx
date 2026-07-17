@@ -1,6 +1,7 @@
 import { validateEmail } from "@boty/shared/api/rankings/claim/claimRules";
 import { RecoveryRejected } from "@boty/shared/api/rankings/recover/RecoveryRejected.error";
 import { useForm } from "@tanstack/react-form";
+import { Schema } from "effect";
 import { Mail } from "lucide-react";
 import { useState } from "react";
 import { Button } from "#/ui/form/Button.tsx";
@@ -35,7 +36,7 @@ export function RequestRecovery() {
 			} catch (error) {
 				// The server re-runs the same email rule and owns the existence check;
 				// map its code to the inline message the field would show.
-				if (error instanceof RecoveryRejected) {
+				if (Schema.is(RecoveryRejected)(error)) {
 					setServerError(emailRejectionMessages[error.code]);
 					return;
 				}

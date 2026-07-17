@@ -11,8 +11,8 @@ import { client } from "#/lib/api/client.ts";
  * a link was emailed — the form renders the check-inbox confirmation.
  */
 async function submitRecovery(
-	input: typeof RequestRecoveryBody.Type,
-): Promise<typeof RequestRecoveryResponse.Type> {
+	input: RequestRecoveryBody,
+): Promise<RequestRecoveryResponse> {
 	return Effect.runPromise(
 		client.rankings.recover({
 			payload: input,

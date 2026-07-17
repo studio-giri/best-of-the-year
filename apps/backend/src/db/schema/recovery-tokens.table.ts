@@ -23,15 +23,13 @@ export const recoveryTokensTable = pgTable("recovery_tokens", {
 
 	tokenHash: text().notNull().unique(),
 
-	// When the link stops being valid. Issuing sets this to now + 48h; expiry
-	// enforcement itself is a later story — this Story only records it.
+	// Expiry timestamp, set at issuance to now + 48h (ADR-001).
 	expiresAt: timestamp({
 		mode: "date",
 		precision: 3,
 	}).notNull(),
 
-	// Null until the link is spent. Single-use enforcement is a later story;
-	// issuing always leaves this null.
+	// Timestamp the link was consumed; null means unconsumed.
 	consumedAt: timestamp({
 		mode: "date",
 		precision: 3,

@@ -5,6 +5,7 @@ import {
 } from "@boty/shared/api/rankings/claim/claimRules";
 import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
+import { Schema } from "effect";
 import { Mail, User2 } from "lucide-react";
 import { useState } from "react";
 import { OwnerTokenNotStored } from "#/lib/ownerTokens.ts";
@@ -51,8 +52,8 @@ export function ClaimRanking() {
 					},
 				});
 			} catch (error) {
-				// Map a username-taken refusal to its inline message
-				if (error instanceof ClaimRejected) {
+				// Map a username-taken refusal to its inline message.
+				if (Schema.is(ClaimRejected)(error)) {
 					setServerError(claimRejectionMessages[error.code]);
 					return;
 				}

@@ -24,9 +24,10 @@ export const RANKINGS_USERNAME_UNIQUE_INDEX =
 
 // Name of the functional unique index guarding email uniqueness AND serving the
 // recovery-request lookup — both match on `lower(trim(email))`, so one index
-// does double duty (case- and whitespace-insensitive). Exported so
-// a handler translating a violation on THIS constraint (the duplicate-email
-// refusal, S-001-03) targets it specifically rather than any unique violation.
+// does double duty (case- and whitespace-insensitive). Exported so a handler
+// translating a unique violation on THIS constraint into a duplicate-email
+// refusal can target it specifically, rather than matching any unique
+// violation on the table.
 export const RANKINGS_EMAIL_UNIQUE_INDEX = "rankings_email_lower_trim_unique";
 
 export const rankingsTable = pgTable(

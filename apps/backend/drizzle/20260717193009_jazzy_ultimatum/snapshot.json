@@ -1,7 +1,7 @@
 {
 	"version": "8",
 	"dialect": "postgres",
-	"id": "f73a0a0e-eafb-45de-9bc5-0ebcace9e3ee",
+	"id": "3dbfa49f-f73f-4fe3-ab59-9c6d8d6cdc0f",
 	"prevIds": [
 		"00000000-0000-0000-0000-000000000000"
 	],
@@ -215,19 +215,6 @@
 			"generated": null,
 			"identity": null,
 			"name": "updated_at",
-			"entityType": "columns",
-			"schema": "public",
-			"table": "rankings"
-		},
-		{
-			"type": "timestamp(3)",
-			"typeSchema": null,
-			"notNull": false,
-			"dimensions": 0,
-			"default": null,
-			"generated": null,
-			"identity": null,
-			"name": "deleted_at",
 			"entityType": "columns",
 			"schema": "public",
 			"table": "rankings"

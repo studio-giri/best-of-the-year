@@ -20,9 +20,6 @@ export function findRankingById(id: string) {
 				},
 				where: {
 					id,
-					deletedAt: {
-						isNull: true,
-					},
 				},
 				with: {
 					items: {

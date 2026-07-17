@@ -18,9 +18,9 @@ import { issueRecoveryToken } from "../recoveryTokens/recoveryToken.service.ts";
  * nor the raw token.
  */
 export function requestRecovery(
-	body: typeof RequestRecoveryBody.Type,
+	body: RequestRecoveryBody,
 ): Effect.Effect<
-	typeof RequestRecoveryResponse.Type,
+	RequestRecoveryResponse,
 	RecoveryRejected,
 	PgDrizzle | Env | Mailer
 > {

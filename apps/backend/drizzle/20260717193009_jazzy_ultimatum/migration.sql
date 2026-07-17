@@ -20,8 +20,7 @@ CREATE TABLE "rankings" (
 	"username" varchar(30) NOT NULL,
 	"email" varchar(254) NOT NULL,
 	"created_at" timestamp(3) DEFAULT now() NOT NULL,
-	"updated_at" timestamp(3) DEFAULT now() NOT NULL,
-	"deleted_at" timestamp(3)
+	"updated_at" timestamp(3) DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX "rankings_username_lower_trim_unique" ON "rankings" (lower(trim("username")));--> statement-breakpoint

@@ -55,11 +55,6 @@ export const rankingsTable = pgTable(
 			.notNull()
 			.defaultNow()
 			.$onUpdate(() => new Date()),
-
-		deletedAt: timestamp({
-			mode: "date",
-			precision: 3,
-		}),
 	},
 	(table) => [
 		// Authoritative uniqueness guard at claim time: the handler inserts and

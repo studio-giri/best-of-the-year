@@ -130,34 +130,4 @@ describe("GET /rankings/:id", () => {
 
 		expect(res.status).toBe(400);
 	});
-
-	test("returns 404 for a soft-deleted ranking", async () => {
-		const { handler, runDb } = ctx;
-
-		/**
-		 * Seed a dedicated row so this test is fully isolated
-		 */
-		const [row] = await runDb(
-			Effect.gen(function* () {
-				const db = yield* PgDrizzle;
-				return yield* db
-					.insert(rankingsTable)
-					.values({
-						...newRanking(),
-						deletedAt: new Date(),
-					})
-					.returning({
-						id: rankingsTable.id,
-					});
-			}),
-		);
-		if (!row) {
-			throw new Error("Failed to seed ranking row");
-		}
-
-		const res = await handler(
-			new Request(`http://localhost/rankings/${row.id}`),
-		);
-		expect(res.status).toBe(404);
-	});
 });

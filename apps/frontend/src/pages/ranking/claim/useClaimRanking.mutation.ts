@@ -14,8 +14,8 @@ import { setOwnerToken } from "#/lib/ownerTokens.ts";
  * as a typed OwnerTokenNotStored the form handles on its own path.
  */
 async function submitClaim(
-	input: typeof ClaimRankingBody.Type,
-): Promise<typeof ClaimRankingResponse.Type> {
+	input: ClaimRankingBody,
+): Promise<ClaimRankingResponse> {
 	const response = await Effect.runPromise(
 		client.rankings.claim({
 			payload: input,

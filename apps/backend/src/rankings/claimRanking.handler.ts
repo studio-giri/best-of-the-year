@@ -17,7 +17,7 @@ import { mintOwnerToken } from "../ownerTokens/ownerToken.service.ts";
  * Claim a ranking: validate the input, persist the ranking and a fresh Owner token,
  * and return the owner credentials.
  */
-export function claimRanking(body: typeof ClaimRankingBody.Type) {
+export function claimRanking(body: ClaimRankingBody) {
 	return Effect.gen(function* () {
 		// Validate email
 		const trimmedEmail = body.email.trim();

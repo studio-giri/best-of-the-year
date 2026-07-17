@@ -33,6 +33,7 @@ Comments state durable facts about the code, not its history.
 - No story/ticket references (`S-001-02`, `#123`) — they rot as work items close. ADRs (`docs/adr/NNN-*.md`) are the one exception, as durable decisions rather than work items.
 - No "later story" / "for now" / "TODO" framing — state what's true today, not who does the rest or when.
 - Don't describe behavior owned by another file — it should stay true if that file changes.
+- Reference only your own altitude or lower, never higher: a low-level piece (DB schema, shared primitive) must not name a specific feature that consumes it — it rots when that feature changes. Describe the piece on its own terms.
 - Don't contrast with an approach the code no longer takes (`instead of X`) — state why the current code is right on its own terms.
 
 ## Prohibitions (what not to do)

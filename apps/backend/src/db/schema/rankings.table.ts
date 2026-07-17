@@ -22,12 +22,11 @@ const pgTable = snakeCase.table;
 export const RANKINGS_USERNAME_UNIQUE_INDEX =
 	"rankings_username_lower_trim_unique";
 
-// Name of the functional unique index guarding email uniqueness AND serving the
-// recovery-request lookup — both match on `lower(trim(email))`, so one index
-// does double duty (case- and whitespace-insensitive). Exported so a handler
-// translating a unique violation on THIS constraint into a duplicate-email
-// refusal can target it specifically, rather than matching any unique
-// violation on the table.
+// Name of the functional unique index guarding email uniqueness (case- and
+// whitespace-insensitive: it matches on `lower(trim(email))`). Exported so a
+// handler translating a unique violation on THIS constraint into a
+// duplicate-email refusal can target it specifically, rather than treating any
+// unique violation on the table as an email clash.
 export const RANKINGS_EMAIL_UNIQUE_INDEX = "rankings_email_lower_trim_unique";
 
 export const rankingsTable = pgTable(
@@ -45,7 +44,7 @@ export const rankingsTable = pgTable(
 		// Private contact (never returned to clients). Stored trimmed, in the typed
 		// casing — it is never displayed, so casing carries no meaning. Uniqueness
 		// is enforced case- and whitespace-insensitively by the functional index
-		// below, which the recovery lookup also matches against.
+		// below.
 		email: varchar({
 			length: MAX_EMAIL_LENGTH,
 		}).notNull(),
@@ -72,8 +71,8 @@ export const rankingsTable = pgTable(
 		uniqueIndex(RANKINGS_USERNAME_UNIQUE_INDEX).on(
 			sql`lower(trim(${table.username}))`,
 		),
-		// One-per-email guard AND the recovery-lookup key: matching on
-		// lower(trim(email)) makes both case- and whitespace-insensitive.
+		// One-per-email guard: matching on lower(trim(email)) makes it case- and
+		// whitespace-insensitive.
 		uniqueIndex(RANKINGS_EMAIL_UNIQUE_INDEX).on(
 			sql`lower(trim(${table.email}))`,
 		),

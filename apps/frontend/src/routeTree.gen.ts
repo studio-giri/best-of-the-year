@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as LayoutRecoverRouteImport } from './routes/_layout/recover'
 import { Route as LayoutAboutRouteImport } from './routes/_layout/about'
 import { Route as LayoutRankingClaimRouteImport } from './routes/_layout/ranking/claim'
 import { Route as LayoutRankingRankingIdIndexRouteImport } from './routes/_layout/ranking/$rankingId/index'
@@ -23,6 +24,11 @@ const LayoutRoute = LayoutRouteImport.update({
 const LayoutIndexRoute = LayoutIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+const LayoutRecoverRoute = LayoutRecoverRouteImport.update({
+  id: '/recover',
+  path: '/recover',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutAboutRoute = LayoutAboutRouteImport.update({
@@ -51,12 +57,14 @@ const LayoutRankingRankingIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
   '/about': typeof LayoutAboutRoute
+  '/recover': typeof LayoutRecoverRoute
   '/ranking/claim': typeof LayoutRankingClaimRoute
   '/ranking/$rankingId/edit': typeof LayoutRankingRankingIdEditRoute
   '/ranking/$rankingId/': typeof LayoutRankingRankingIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/about': typeof LayoutAboutRoute
+  '/recover': typeof LayoutRecoverRoute
   '/': typeof LayoutIndexRoute
   '/ranking/claim': typeof LayoutRankingClaimRoute
   '/ranking/$rankingId/edit': typeof LayoutRankingRankingIdEditRoute
@@ -66,6 +74,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
   '/_layout/about': typeof LayoutAboutRoute
+  '/_layout/recover': typeof LayoutRecoverRoute
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/ranking/claim': typeof LayoutRankingClaimRoute
   '/_layout/ranking/$rankingId/edit': typeof LayoutRankingRankingIdEditRoute
@@ -76,12 +85,14 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/recover'
     | '/ranking/claim'
     | '/ranking/$rankingId/edit'
     | '/ranking/$rankingId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/about'
+    | '/recover'
     | '/'
     | '/ranking/claim'
     | '/ranking/$rankingId/edit'
@@ -90,6 +101,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_layout'
     | '/_layout/about'
+    | '/_layout/recover'
     | '/_layout/'
     | '/_layout/ranking/claim'
     | '/_layout/ranking/$rankingId/edit'
@@ -114,6 +126,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof LayoutIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
+    '/_layout/recover': {
+      id: '/_layout/recover'
+      path: '/recover'
+      fullPath: '/recover'
+      preLoaderRoute: typeof LayoutRecoverRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/about': {
@@ -149,6 +168,7 @@ declare module '@tanstack/react-router' {
 
 interface LayoutRouteChildren {
   LayoutAboutRoute: typeof LayoutAboutRoute
+  LayoutRecoverRoute: typeof LayoutRecoverRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
   LayoutRankingClaimRoute: typeof LayoutRankingClaimRoute
   LayoutRankingRankingIdEditRoute: typeof LayoutRankingRankingIdEditRoute
@@ -157,6 +177,7 @@ interface LayoutRouteChildren {
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAboutRoute: LayoutAboutRoute,
+  LayoutRecoverRoute: LayoutRecoverRoute,
   LayoutIndexRoute: LayoutIndexRoute,
   LayoutRankingClaimRoute: LayoutRankingClaimRoute,
   LayoutRankingRankingIdEditRoute: LayoutRankingRankingIdEditRoute,

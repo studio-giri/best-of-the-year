@@ -2,6 +2,7 @@ import { Config, Context, Effect, Layer, Redacted } from "effect";
 
 interface EnvShape {
 	readonly databaseUrl: Redacted.Redacted<string>;
+	readonly appBaseUrl: string;
 }
 
 export class Env extends Context.Service<Env, EnvShape>()("Env") {
@@ -24,8 +25,16 @@ export class Env extends Context.Service<Env, EnvShape>()("Env") {
 				catch: () => new Error("DATABASE_URL is not a valid URL"),
 			});
 
+			/**
+			 * Frontend origin the backend prepends to emailed recovery links. Plain
+			 * (not redacted): it is a public URL, never a secret, and it is embedded
+			 * verbatim into user-facing links.
+			 */
+			const appBaseUrl = yield* Config.string("APP_BASE_URL");
+
 			return {
 				databaseUrl,
+				appBaseUrl,
 			};
 		}),
 	);

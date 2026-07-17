@@ -1,14 +1,15 @@
 import type { ClaimRejectionCode } from "@boty/shared/api/rankings/claim/ClaimRejectionCode.schema";
+import { emailRejectionMessages } from "#/lib/emailRejectionMessages.ts";
 
 /**
  * The single client-side source of the user-facing claim-rejection wording.
  * The server speaks only machine codes; this map renders them. The exact
  * strings here are the acceptance-criteria source of truth (i18n-ready: swap
- * this map, not the call sites).
+ * this map, not the call sites). The email strings come from the shared
+ * `emailRejectionMessages` so the recovery form renders them identically.
  */
 export const claimRejectionMessages: Record<ClaimRejectionCode, string> = {
-	email_empty: "Email cannot be empty.",
-	email_invalid: "Email is invalid.",
+	...emailRejectionMessages,
 	username_empty: "Username cannot be empty.",
 	username_too_short: "Username must be at least 2 characters.",
 	username_too_long: "Username must be 30 characters or fewer.",

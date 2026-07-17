@@ -73,7 +73,7 @@ concern (see Out of Scope).
 
 - REQ-11: A person can request recovery by entering their email.
 - REQ-12: When a Ranking exists for that email, an emailed link is sent and the person is told to check their inbox.
-- REQ-13: When no Ranking exists for that email, the person is told plainly and offered to create one — the dead end becomes a starting point.
+- REQ-13: When no Ranking exists for that email, the person is told plainly and kept on the form to correct the address, which is treated as a correctable input error.
 - REQ-14: The recovery form signals existence honestly either way — it never masks whether a Ranking exists behind a vague "if it exists, a link was sent" message.
 - REQ-15: Recovery restores edit access only to the requester's own Ranking, never anyone else's.
 - REQ-16: Clicking a valid recovery link lands the person directly in edit mode on that browser, with no extra confirmation step.

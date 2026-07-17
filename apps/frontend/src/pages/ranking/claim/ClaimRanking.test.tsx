@@ -39,7 +39,7 @@ function fill(label: string, value: string) {
 function submit() {
 	fireEvent.click(
 		screen.getByRole("button", {
-			name: /claim/i,
+			name: /lezgoo/i,
 		}),
 	);
 }
@@ -133,7 +133,7 @@ describe("ClaimRanking", () => {
 		submit();
 
 		expect(
-			await screen.findByText("Username taken: pick another."),
+			await screen.findByText("Username taken. Pick another."),
 		).toBeTruthy();
 		expect(navigateMock).not.toHaveBeenCalled();
 	});

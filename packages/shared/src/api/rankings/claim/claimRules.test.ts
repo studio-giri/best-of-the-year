@@ -2,7 +2,6 @@ import { describe, expect, test } from "bun:test";
 import { validateEmail, validateUsername } from "./claimRules.ts";
 
 describe("validateEmail", () => {
-	// AC7
 	test.each([
 		"",
 		"   ",
@@ -10,7 +9,6 @@ describe("validateEmail", () => {
 		expect(validateEmail(value)).toBe("email_empty");
 	});
 
-	// AC6
 	test.each([
 		"foo@",
 		"no-at-sign",
@@ -25,7 +23,6 @@ describe("validateEmail", () => {
 });
 
 describe("validateUsername", () => {
-	// AC9
 	test.each([
 		"",
 		"   ",
@@ -33,7 +30,6 @@ describe("validateUsername", () => {
 		expect(validateUsername(value)).toBe("username_empty");
 	});
 
-	// AC10
 	test("flags a trimmed length < 2 as username_too_short", () => {
 		expect(validateUsername(" a ")).toBe("username_too_short");
 	});

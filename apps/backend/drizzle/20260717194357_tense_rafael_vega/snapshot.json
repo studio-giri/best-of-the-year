@@ -1,7 +1,7 @@
 {
 	"version": "8",
 	"dialect": "postgres",
-	"id": "3dbfa49f-f73f-4fe3-ab59-9c6d8d6cdc0f",
+	"id": "419d4101-b1f1-4892-ac91-bc9ba62b0838",
 	"prevIds": [
 		"00000000-0000-0000-0000-000000000000"
 	],
@@ -21,6 +21,12 @@
 		{
 			"isRlsEnabled": false,
 			"name": "rankings",
+			"entityType": "tables",
+			"schema": "public"
+		},
+		{
+			"isRlsEnabled": false,
+			"name": "recovery_tokens",
 			"entityType": "tables",
 			"schema": "public"
 		},
@@ -220,6 +226,84 @@
 			"table": "rankings"
 		},
 		{
+			"type": "uuid",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": "uuidv7()",
+			"generated": null,
+			"identity": null,
+			"name": "id",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "recovery_tokens"
+		},
+		{
+			"type": "uuid",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "ranking_id",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "recovery_tokens"
+		},
+		{
+			"type": "text",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "token_hash",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "recovery_tokens"
+		},
+		{
+			"type": "timestamp(3)",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "expires_at",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "recovery_tokens"
+		},
+		{
+			"type": "timestamp(3)",
+			"typeSchema": null,
+			"notNull": false,
+			"dimensions": 0,
+			"default": null,
+			"generated": null,
+			"identity": null,
+			"name": "consumed_at",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "recovery_tokens"
+		},
+		{
+			"type": "timestamp(3)",
+			"typeSchema": null,
+			"notNull": true,
+			"dimensions": 0,
+			"default": "now()",
+			"generated": null,
+			"identity": null,
+			"name": "created_at",
+			"entityType": "columns",
+			"schema": "public",
+			"table": "recovery_tokens"
+		},
+		{
 			"nameExplicit": true,
 			"columns": [
 				{
@@ -236,6 +320,27 @@
 			"method": "btree",
 			"concurrently": false,
 			"name": "rankings_username_lower_trim_unique",
+			"entityType": "indexes",
+			"schema": "public",
+			"table": "rankings"
+		},
+		{
+			"nameExplicit": true,
+			"columns": [
+				{
+					"value": "lower(trim(\"email\"))",
+					"isExpression": true,
+					"asc": true,
+					"nullsFirst": false,
+					"opclass": null
+				}
+			],
+			"isUnique": true,
+			"where": null,
+			"with": "",
+			"method": "btree",
+			"concurrently": false,
+			"name": "rankings_email_lower_trim_unique",
 			"entityType": "indexes",
 			"schema": "public",
 			"table": "rankings"
@@ -275,6 +380,23 @@
 			"table": "ranking_items"
 		},
 		{
+			"nameExplicit": false,
+			"columns": [
+				"ranking_id"
+			],
+			"schemaTo": "public",
+			"tableTo": "rankings",
+			"columnsTo": [
+				"id"
+			],
+			"onUpdate": "NO ACTION",
+			"onDelete": "CASCADE",
+			"name": "recovery_tokens_ranking_id_rankings_id_fkey",
+			"entityType": "fks",
+			"schema": "public",
+			"table": "recovery_tokens"
+		},
+		{
 			"columns": [
 				"id"
 			],
@@ -305,6 +427,16 @@
 			"entityType": "pks"
 		},
 		{
+			"columns": [
+				"id"
+			],
+			"nameExplicit": false,
+			"name": "recovery_tokens_pkey",
+			"schema": "public",
+			"table": "recovery_tokens",
+			"entityType": "pks"
+		},
+		{
 			"nameExplicit": false,
 			"columns": [
 				"ranking_id",
@@ -325,6 +457,17 @@
 			"name": "owner_tokens_token_hash_key",
 			"schema": "public",
 			"table": "owner_tokens",
+			"entityType": "uniques"
+		},
+		{
+			"nameExplicit": false,
+			"columns": [
+				"token_hash"
+			],
+			"nullsNotDistinct": false,
+			"name": "recovery_tokens_token_hash_key",
+			"schema": "public",
+			"table": "recovery_tokens",
 			"entityType": "uniques"
 		}
 	],

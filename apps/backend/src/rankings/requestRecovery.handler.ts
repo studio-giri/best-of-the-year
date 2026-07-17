@@ -28,16 +28,16 @@ export function requestRecovery(
 		// Reuse the same email validation used at claim time, so rejection codes
 		// and messages match across both flows. Refuse before any lookup runs.
 		const trimmedEmail = body.email.trim();
-		const emailError = validateEmail(trimmedEmail);
-		if (emailError) {
+		const emailErrorCode = validateEmail(trimmedEmail);
+		if (emailErrorCode) {
 			return yield* Effect.fail(
 				new RecoveryRejected({
-					code: emailError,
+					code: emailErrorCode,
 				}),
 			);
 		}
 
-		// Match case- and whitespace-insensitively against the same
+		// Match case and whitespace insensitively against the same
 		// lower(trim(email)) expression the unique index is built on.
 		const db = yield* PgDrizzle;
 		const matches = yield* db

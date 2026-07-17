@@ -48,7 +48,7 @@ describe("RequestRecovery", () => {
 		expect(email.required).toBe(true);
 	});
 
-	// AC1: an invalid email shows its mapped message and blocks submit.
+	// An invalid email shows its mapped message and blocks submit.
 	test("blocks submit and shows the message for an invalid email", async () => {
 		render(<RequestRecovery />);
 		fill("Email", "foo@");
@@ -58,7 +58,7 @@ describe("RequestRecovery", () => {
 		expect(mutateAsyncMock).not.toHaveBeenCalled();
 	});
 
-	// AC1: a blank email shows its mapped message and blocks submit.
+	// A blank email shows its mapped message and blocks submit.
 	test("blocks submit and shows the message for a blank email", async () => {
 		render(<RequestRecovery />);
 		submit();
@@ -67,7 +67,7 @@ describe("RequestRecovery", () => {
 		expect(mutateAsyncMock).not.toHaveBeenCalled();
 	});
 
-	// AC3: a `sent` outcome renders the check-inbox message.
+	// A `sent` outcome renders the check-inbox message.
 	test("renders the check-inbox message on a sent outcome", async () => {
 		mutateAsyncMock.mockResolvedValue({
 			outcome: "sent",
@@ -84,7 +84,7 @@ describe("RequestRecovery", () => {
 		).toBeTruthy();
 	});
 
-	// AC4: an unknown email is refused inline and the person stays on the form —
+	// An unknown email is refused inline and the person stays on the form —
 	// no confirmation, no offer to create a new ranking.
 	test("shows the unknown-email message inline and keeps the form", async () => {
 		mutateAsyncMock.mockRejectedValue(

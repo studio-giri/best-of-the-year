@@ -82,7 +82,7 @@ describe("POST /rankings/recover (request recovery)", () => {
 		await ctx?.cleanup();
 	});
 
-	// AC1: blank / whitespace-only email is refused as email_empty, with no
+	// A blank / whitespace-only email is refused as email_empty, with no
 	// lookup — no token row and no email dispatched.
 	test.each([
 		[
@@ -101,7 +101,7 @@ describe("POST /rankings/recover (request recovery)", () => {
 		expect(ctx.mailerCalls).toHaveLength(0);
 	});
 
-	// AC1: malformed / over-length email is refused as email_invalid, no lookup.
+	// A malformed / over-length email is refused as email_invalid, no lookup.
 	test.each([
 		[
 			"foo@",
@@ -119,7 +119,7 @@ describe("POST /rankings/recover (request recovery)", () => {
 		expect(ctx.mailerCalls).toHaveLength(0);
 	});
 
-	// AC2: the email is matched ignoring letter case and surrounding whitespace.
+	// The email is matched ignoring letter case and surrounding whitespace.
 	test("matches case- and whitespace-insensitively", async () => {
 		await seedRanking(ctx, "Paulin@x.com");
 
@@ -131,7 +131,7 @@ describe("POST /rankings/recover (request recovery)", () => {
 		expect(ctx.mailerCalls).toHaveLength(1);
 	});
 
-	// AC3: an email backing a ranking creates exactly one link (hash only, ~48h
+	// An email backing a ranking creates exactly one link (hash only, ~48h
 	// expiry, unconsumed) and dispatches exactly one email carrying the raw token
 	// in a /recover/ link built from the configured origin.
 	test("issues one link and dispatches one email when the ranking exists", async () => {
@@ -165,7 +165,7 @@ describe("POST /rankings/recover (request recovery)", () => {
 		expect(row.tokenHash).not.toBe(rawToken);
 	});
 
-	// AC4: an email backing no ranking is refused as email_unknown (422), with no
+	// An email backing no ranking is refused as email_unknown (422), with no
 	// link created and no email sent.
 	test("refuses email_unknown without issuing or sending when no ranking exists", async () => {
 		const { status, json } = await recover(ctx, "nobody@example.com");
@@ -175,7 +175,7 @@ describe("POST /rankings/recover (request recovery)", () => {
 		expect(ctx.mailerCalls).toHaveLength(0);
 	});
 
-	// AC5: two requests create two distinct, independent links; neither dispatch
+	// Two requests create two distinct, independent links; neither dispatch
 	// alters the other, and neither is consumed by issuing.
 	test("creates two distinct independent links when requested twice", async () => {
 		await seedRanking(ctx, "twice@example.com");

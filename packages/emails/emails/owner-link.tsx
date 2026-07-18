@@ -117,6 +117,7 @@ const urlText = {
 	fontSize: "13px",
 	lineHeight: "20px",
 	color: "#2563eb",
+	overflowWrap: "break-word" as const,
 	wordBreak: "break-all" as const,
 	margin: "0 0 16px",
 };

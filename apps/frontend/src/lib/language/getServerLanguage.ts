@@ -17,6 +17,8 @@ export const getServerLanguage = createServerFn({
 	method: "GET",
 }).handler((): Language => {
 	const cookie = getCookie(LANGUAGE_COOKIE);
-	if (cookie !== undefined && isLanguage(cookie)) return cookie;
+	if (cookie !== undefined && isLanguage(cookie)) {
+		return cookie;
+	}
 	return negotiateAcceptLanguage(getRequestHeader("accept-language"));
 });

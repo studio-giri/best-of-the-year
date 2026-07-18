@@ -13,7 +13,9 @@ import { readLanguageCookie } from "./languageCookie.ts";
  */
 export function resolveClientLanguage(): Language {
 	const fromCookie = readLanguageCookie(document.cookie);
-	if (fromCookie) return fromCookie;
+	if (fromCookie) {
+		return fromCookie;
+	}
 	const current = document.documentElement.lang;
 	return isLanguage(current) ? current : defaultLanguage;
 }

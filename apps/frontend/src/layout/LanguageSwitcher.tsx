@@ -30,7 +30,9 @@ export function LanguageSwitcher() {
 	const router = useRouter();
 
 	const choose = (next: Language) => {
-		if (next === language) return;
+		if (next === language) {
+			return;
+		}
 		setLanguage(next);
 		void router.invalidate();
 	};

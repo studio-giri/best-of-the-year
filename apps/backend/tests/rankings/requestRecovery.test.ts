@@ -60,7 +60,9 @@ function seedRanking(ctx: Ctx, email: string) {
 					id: rankingsTable.id,
 				});
 			const row = rows[0];
-			if (!row) throw new Error("seed insert returned no row");
+			if (!row) {
+				throw new Error("seed insert returned no row");
+			}
 			return row.id;
 		}),
 	);
@@ -151,7 +153,9 @@ describe("POST /rankings/recover (request recovery)", () => {
 		const tokens = await allRecoveryTokens(ctx);
 		expect(tokens).toHaveLength(1);
 		const row = tokens[0];
-		if (!row) throw new Error("expected a recovery_tokens row");
+		if (!row) {
+			throw new Error("expected a recovery_tokens row");
+		}
 		expect(row.rankingId).toBe(rankingId);
 		expect(row.consumedAt).toBeNull();
 		expect(
@@ -160,7 +164,9 @@ describe("POST /rankings/recover (request recovery)", () => {
 
 		expect(ctx.mailerCalls).toHaveLength(1);
 		const call = ctx.mailerCalls[0];
-		if (!call) throw new Error("expected a Mailer call");
+		if (!call) {
+			throw new Error("expected a Mailer call");
+		}
 		expect(call.to).toBe("owner@example.com");
 		expect(call.url.startsWith(`${ctx.appBaseUrl}/recover/`)).toBe(true);
 
@@ -250,7 +256,9 @@ describe("POST /rankings/recover (request recovery)", () => {
 		const rawToken = ctx.mailerCalls[0]?.url.slice(
 			`${ctx.appBaseUrl}/recover/`.length,
 		);
-		if (!rawToken) throw new Error("expected a dispatched token");
+		if (!rawToken) {
+			throw new Error("expected a dispatched token");
+		}
 		expect(sentBody).not.toContain(rawToken);
 
 		const miss = await recover(ctx, "ghost@example.com");

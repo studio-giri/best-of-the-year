@@ -19,12 +19,18 @@ const ONE_YEAR_SECONDS = 60 * 60 * 24 * 365;
 export function readLanguageCookie(
 	cookieHeader: string | null | undefined,
 ): Language | undefined {
-	if (!cookieHeader) return undefined;
+	if (!cookieHeader) {
+		return undefined;
+	}
 	for (const pair of cookieHeader.split(";")) {
 		const separator = pair.indexOf("=");
-		if (separator === -1) continue;
+		if (separator === -1) {
+			continue;
+		}
 		const name = pair.slice(0, separator).trim();
-		if (name !== LANGUAGE_COOKIE) continue;
+		if (name !== LANGUAGE_COOKIE) {
+			continue;
+		}
 		const value = decodeURIComponent(pair.slice(separator + 1).trim());
 		return isLanguage(value) ? value : undefined;
 	}

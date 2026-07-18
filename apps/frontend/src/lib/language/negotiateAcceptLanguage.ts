@@ -14,7 +14,9 @@ import { match } from "@formatjs/intl-localematcher";
 export function parseAcceptLanguage(
 	header: string | null | undefined,
 ): string[] {
-	if (!header) return [];
+	if (!header) {
+		return [];
+	}
 	return header
 		.split(",")
 		.map((part) => {
@@ -41,7 +43,9 @@ export function negotiateAcceptLanguage(
 	header: string | null | undefined,
 ): Language {
 	const requested = parseAcceptLanguage(header);
-	if (requested.length === 0) return defaultLanguage;
+	if (requested.length === 0) {
+		return defaultLanguage;
+	}
 	const matched = match(
 		requested,
 		[

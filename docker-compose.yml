@@ -19,5 +19,16 @@ services:
       timeout: 5s
       retries: 5
 
+  # Local email sink: captures every message the backend sends over SMTP so no
+  # real mail leaves the machine in development. SMTP on 1025, web UI on 8025
+  # (http://localhost:8025). Same restart policy as the DB — explicit `bun db:up`
+  # only, never resurrected by the daemon.
+  mailpit:
+    image: axllent/mailpit:v1.30.4
+    restart: "no"
+    ports:
+      - "${MAILPIT_SMTP_PORT:-1025}:1025"
+      - "${MAILPIT_UI_PORT:-8025}:8025"
+
 volumes:
   best_of_the_year_db_data:

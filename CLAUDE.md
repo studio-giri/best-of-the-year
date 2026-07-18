@@ -12,10 +12,11 @@ best-of-the-year/
 │   ├── backend/      # Bun + Effect HTTP server (@effect/platform-bun) + Drizzle ORM (PostgreSQL)
 │   └── frontend/     # React 19 + TanStack Start (SSR) + TanStack Query + Vite + Tailwind v4
 └── packages/
-    └── shared/       # @boty/shared — shared Effect schemas, types, and HttpApi specs (src/api/)
+    ├── shared/       # @boty/shared — shared Effect schemas, types, and HttpApi specs (src/api/)
+    └── emails/       # @boty/emails — react-email templates + preview server; backend renders these for SMTP
 ```
 
-Both apps depend on `@boty/shared` via `workspace:*`.
+Both apps depend on `@boty/shared` via `workspace:*`; the backend also depends on `@boty/emails`.
 
 Frontend path alias: `#/*` → `./src/*` (use for all internal imports in the frontend).
 

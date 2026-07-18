@@ -1,15 +1,11 @@
-import type { Language } from "@boty/shared/language/Language.schema";
-
-interface AboutMessages {
-	readonly body: string;
-}
+import { defineMessages } from "#/lib/language/defineMessages.ts";
 
 // About page copy, per Language.
-export const aboutMessages = {
+export const aboutMessages = defineMessages({
 	en: {
 		body: "About!",
 	},
 	fr: {
 		body: "À propos !",
 	},
-} satisfies Record<Language, AboutMessages>;
+});

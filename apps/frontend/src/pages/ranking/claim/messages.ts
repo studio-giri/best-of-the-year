@@ -1,30 +1,15 @@
 import type { ClaimRejectionCode } from "@boty/shared/api/rankings/claim/ClaimRejectionCode.schema";
-import type { Language } from "@boty/shared/language/Language.schema";
 import { emailRejectionMessages } from "#/lib/emailRejectionMessages.ts";
-
-interface ClaimMessages {
-	readonly subtitle: string;
-	readonly usernameLabel: string;
-	readonly usernameHint: string;
-	readonly usernamePlaceholder: string;
-	readonly emailLabel: string;
-	readonly emailHint: string;
-	readonly emailPlaceholder: string;
-	readonly submit: string;
-	// Server speaks machine codes; this renders them. Reuses the shared email
-	// wording so claim and recovery show identical email rejections.
-	readonly rejections: Record<ClaimRejectionCode, string>;
-	readonly ownerTokenNotStored: string;
-}
+import { defineMessages } from "#/lib/language/defineMessages.ts";
 
 /**
- * The claim form's copy, per Language. Typed so no Language can omit a key (or a
- * rejection code) another defines — a missing translation is a compile error.
- * The `rejections` map renders the server's machine codes; a claim that
- * succeeds but whose Owner token can't be saved shows `ownerTokenNotStored`,
- * worded as terminal rather than retryable.
+ * The claim form's copy, per Language. The `rejections` map renders the server's
+ * machine codes, reusing the shared email wording so claim and recovery show
+ * identical email rejections; its `satisfies Record<ClaimRejectionCode, string>`
+ * makes an unmapped code a compile error. A claim that succeeds but whose Owner
+ * token can't be saved shows `ownerTokenNotStored`, worded as terminal.
  */
-export const claimMessages = {
+export const claimMessages = defineMessages({
 	en: {
 		subtitle: "New list",
 		usernameLabel: "Username",
@@ -41,7 +26,7 @@ export const claimMessages = {
 			username_too_short: "Username must be at least 2 characters.",
 			username_too_long: "Username must be 30 characters or fewer.",
 			username_taken: "Username taken. Pick another.",
-		},
+		} satisfies Record<ClaimRejectionCode, string>,
 		ownerTokenNotStored:
 			"Your list was created, but this browser couldn't save your access to it. Open another browser and use the Recover List form to gain access.",
 	},
@@ -66,4 +51,4 @@ export const claimMessages = {
 		ownerTokenNotStored:
 			"Votre liste a été créée, mais ce navigateur n'a pas pu enregistrer votre accès. Ouvrez un autre navigateur et utilisez le formulaire de récupération pour y accéder.",
 	},
-} satisfies Record<Language, ClaimMessages>;
+});

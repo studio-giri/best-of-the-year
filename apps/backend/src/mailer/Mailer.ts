@@ -7,9 +7,6 @@ import nodemailer from "nodemailer";
 export interface SendOwnerLinkArgs {
 	readonly to: string;
 	readonly url: string;
-	// Language the email is written in. Passing the shared `Language` value
-	// through to the renderer here — the renderer's sole call site — is what
-	// catches any drift with the emails package's own local Language union.
 	readonly language: Language;
 }
 

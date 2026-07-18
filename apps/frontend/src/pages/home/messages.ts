@@ -1,15 +1,11 @@
-import type { Language } from "@boty/shared/language/Language.schema";
-
-interface HomeMessages {
-	readonly heading: string;
-}
+import { defineMessages } from "#/lib/language/defineMessages.ts";
 
 // Home page copy, per Language.
-export const homeMessages = {
+export const homeMessages = defineMessages({
 	en: {
 		heading: "Homepage",
 	},
 	fr: {
 		heading: "Accueil",
 	},
-} satisfies Record<Language, HomeMessages>;
+});

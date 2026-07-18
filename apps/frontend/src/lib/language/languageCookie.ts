@@ -37,5 +37,6 @@ export function readLanguageCookie(
  * httpOnly, since client JS both writes and later reads it.
  */
 export function writeLanguageCookie(language: Language): void {
+	// biome-ignore lint/suspicious/noDocumentCookie: value is a validated Language, and the Cookie Store API is async and unavailable in Safari — overkill for one cookie.
 	document.cookie = `${LANGUAGE_COOKIE}=${language}; Path=/; Max-Age=${ONE_YEAR_SECONDS}; SameSite=Lax`;
 }

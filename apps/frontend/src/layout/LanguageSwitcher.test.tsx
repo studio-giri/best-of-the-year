@@ -31,6 +31,7 @@ beforeEach(() => {
 afterEach(() => {
 	cleanup();
 	// Expire the cookie so a persisted choice doesn't leak into the next test.
+	// biome-ignore lint/suspicious/noDocumentCookie: test cleanup; the Cookie Store API is async and adds nothing here.
 	document.cookie = "lang=; Path=/; Max-Age=0";
 });
 

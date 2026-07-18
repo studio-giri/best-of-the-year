@@ -1,24 +1,9 @@
-import type { RecoveryRejectionCode } from "@boty/shared/api/rankings/recover/RecoveryRejectionCode.schema";
-import type { Language } from "@boty/shared/language/Language.schema";
 import { emailRejectionMessages } from "#/lib/emailRejectionMessages.ts";
+import { defineMessages } from "#/lib/language/defineMessages.ts";
 
-interface RecoverMessages {
-	readonly subtitle: string;
-	readonly emailLabel: string;
-	readonly emailHint: string;
-	readonly emailPlaceholder: string;
-	readonly submit: string;
-	readonly sent: string;
-	// Email-rejection wording (empty, invalid, unknown address) reused from the
-	// shared source so claim and recovery render it identically.
-	readonly rejections: Record<RecoveryRejectionCode, string>;
-}
-
-/**
- * The recovery form's copy, per Language. Typed so no Language can omit a key
- * another defines — a missing translation is a compile error.
- */
-export const recoverMessages = {
+// The recovery form's copy, per Language. `rejections` reuses the shared
+// email-rejection wording so claim and recovery render it identically.
+export const recoverMessages = defineMessages({
 	en: {
 		subtitle: "Recover your list",
 		emailLabel: "Email",
@@ -37,4 +22,4 @@ export const recoverMessages = {
 		sent: "Vérifiez votre boîte de réception. Nous vous avons envoyé un lien pour récupérer l'accès à votre liste.",
 		rejections: emailRejectionMessages.fr,
 	},
-} satisfies Record<Language, RecoverMessages>;
+});

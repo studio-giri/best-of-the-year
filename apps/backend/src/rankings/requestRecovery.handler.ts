@@ -70,9 +70,10 @@ export function requestRecovery(
 		const url = `${env.appBaseUrl}/recover/${rawToken}`;
 
 		// The email follows the reader's current Language, carried in the request
-		// body and coerced with an English fallback. The HTTP response stays
-		// language-blind — it returns codes only.
+		// body and coerced with an English fallback.
 		const language = coerceLanguage(body.language);
+
+		// Send the email
 		const mailer = yield* Mailer;
 		yield* mailer.sendOwnerLink({
 			to: trimmedEmail,

@@ -13,11 +13,12 @@ export const emailRejectionMessages = {
 	en: {
 		email_empty: "Email cannot be empty.",
 		email_invalid: "Email is invalid.",
-		email_unknown: "No ranking exists for this email.",
+		email_unknown: "No list exists for this email.",
 	},
 	fr: {
-		email_empty: "L'e-mail ne peut pas être vide.",
+		email_empty: "Tu n'as pas renseigné d'email !",
 		email_invalid: "L'e-mail est invalide.",
-		email_unknown: "Aucun classement n'existe pour cet e-mail.",
+		email_unknown:
+			"Tu as dû te tromper : aucune liste n'existe pour cet e-mail.",
 	},
 } satisfies Record<Language, Record<RecoveryRejectionCode, string>>;

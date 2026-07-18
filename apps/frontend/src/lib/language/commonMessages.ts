@@ -7,6 +7,7 @@ interface CommonMessages {
 	readonly genericError: string;
 	readonly buttonLoading: string;
 	readonly languageSwitcherLabel: string;
+	readonly createYourOwn: string;
 }
 
 /**
@@ -17,17 +18,19 @@ interface CommonMessages {
 export const commonMessages = {
 	en: {
 		siteTitle: "Games of the Year",
-		footerCredit: "Crafted with 🤘 by Paulin ·",
+		footerCredit: "Crafted with 🤘 by Paulin",
 		genericError: "Something went wrong, please try again later.",
 		buttonLoading: "Loading…",
 		languageSwitcherLabel: "Language",
+		createYourOwn: "Create your own",
 	},
 	fr: {
-		siteTitle: "Jeux de l'année",
-		footerCredit: "Réalisé avec 🤘 par Paulin ·",
+		siteTitle: "Games of the Year",
+		footerCredit: "Made with 🤘 by Paulin",
 		genericError: "Une erreur est survenue, veuillez réessayer plus tard.",
 		buttonLoading: "Chargement…",
 		languageSwitcherLabel: "Langue",
+		createYourOwn: "Crée ta propre liste !",
 	},
 } satisfies Record<Language, CommonMessages>;
 

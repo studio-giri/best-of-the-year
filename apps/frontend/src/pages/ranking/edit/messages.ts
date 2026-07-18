@@ -10,13 +10,13 @@ interface EditMessages {
 // Ranking-edit copy, per Language.
 export const editMessages = {
 	en: {
-		denied: "You don't have permission to edit this ranking.",
-		editingSubtitle: "Editing your ranking",
-		ownRanking: "You own this ranking",
+		denied: "You don't have permission to edit this list.",
+		editingSubtitle: "Editing your list",
+		ownRanking: "You own this list",
 	},
 	fr: {
-		denied: "Vous n'avez pas la permission de modifier ce classement.",
-		editingSubtitle: "Modification de votre classement",
-		ownRanking: "Vous possédez ce classement",
+		denied: "Vous n'avez pas la permission de modifier cette liste.",
+		editingSubtitle: "Modification de votre liste",
+		ownRanking: "Vous possédez cette liste",
 	},
 } satisfies Record<Language, EditMessages>;

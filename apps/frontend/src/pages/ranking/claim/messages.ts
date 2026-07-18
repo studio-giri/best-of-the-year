@@ -26,12 +26,13 @@ interface ClaimMessages {
  */
 export const claimMessages = {
 	en: {
-		subtitle: "New ranking",
+		subtitle: "New list",
 		usernameLabel: "Username",
-		usernameHint: "Pick carefully: it'll be public, forever. No pressure.",
+		usernameHint: "Public, forever. Pick carefully. No pressure.",
 		usernamePlaceholder: "YourUsername",
 		emailLabel: "Email",
-		emailHint: "So you don't lose your ranking. That's the only reason we ask.",
+		emailHint:
+			"So you don't lose access to your list. That's the only reason we ask.",
 		emailPlaceholder: "your@email.com",
 		submit: "lezgoo",
 		rejections: {
@@ -42,21 +43,20 @@ export const claimMessages = {
 			username_taken: "Username taken. Pick another.",
 		},
 		ownerTokenNotStored:
-			"Your ranking was created, but this browser couldn't save your access to it. Open another browser and use the Recover Ranking form to gain access.",
+			"Your list was created, but this browser couldn't save your access to it. Open another browser and use the Recover List form to gain access.",
 	},
 	fr: {
-		subtitle: "Nouveau classement",
+		subtitle: "Nouvelle liste",
 		usernameLabel: "Nom d'utilisateur",
-		usernameHint:
-			"Choisissez bien : ce sera public, pour toujours. Sans pression.",
-		usernamePlaceholder: "VotreNom",
+		usernameHint: "Choisis bien, ou tu vas le regretter. Mais pas de pression.",
+		usernamePlaceholder: "PseudoCringe",
 		emailLabel: "E-mail",
-		emailHint: "Pour ne pas perdre votre classement. C'est la seule raison.",
-		emailPlaceholder: "vous@email.com",
+		emailHint: "On en a besoin pour récupérer l'accès à ta liste, au cas où.",
+		emailPlaceholder: "machin@email.com",
 		submit: "c'est parti",
 		rejections: {
 			...emailRejectionMessages.fr,
-			username_empty: "Le nom d'utilisateur ne peut pas être vide.",
+			username_empty: "Tu n'as pas renseigné ton blaze !",
 			username_too_short:
 				"Le nom d'utilisateur doit comporter au moins 2 caractères.",
 			username_too_long:
@@ -64,6 +64,6 @@ export const claimMessages = {
 			username_taken: "Nom d'utilisateur déjà pris. Choisissez-en un autre.",
 		},
 		ownerTokenNotStored:
-			"Votre classement a été créé, mais ce navigateur n'a pas pu enregistrer votre accès. Ouvrez un autre navigateur et utilisez le formulaire de récupération pour y accéder.",
+			"Votre liste a été créée, mais ce navigateur n'a pas pu enregistrer votre accès. Ouvrez un autre navigateur et utilisez le formulaire de récupération pour y accéder.",
 	},
 } satisfies Record<Language, ClaimMessages>;

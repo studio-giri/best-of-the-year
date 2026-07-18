@@ -96,7 +96,7 @@ describe("RequestRecovery", () => {
 
 		expect(
 			await screen.findByText(
-				"Check your inbox. We've emailed you a link to get back into your ranking.",
+				"Check your inbox. We've emailed you a link to get back into your list.",
 			),
 		).toBeTruthy();
 	});
@@ -115,12 +115,12 @@ describe("RequestRecovery", () => {
 		submit();
 
 		expect(
-			await screen.findByText("No ranking exists for this email."),
+			await screen.findByText("No list exists for this email."),
 		).toBeTruthy();
 		expect(screen.getByLabelText("Email")).toBeTruthy();
 		expect(
 			screen.queryByText(
-				"Check your inbox. We've emailed you a link to get back into your ranking.",
+				"Check your inbox. We've emailed you a link to get back into your list.",
 			),
 		).toBeNull();
 	});

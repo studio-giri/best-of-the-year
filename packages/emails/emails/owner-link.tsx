@@ -36,21 +36,21 @@ interface Copy {
 // entry here (and to `ownerLinkSubject`).
 const copy: Record<Language, Copy> = {
 	en: {
-		preview: "A single-use link to reopen your ranking",
+		preview: "A single-use link to reopen your list",
 		heading: "Let's get you back in",
 		intro:
 			"Here's the recovery link you asked for. It's single-use and expires in 48h.",
-		button: "Recover my ranking",
+		button: "Recover my list",
 		fallbackHint:
 			"If the button doesn't work, copy and paste this link into your browser:",
 		ignoreHint: "If you didn't request this, you can safely ignore this email.",
 	},
 	fr: {
-		preview: "Un lien à usage unique pour rouvrir votre classement",
+		preview: "Un lien à usage unique pour rouvrir votre liste",
 		heading: "On vous reconnecte",
 		intro:
 			"Voici le lien de récupération que vous avez demandé. Il est à usage unique et expire dans 48 h.",
-		button: "Récupérer mon classement",
+		button: "Récupérer ma liste",
 		fallbackHint:
 			"Si le bouton ne fonctionne pas, copiez-collez ce lien dans votre navigateur :",
 		ignoreHint:
@@ -60,8 +60,8 @@ const copy: Record<Language, Copy> = {
 
 // Subject line of the Owner recovery email, per Language.
 export const ownerLinkSubject: Record<Language, string> = {
-	en: "Get back into your ranking",
-	fr: "Récupérez l'accès à votre classement",
+	en: "Get back into your list",
+	fr: "Récupérez l'accès à votre liste",
 };
 
 /**

@@ -38,7 +38,7 @@ describe("makeMailer", () => {
 		const message = sent[0];
 		expect(message?.to).toBe("someone@example.com");
 		expect(message?.from).toBe("Best of the Year <noreply@boty.test>");
-		expect(message?.subject).toBe("Get back into your ranking");
+		expect(message?.subject).toBe("Get back into your list");
 		// Both parts carry the recovery link.
 		expect(message?.html).toContain("http://localhost:3001/recover/raw-token");
 		expect(message?.text).toContain("http://localhost:3001/recover/raw-token");
@@ -58,10 +58,10 @@ describe("makeMailer", () => {
 			.pipe(Effect.runPromise);
 
 		const message = sent[0];
-		expect(message?.subject).toBe("Récupérez l'accès à votre classement");
+		expect(message?.subject).toBe("Récupérez l'accès à votre liste");
 		expect(message?.html).toContain('lang="fr"');
-		expect(message?.html).toContain("Récupérer mon classement");
-		expect(message?.text).toContain("Récupérer mon classement");
+		expect(message?.html).toContain("Récupérer ma liste");
+		expect(message?.text).toContain("Récupérer ma liste");
 		// The link survives localization.
 		expect(message?.html).toContain("http://localhost:3001/recover/raw-token");
 	});

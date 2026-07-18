@@ -11,13 +11,13 @@ interface DetailMessages {
 // Ranking-detail copy, per Language.
 export const detailMessages = {
 	en: {
-		notFound: "Ranking not found",
-		notFoundMalformed: "Ranking not found: the URL is malformed",
+		notFound: "List not found",
+		notFoundMalformed: "List not found: the URL is malformed",
 		by: "By",
 	},
 	fr: {
-		notFound: "Classement introuvable",
-		notFoundMalformed: "Classement introuvable : l'URL est incorrecte",
+		notFound: "Liste introuvable",
+		notFoundMalformed: "Liste introuvable : l'URL est incorrecte",
 		by: "Par",
 	},
 } satisfies Record<Language, DetailMessages>;

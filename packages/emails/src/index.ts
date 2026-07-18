@@ -1,4 +1,5 @@
 import { render } from "@react-email/render";
+import { createElement } from "react";
 import {
 	OwnerLinkEmail,
 	type OwnerLinkEmailProps,
@@ -22,7 +23,7 @@ export interface RenderedEmail {
 export async function renderOwnerLink(
 	props: OwnerLinkEmailProps,
 ): Promise<RenderedEmail> {
-	const element = OwnerLinkEmail(props);
+	const element = createElement(OwnerLinkEmail, props);
 	const [html, text] = await Promise.all([
 		render(element),
 		render(element, {

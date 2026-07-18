@@ -14,7 +14,6 @@ export function RankingPage({ rankingId }: Props) {
 
 	return (
 		<div>
-			{/* Prefix is translated; the Username is the person's data, shown as entered. */}
 			<Subtitle>
 				{messages.by} {data.username}
 			</Subtitle>

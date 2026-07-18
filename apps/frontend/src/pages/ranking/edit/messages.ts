@@ -5,7 +5,6 @@ export const editMessages = defineMessages({
 	en: {
 		denied: "You don't have permission to edit this list.",
 		editingSubtitle: "Editing your list",
-		// Owner confirmation lead-in; the ranking's id is appended as data, untranslated.
 		ownRanking: "You own this list",
 	},
 	fr: {

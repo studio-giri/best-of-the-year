@@ -17,8 +17,7 @@ import { useRequestRecovery } from "./useRequestRecovery.mutation.ts";
  * rule and copy the claim form uses. A ranking-backed email shows the check-inbox
  * confirmation; any email rejection — empty, malformed, or backing no ranking —
  * comes back as a `RecoveryRejected` code that maps to an inline message, so the
- * person corrects the address without leaving the form. The reader's current
- * Language rides along in the request so the email arrives in that Language.
+ * person corrects the address without leaving the form.
  */
 export function RequestRecovery() {
 	const messages = useLocalized(recoverMessages);
@@ -37,11 +36,9 @@ export function RequestRecovery() {
 		onSubmit: async ({ value }) => {
 			setServerError(null);
 			try {
-				// Carry the current Language so the email matches what the person is
-				// reading now — not the Language they claimed in.
 				await requestRecovery.mutateAsync({
 					email: value.email,
-					language,
+					language, // Send language in which the email should be written
 				});
 				setSent(true);
 			} catch (error) {

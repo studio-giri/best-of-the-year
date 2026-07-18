@@ -17,7 +17,6 @@ export function RankingEditPage({ rankingId }: Props) {
 		<div>
 			<Subtitle>{messages.editingSubtitle}</Subtitle>
 			<p data-testid="owner-view" className="text-center text-white">
-				{/* The ranking id is data, appended untranslated. */}
 				{`${messages.ownRanking} (${rankingId}).`}
 			</p>
 		</div>

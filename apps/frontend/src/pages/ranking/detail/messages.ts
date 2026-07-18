@@ -5,8 +5,7 @@ export const detailMessages = defineMessages({
 	en: {
 		notFound: "List not found",
 		notFoundMalformed: "List not found: the URL is malformed",
-		// The "By <Username>" byline prefix. The Username itself is the person's data
-		// and is never translated; only this prefix is.
+		// The "By <Username>" byline prefix.
 		by: "By",
 	},
 	fr: {

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { useLocalized } from "#/lib/language/LanguageProvider.tsx";
 import { hasOwnerToken } from "#/lib/ownerTokens.ts";
+import { editMessages } from "./messages.ts";
 import { RankingEditPage } from "./RankingEditPage.tsx";
 
 interface Props {
@@ -14,6 +16,7 @@ interface Props {
  * shell and shown an access-denied message.
  */
 export function RankingEditGuard({ rankingId }: Props) {
+	const messages = useLocalized(editMessages);
 	// Three states, not a boolean: `null` means "not yet checked" — the token
 	// lives in localStorage, which is unavailable during SSR and on the first
 	// client render, so we can't tell owner from non-owner until the effect runs
@@ -32,7 +35,7 @@ export function RankingEditGuard({ rankingId }: Props) {
 		return (
 			<div>
 				<p data-testid="edit-denied" className="text-center text-white">
-					You don't have permission to edit this ranking.
+					{messages.denied}
 				</p>
 			</div>
 		);

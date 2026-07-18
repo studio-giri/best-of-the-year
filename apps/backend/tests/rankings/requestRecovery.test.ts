@@ -15,16 +15,23 @@ const FORTY_EIGHT_HOURS_MS = 48 * 60 * 60 * 1000;
  * POST a recovery request and return the parsed response plus status. The body
  * is either the honest outcome (200) or a validation rejection code (422).
  */
-async function recover(ctx: Ctx, email: string) {
+async function recover(ctx: Ctx, email: string, language?: string) {
 	const res = await ctx.handler(
 		new Request("http://localhost/rankings/recover", {
 			method: "POST",
 			headers: {
 				"content-type": "application/json",
 			},
-			body: JSON.stringify({
-				email,
-			}),
+			body: JSON.stringify(
+				language === undefined
+					? {
+							email,
+						}
+					: {
+							email,
+							language,
+						},
+			),
 		}),
 	);
 	const json = (await res.json()) as {
@@ -53,7 +60,9 @@ function seedRanking(ctx: Ctx, email: string) {
 					id: rankingsTable.id,
 				});
 			const row = rows[0];
-			if (!row) throw new Error("seed insert returned no row");
+			if (!row) {
+				throw new Error("seed insert returned no row");
+			}
 			return row.id;
 		}),
 	);
@@ -144,7 +153,9 @@ describe("POST /rankings/recover (request recovery)", () => {
 		const tokens = await allRecoveryTokens(ctx);
 		expect(tokens).toHaveLength(1);
 		const row = tokens[0];
-		if (!row) throw new Error("expected a recovery_tokens row");
+		if (!row) {
+			throw new Error("expected a recovery_tokens row");
+		}
 		expect(row.rankingId).toBe(rankingId);
 		expect(row.consumedAt).toBeNull();
 		expect(
@@ -153,7 +164,9 @@ describe("POST /rankings/recover (request recovery)", () => {
 
 		expect(ctx.mailerCalls).toHaveLength(1);
 		const call = ctx.mailerCalls[0];
-		if (!call) throw new Error("expected a Mailer call");
+		if (!call) {
+			throw new Error("expected a Mailer call");
+		}
 		expect(call.to).toBe("owner@example.com");
 		expect(call.url.startsWith(`${ctx.appBaseUrl}/recover/`)).toBe(true);
 
@@ -196,6 +209,42 @@ describe("POST /rankings/recover (request recovery)", () => {
 		expect(ctx.mailerCalls[0]?.url).not.toBe(ctx.mailerCalls[1]?.url);
 	});
 
+	// The request's Language is forwarded to the mailer, so the email is written
+	// in the Language the person is currently reading.
+	test("forwards the request Language to the mailer", async () => {
+		await seedRanking(ctx, "fr@example.com");
+
+		const { status } = await recover(ctx, "fr@example.com", "fr");
+
+		expect(status).toBe(200);
+		expect(ctx.mailerCalls).toHaveLength(1);
+		expect(ctx.mailerCalls[0]?.language).toBe("fr");
+	});
+
+	// A missing or unsupported Language never fails recovery — the email falls
+	// back to English rather than the request being refused.
+	test.each([
+		[
+			undefined,
+			"absent",
+		],
+		[
+			"de",
+			"unsupported",
+		],
+		[
+			"EN",
+			"wrong case",
+		],
+	])("falls back to English when the Language is %p (%s)", async (language) => {
+		await seedRanking(ctx, "fallback@example.com");
+
+		const { status } = await recover(ctx, "fallback@example.com", language);
+
+		expect(status).toBe(200);
+		expect(ctx.mailerCalls[0]?.language).toBe("en");
+	});
+
 	// Cross-cutting privacy: the response body never echoes the submitted email
 	// nor the raw token, on either a sent confirmation or an unknown-email refusal.
 	test("never echoes the email or the raw token in the response body", async () => {
@@ -207,7 +256,9 @@ describe("POST /rankings/recover (request recovery)", () => {
 		const rawToken = ctx.mailerCalls[0]?.url.slice(
 			`${ctx.appBaseUrl}/recover/`.length,
 		);
-		if (!rawToken) throw new Error("expected a dispatched token");
+		if (!rawToken) {
+			throw new Error("expected a dispatched token");
+		}
 		expect(sentBody).not.toContain(rawToken);
 
 		const miss = await recover(ctx, "ghost@example.com");

@@ -1,6 +1,15 @@
 import { RecoveryRejected } from "@boty/shared/api/rankings/recover/RecoveryRejected.error";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import type { Language } from "@boty/shared/language/Language.schema";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/react";
+import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { LanguageProvider } from "#/lib/language/LanguageProvider.tsx";
 
 /**
  * Mock the recovery mutation (would otherwise hit the network) so each test can
@@ -16,6 +25,14 @@ vi.mock("./useRequestRecovery.mutation.ts", () => ({
 }));
 
 import { RequestRecovery } from "./RequestRecovery.tsx";
+
+// Every screen reads its copy through the LanguageProvider; render inside one,
+// defaulting to English so the existing assertions stand.
+function renderWithLanguage(ui: ReactElement, language: Language = "en") {
+	return render(
+		<LanguageProvider initialLanguage={language}>{ui}</LanguageProvider>,
+	);
+}
 
 function fill(label: string, value: string) {
 	fireEvent.change(screen.getByLabelText(label), {
@@ -43,14 +60,14 @@ afterEach(() => {
 
 describe("RequestRecovery", () => {
 	test("renders an email field marked required from the start", () => {
-		render(<RequestRecovery />);
+		renderWithLanguage(<RequestRecovery />);
 		const email = screen.getByLabelText("Email") as HTMLInputElement;
 		expect(email.required).toBe(true);
 	});
 
 	// An invalid email shows its mapped message and blocks submit.
 	test("blocks submit and shows the message for an invalid email", async () => {
-		render(<RequestRecovery />);
+		renderWithLanguage(<RequestRecovery />);
 		fill("Email", "foo@");
 		submit();
 
@@ -60,7 +77,7 @@ describe("RequestRecovery", () => {
 
 	// A blank email shows its mapped message and blocks submit.
 	test("blocks submit and shows the message for a blank email", async () => {
-		render(<RequestRecovery />);
+		renderWithLanguage(<RequestRecovery />);
 		submit();
 
 		expect(await screen.findByText("Email cannot be empty.")).toBeTruthy();
@@ -73,13 +90,13 @@ describe("RequestRecovery", () => {
 			outcome: "sent",
 		});
 
-		render(<RequestRecovery />);
+		renderWithLanguage(<RequestRecovery />);
 		fill("Email", "me@example.com");
 		submit();
 
 		expect(
 			await screen.findByText(
-				"Check your inbox. We've emailed you a link to get back into your ranking.",
+				"Check your inbox. We've emailed you a link to get back into your list.",
 			),
 		).toBeTruthy();
 	});
@@ -93,18 +110,53 @@ describe("RequestRecovery", () => {
 			}),
 		);
 
-		render(<RequestRecovery />);
+		renderWithLanguage(<RequestRecovery />);
 		fill("Email", "nobody@example.com");
 		submit();
 
 		expect(
-			await screen.findByText("No ranking exists for this email."),
+			await screen.findByText("No list exists for this email."),
 		).toBeTruthy();
 		expect(screen.getByLabelText("Email")).toBeTruthy();
 		expect(
 			screen.queryByText(
-				"Check your inbox. We've emailed you a link to get back into your ranking.",
+				"Check your inbox. We've emailed you a link to get back into your list.",
 			),
 		).toBeNull();
+	});
+
+	// The current Language rides along in the request body so the email matches
+	// what the person is reading.
+	test("sends the current Language in the recovery request", async () => {
+		mutateAsyncMock.mockResolvedValue({
+			outcome: "sent",
+		});
+
+		renderWithLanguage(<RequestRecovery />, "fr");
+		fill("E-mail", "moi@example.com");
+		fireEvent.click(
+			screen.getByRole("button", {
+				name: /envoie-moi un lien/i,
+			}),
+		);
+
+		await waitFor(() => {
+			expect(mutateAsyncMock).toHaveBeenCalledWith({
+				email: "moi@example.com",
+				language: "fr",
+			});
+		});
+	});
+
+	// A French render shows French copy throughout (REQ-8: wholly one Language).
+	test("renders the form in French when the Language is fr", () => {
+		renderWithLanguage(<RequestRecovery />, "fr");
+
+		expect(screen.getByLabelText("E-mail")).toBeTruthy();
+		expect(
+			screen.getByRole("button", {
+				name: /envoie-moi un lien/i,
+			}),
+		).toBeTruthy();
 	});
 });

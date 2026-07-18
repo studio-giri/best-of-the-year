@@ -1,6 +1,9 @@
 import type { NotFoundRouteProps } from "@tanstack/react-router";
+import { useLocalized } from "#/lib/language/LanguageProvider.tsx";
+import { detailMessages } from "./messages.ts";
 
 export function RankingNotFound({ data }: NotFoundRouteProps) {
+	const messages = useLocalized(detailMessages);
 	const isMalformed =
 		typeof data === "object" &&
 		data !== null &&
@@ -9,9 +12,7 @@ export function RankingNotFound({ data }: NotFoundRouteProps) {
 
 	return (
 		<p className="text-white text-center">
-			{isMalformed
-				? "Ranking not found: the URL is malformed"
-				: "Ranking not found"}
+			{isMalformed ? messages.notFoundMalformed : messages.notFound}
 		</p>
 	);
 }

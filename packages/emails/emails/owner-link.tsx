@@ -10,45 +10,85 @@ import {
 	Text,
 } from "@react-email/components";
 
+// A local Language union kept independent of `@boty/shared` so this package
+// stays dependency-minimal; the backend (the renderer's sole caller) passes the
+// shared Language value in, so any drift with this union surfaces there.
+type Language = "en" | "fr";
+
 export interface OwnerLinkEmailProps {
 	// Absolute, single-use recovery URL
 	readonly url: string;
+	// Language the email is written in — the reader's current Language, passed
+	// through from the recovery request.
+	readonly language: Language;
 }
 
-// Subject line of the Owner recovery email
-export const ownerLinkSubject = "Your ranking recovery link";
+interface Copy {
+	readonly preview: string;
+	readonly heading: string;
+	readonly intro: string;
+	readonly button: string;
+	readonly fallbackHint: string;
+	readonly ignoreHint: string;
+}
+
+// Every string the email shows, per Language. Adding a Language means adding an
+// entry here (and to `ownerLinkSubject`).
+const copy: Record<Language, Copy> = {
+	en: {
+		preview: "A single-use link to reopen your list",
+		heading: "Let's get you back in",
+		intro:
+			"Here's the recovery link you asked for. It's single-use and expires in 48h.",
+		button: "Recover my list",
+		fallbackHint:
+			"If the button doesn't work, copy and paste this link into your browser:",
+		ignoreHint: "If you didn't request this, you can safely ignore this email.",
+	},
+	fr: {
+		preview: "Un lien à usage unique pour récupérer l'accès",
+		heading: "On te reconnecte",
+		intro:
+			"Voici le lien de récupération que tu as demandé. Il est à usage unique et expire dans 48 h.",
+		button: "Récupérer ma liste",
+		fallbackHint:
+			"Si le bouton ne fonctionne pas, copie-colle ce lien dans ton navigateur :",
+		ignoreHint:
+			"Si tu n'es pas à l'origine de cette demande, tu peux ignorer cet e-mail.",
+	},
+};
+
+// Subject line of the Owner recovery email, per Language.
+export const ownerLinkSubject: Record<Language, string> = {
+	en: "Get back into your list",
+	fr: "Récupère l'accès à ta liste",
+};
 
 /**
- * The email carrying an Owner recovery link (S-001-02). One primary action — the
- * link back into the person's ranking — plus a plain-text fallback URL for
- * clients that strip buttons. No account, no password: the link is the whole
- * credential, so the copy states its single-use, short-lived nature.
+ * The email carrying an Owner recovery link. One primary action — the link back
+ * into the person's ranking — plus a plain-text fallback URL for clients that
+ * strip buttons. No account, no password: the link is the whole credential, so
+ * the copy states its single-use, short-lived nature. Written in the reader's
+ * Language, with `<html lang>` set to match.
  */
-export function OwnerLinkEmail({ url }: OwnerLinkEmailProps) {
+export function OwnerLinkEmail({ url, language }: OwnerLinkEmailProps) {
+	const t = copy[language];
 	return (
-		<Html lang="en">
+		<Html lang={language}>
 			<Head />
-			<Preview>A single-use link to reopen your ranking</Preview>
+			<Preview>{t.preview}</Preview>
 			<Body style={body}>
 				<Container style={container}>
-					<Heading style={heading}>Let's get you back in</Heading>
-					<Text style={text}>
-						Here's the recovery link you asked for. It's single-use and expires
-						in 48h.
-					</Text>
+					<Heading style={heading}>{t.heading}</Heading>
+					<Text style={text}>{t.intro}</Text>
 					<Section style={buttonSection}>
 						<Button href={url} style={button}>
-							Recover my ranking
+							{t.button}
 						</Button>
 					</Section>
-					<Text style={mutedText}>
-						If the button doesn't work, copy and paste this link into your
-						browser:
-					</Text>
+					<Text style={mutedText}>{t.fallbackHint}</Text>
 					<Text style={urlText}>{url}</Text>
-					<Text style={mutedText}>
-						If you didn't request this, you can safely ignore this email.
-					</Text>
+					<Text style={mutedText}>{t.ignoreHint}</Text>
 				</Container>
 			</Body>
 		</Html>
@@ -59,6 +99,7 @@ export function OwnerLinkEmail({ url }: OwnerLinkEmailProps) {
 // as sample data. The backend imports the named renderer, not this default.
 OwnerLinkEmail.PreviewProps = {
 	url: "http://localhost:3001/recover/preview-token",
+	language: "en",
 } satisfies OwnerLinkEmailProps;
 
 export default OwnerLinkEmail;

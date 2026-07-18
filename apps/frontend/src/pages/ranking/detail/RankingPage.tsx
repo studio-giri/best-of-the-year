@@ -1,4 +1,6 @@
+import { useLocalized } from "#/lib/language/LanguageProvider.tsx";
 import { Subtitle } from "#/ui/Subtitle.tsx";
+import { detailMessages } from "./messages.ts";
 import { Ranking } from "./Ranking.tsx";
 import { useRanking } from "./useRanking.query.ts";
 
@@ -7,11 +9,14 @@ interface Props {
 }
 
 export function RankingPage({ rankingId }: Props) {
+	const messages = useLocalized(detailMessages);
 	const { data } = useRanking(rankingId);
 
 	return (
 		<div>
-			<Subtitle>By {data.username}</Subtitle>
+			<Subtitle>
+				{messages.by} {data.username}
+			</Subtitle>
 			<Ranking items={data.items} />
 		</div>
 	);

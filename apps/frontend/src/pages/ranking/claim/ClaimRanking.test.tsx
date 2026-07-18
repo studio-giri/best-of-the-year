@@ -1,4 +1,5 @@
 import { ClaimRejected } from "@boty/shared/api/rankings/claim/ClaimRejected.error";
+import type { Language } from "@boty/shared/language/Language.schema";
 import {
 	cleanup,
 	fireEvent,
@@ -6,7 +7,9 @@ import {
 	screen,
 	waitFor,
 } from "@testing-library/react";
+import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { LanguageProvider } from "#/lib/language/LanguageProvider.tsx";
 
 /**
  * Mock the two side-effecting seams: navigation (needs a router context we do
@@ -27,6 +30,14 @@ vi.mock("./useClaimRanking.mutation.ts", () => ({
 }));
 
 import { ClaimRanking } from "./ClaimRanking.tsx";
+
+// Every screen reads its copy through the LanguageProvider; render inside one,
+// defaulting to English so the existing assertions stand.
+function renderWithLanguage(ui: ReactElement, language: Language = "en") {
+	return render(
+		<LanguageProvider initialLanguage={language}>{ui}</LanguageProvider>,
+	);
+}
 
 function fill(label: string, value: string) {
 	fireEvent.change(screen.getByLabelText(label), {
@@ -56,7 +67,7 @@ afterEach(() => {
 
 describe("ClaimRanking", () => {
 	test("renders an email field marked required from the start", () => {
-		render(<ClaimRanking />);
+		renderWithLanguage(<ClaimRanking />);
 		const email = screen.getByLabelText("Email") as HTMLInputElement;
 		const username = screen.getByLabelText("Username") as HTMLInputElement;
 		expect(email.required).toBe(true);
@@ -64,7 +75,7 @@ describe("ClaimRanking", () => {
 	});
 
 	test("blocks submit and shows the message for an invalid email", async () => {
-		render(<ClaimRanking />);
+		renderWithLanguage(<ClaimRanking />);
 		fill("Email", "foo@");
 		fill("Username", "valid-name");
 		submit();
@@ -74,7 +85,7 @@ describe("ClaimRanking", () => {
 	});
 
 	test("blocks submit and shows the message for a blank email", async () => {
-		render(<ClaimRanking />);
+		renderWithLanguage(<ClaimRanking />);
 		fill("Username", "valid-name");
 		submit();
 
@@ -83,7 +94,7 @@ describe("ClaimRanking", () => {
 	});
 
 	test("blocks submit and shows the message for a too-short username", async () => {
-		render(<ClaimRanking />);
+		renderWithLanguage(<ClaimRanking />);
 		fill("Email", "me@example.com");
 		fill("Username", "a");
 		submit();
@@ -103,7 +114,7 @@ describe("ClaimRanking", () => {
 			ownerToken: "tok",
 		});
 
-		render(<ClaimRanking />);
+		renderWithLanguage(<ClaimRanking />);
 		fill("Email", "me@example.com");
 		fill("Username", "MyUsername");
 		submit();
@@ -127,7 +138,7 @@ describe("ClaimRanking", () => {
 			}),
 		);
 
-		render(<ClaimRanking />);
+		renderWithLanguage(<ClaimRanking />);
 		fill("Email", "me@example.com");
 		fill("Username", "taken-name");
 		submit();
@@ -143,7 +154,7 @@ describe("ClaimRanking", () => {
 	test("shows a generic retryable message on a server 500 and stays on the form", async () => {
 		mutateAsyncMock.mockRejectedValue(new Error("Internal Server Error"));
 
-		render(<ClaimRanking />);
+		renderWithLanguage(<ClaimRanking />);
 		fill("Email", "me@example.com");
 		fill("Username", "valid-name");
 		submit();

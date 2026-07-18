@@ -9,6 +9,7 @@ import { rankingsTable } from "../db/schema/rankings.table.ts";
 import { Env } from "../env.ts";
 import { Mailer } from "../mailer/Mailer.ts";
 import { issueRecoveryToken } from "../recoveryTokens/recoveryToken.service.ts";
+import { coerceLanguage } from "./coerceLanguage.ts";
 
 /**
  * Request recovery by email: validate the email (first failure wins, before any
@@ -67,10 +68,17 @@ export function requestRecovery(
 		const rawToken = yield* issueRecoveryToken(ranking.id);
 		const env = yield* Env;
 		const url = `${env.appBaseUrl}/recover/${rawToken}`;
+
+		// The email follows the reader's current Language, carried in the request
+		// body and coerced with an English fallback.
+		const language = coerceLanguage(body.language);
+
+		// Send the email
 		const mailer = yield* Mailer;
 		yield* mailer.sendOwnerLink({
 			to: trimmedEmail,
 			url,
+			language,
 		});
 
 		return {

@@ -31,7 +31,7 @@ export async function renderOwnerLink(
 		}),
 	]);
 	return {
-		subject: ownerLinkSubject,
+		subject: ownerLinkSubject[props.language],
 		html,
 		text,
 	};

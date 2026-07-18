@@ -15,6 +15,11 @@ Deferred work we intend to revisit.
 - Add edit ranking button in view ranking page
 - Archive ranking
 
+## Localization
+
+- Additional languages beyond English and French
+- Grammatical pluralization rules (ICU-style, per-language)
+
 ## Developer tooling
 
 - Add pre-commit check (typescript, lint, tests)

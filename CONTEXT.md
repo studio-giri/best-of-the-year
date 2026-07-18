@@ -45,3 +45,12 @@ A person's private email address, captured when their Ranking is created. Used
 only to identify them (one Ranking per Email) and to deliver Owner links. Never
 shown publicly. There is no account behind it.
 _Avoid_: Account, login, user
+
+**Language**:
+The person's chosen language for reading the site and receiving emails —
+currently English or French. A presentation choice about which words are shown,
+not about number/date formatting (there is nothing format-sensitive to
+localize). It is client-owned and never a stored account attribute: the site
+follows whatever Language the person is currently using, and an email inherits
+the Language of the browser that triggered it.
+_Avoid_: Locale, i18n, translation, region

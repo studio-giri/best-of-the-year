@@ -1,6 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
-import type { ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
 import { afterEach, describe, expect, test, vi } from "vitest";
+import { LanguageProvider } from "#/lib/language/LanguageProvider.tsx";
 import { setOwnerToken } from "#/lib/ownerTokens.ts";
 
 vi.mock("@tanstack/react-router", () => ({
@@ -10,6 +11,11 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 import { RankingEditGuard } from "./RankingEditGuard.tsx";
+
+// The guard's copy reads through the LanguageProvider; render inside one.
+function renderWithLanguage(ui: ReactElement) {
+	return render(<LanguageProvider initialLanguage="en">{ui}</LanguageProvider>);
+}
 
 afterEach(() => {
 	cleanup();
@@ -22,7 +28,7 @@ describe("RankingEditGuard", () => {
 	test("renders the owner view when a token is present", async () => {
 		setOwnerToken("ranking-1", "stored-token");
 
-		render(<RankingEditGuard rankingId="ranking-1" />);
+		renderWithLanguage(<RankingEditGuard rankingId="ranking-1" />);
 
 		expect(await screen.findByTestId("owner-view")).toBeTruthy();
 		expect(screen.queryByTestId("edit-denied")).toBeNull();
@@ -31,7 +37,7 @@ describe("RankingEditGuard", () => {
 	// A browser without a token is refused the owner view and shown an
 	// access-denied message with a link to the public read-only view.
 	test("shows the access-denied message when no token is held", async () => {
-		render(<RankingEditGuard rankingId="ranking-1" />);
+		renderWithLanguage(<RankingEditGuard rankingId="ranking-1" />);
 
 		expect(await screen.findByTestId("edit-denied")).toBeTruthy();
 		expect(screen.queryByTestId("owner-view")).toBeNull();

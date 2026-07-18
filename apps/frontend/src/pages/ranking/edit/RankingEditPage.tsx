@@ -1,4 +1,6 @@
+import { useLocalized } from "#/lib/language/LanguageProvider.tsx";
 import { Subtitle } from "#/ui/Subtitle.tsx";
+import { editMessages } from "./messages.ts";
 
 interface Props {
 	rankingId: string;
@@ -10,11 +12,12 @@ interface Props {
  * of scope for this story — this just confirms the owner can get here.
  */
 export function RankingEditPage({ rankingId }: Props) {
+	const messages = useLocalized(editMessages);
 	return (
 		<div>
-			<Subtitle>Editing your ranking</Subtitle>
+			<Subtitle>{messages.editingSubtitle}</Subtitle>
 			<p data-testid="owner-view" className="text-center text-white">
-				You own this ranking ({rankingId}).
+				{`${messages.ownRanking} (${rankingId}).`}
 			</p>
 		</div>
 	);

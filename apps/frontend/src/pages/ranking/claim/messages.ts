@@ -1,26 +1,69 @@
 import type { ClaimRejectionCode } from "@boty/shared/api/rankings/claim/ClaimRejectionCode.schema";
+import type { Language } from "@boty/shared/language/Language.schema";
 import { emailRejectionMessages } from "#/lib/emailRejectionMessages.ts";
 
-/**
- * The single client-side source of the user-facing claim-rejection wording.
- * The server speaks only machine codes; this map renders them. The exact
- * strings here are the acceptance-criteria source of truth (i18n-ready: swap
- * this map, not the call sites). The email strings come from the shared
- * `emailRejectionMessages` so the recovery form renders them identically.
- */
-export const claimRejectionMessages: Record<ClaimRejectionCode, string> = {
-	...emailRejectionMessages,
-	username_empty: "Username cannot be empty.",
-	username_too_short: "Username must be at least 2 characters.",
-	username_too_long: "Username must be 30 characters or fewer.",
-	username_taken: "Username taken. Pick another.",
-};
+interface ClaimMessages {
+	readonly subtitle: string;
+	readonly usernameLabel: string;
+	readonly usernameHint: string;
+	readonly usernamePlaceholder: string;
+	readonly emailLabel: string;
+	readonly emailHint: string;
+	readonly emailPlaceholder: string;
+	readonly submit: string;
+	// Server speaks machine codes; this renders them. Reuses the shared email
+	// wording so claim and recovery show identical email rejections.
+	readonly rejections: Record<ClaimRejectionCode, string>;
+	readonly ownerTokenNotStored: string;
+}
 
 /**
- * Shown when a claim succeeded but its Owner token could not be saved to this
- * browser (storage full or disabled): the ranking exists and is claimed, yet
- * this browser cannot prove ownership to edit it. Resubmitting would only hit a
- * username collision, so the wording must not read as retryable.
+ * The claim form's copy, per Language. Typed so no Language can omit a key (or a
+ * rejection code) another defines — a missing translation is a compile error.
+ * The `rejections` map renders the server's machine codes; a claim that
+ * succeeds but whose Owner token can't be saved shows `ownerTokenNotStored`,
+ * worded as terminal rather than retryable.
  */
-export const ownerTokenNotStoredMessage =
-	"Your ranking was created, but this browser couldn't save your access to it. Open another browser and use the Recover Ranking form to gain access.";
+export const claimMessages = {
+	en: {
+		subtitle: "New ranking",
+		usernameLabel: "Username",
+		usernameHint: "Pick carefully: it'll be public, forever. No pressure.",
+		usernamePlaceholder: "YourUsername",
+		emailLabel: "Email",
+		emailHint: "So you don't lose your ranking. That's the only reason we ask.",
+		emailPlaceholder: "your@email.com",
+		submit: "lezgoo",
+		rejections: {
+			...emailRejectionMessages.en,
+			username_empty: "Username cannot be empty.",
+			username_too_short: "Username must be at least 2 characters.",
+			username_too_long: "Username must be 30 characters or fewer.",
+			username_taken: "Username taken. Pick another.",
+		},
+		ownerTokenNotStored:
+			"Your ranking was created, but this browser couldn't save your access to it. Open another browser and use the Recover Ranking form to gain access.",
+	},
+	fr: {
+		subtitle: "Nouveau classement",
+		usernameLabel: "Nom d'utilisateur",
+		usernameHint:
+			"Choisissez bien : ce sera public, pour toujours. Sans pression.",
+		usernamePlaceholder: "VotreNom",
+		emailLabel: "E-mail",
+		emailHint: "Pour ne pas perdre votre classement. C'est la seule raison.",
+		emailPlaceholder: "vous@email.com",
+		submit: "c'est parti",
+		rejections: {
+			...emailRejectionMessages.fr,
+			username_empty: "Le nom d'utilisateur ne peut pas être vide.",
+			username_too_short:
+				"Le nom d'utilisateur doit comporter au moins 2 caractères.",
+			username_too_long:
+				"Le nom d'utilisateur ne peut pas dépasser 30 caractères.",
+			username_taken: "Nom d'utilisateur déjà pris. Choisissez-en un autre.",
+		},
+		ownerTokenNotStored:
+			"Votre classement a été créé, mais ce navigateur n'a pas pu enregistrer votre accès. Ouvrez un autre navigateur et utilisez le formulaire de récupération pour y accéder.",
+	},
+} satisfies Record<Language, ClaimMessages>;

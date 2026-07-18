@@ -8,14 +8,13 @@ import { useNavigate } from "@tanstack/react-router";
 import { Schema } from "effect";
 import { Mail, User2 } from "lucide-react";
 import { useState } from "react";
+import { useMessages } from "#/lib/language/commonMessages.ts";
+import { useLocalized } from "#/lib/language/LanguageProvider.tsx";
 import { OwnerTokenNotStored } from "#/lib/ownerTokens.ts";
 import { Button } from "#/ui/form/Button.tsx";
 import { TextField } from "#/ui/form/TextField.tsx";
 import { Subtitle } from "#/ui/Subtitle.tsx";
-import {
-	claimRejectionMessages,
-	ownerTokenNotStoredMessage,
-} from "./messages.ts";
+import { claimMessages } from "./messages.ts";
 import { useClaimRanking } from "./useClaimRanking.mutation.ts";
 
 /**
@@ -28,6 +27,8 @@ import { useClaimRanking } from "./useClaimRanking.mutation.ts";
  * explanatory message rather than route into a view they can't edit.
  */
 export function ClaimRanking() {
+	const messages = useLocalized(claimMessages);
+	const common = useMessages();
 	const navigate = useNavigate();
 	const claimRanking = useClaimRanking();
 
@@ -54,19 +55,18 @@ export function ClaimRanking() {
 			} catch (error) {
 				// Map a username-taken refusal to its inline message.
 				if (Schema.is(ClaimRejected)(error)) {
-					setServerError(claimRejectionMessages[error.code]);
+					setServerError(messages.rejections[error.code]);
 					return;
 				}
 				// The claim succeeded but its token couldn't be saved to this browser:
 				// terminal, not retryable, so explain it rather than invite a resubmit
 				if (error instanceof OwnerTokenNotStored) {
-					setServerError(ownerTokenNotStoredMessage);
+					setServerError(messages.ownerTokenNotStored);
 					return;
 				}
-				// Anything else (network blip, 5xx) is transient, so show a generic retryable error message
-				setServerError(
-					`Something went wrong, please try again later. (${String(error)})`,
-				);
+				// Anything else (network blip, 5xx) is transient, so show a generic
+				// retryable message; the raw error is data, appended untranslated.
+				setServerError(`${common.genericError} (${String(error)})`);
 				console.error(error);
 			}
 		},
@@ -74,7 +74,7 @@ export function ClaimRanking() {
 
 	return (
 		<>
-			<Subtitle>New ranking</Subtitle>
+			<Subtitle>{messages.subtitle}</Subtitle>
 			<div className="max-w-xl mx-auto">
 				<form
 					// We own validation messaging: suppress the browser's native validation
@@ -90,20 +90,20 @@ export function ClaimRanking() {
 						validators={{
 							onSubmit: ({ value }) => {
 								const code = validateUsername(value);
-								return code ? claimRejectionMessages[code] : undefined;
+								return code ? messages.rejections[code] : undefined;
 							},
 						}}
 					>
 						{(field) => (
 							<>
 								<TextField
-									label="Username"
-									hint="Pick carefully: it'll be public, forever. No pressure."
+									label={messages.usernameLabel}
+									hint={messages.usernameHint}
 									icon={User2}
 									error={field.state.meta.errors[0]}
 									input={{
 										type: "text",
-										placeholder: "YourUsername",
+										placeholder: messages.usernamePlaceholder,
 										required: true,
 										name: field.name,
 										value: field.state.value,
@@ -123,20 +123,20 @@ export function ClaimRanking() {
 						validators={{
 							onSubmit: ({ value }) => {
 								const code = validateEmail(value);
-								return code ? claimRejectionMessages[code] : undefined;
+								return code ? messages.rejections[code] : undefined;
 							},
 						}}
 					>
 						{(field) => (
 							<TextField
-								label="Email"
-								hint="So you don't lose your ranking. That's the only reason we ask."
+								label={messages.emailLabel}
+								hint={messages.emailHint}
 								icon={Mail}
 								error={field.state.meta.errors[0]}
 								input={{
 									type: "email",
 									required: true,
-									placeholder: "your@email.com",
+									placeholder: messages.emailPlaceholder,
 									name: field.name,
 									value: field.state.value,
 									onBlur: field.handleBlur,
@@ -156,7 +156,7 @@ export function ClaimRanking() {
 					) : null}
 
 					<Button type="submit" loading={claimRanking.isPending}>
-						lezgoo
+						{messages.submit}
 					</Button>
 				</form>
 			</div>

@@ -4,10 +4,12 @@ import { useForm } from "@tanstack/react-form";
 import { Schema } from "effect";
 import { Mail } from "lucide-react";
 import { useState } from "react";
+import { useMessages } from "#/lib/language/commonMessages.ts";
+import { useLanguage, useLocalized } from "#/lib/language/LanguageProvider.tsx";
 import { Button } from "#/ui/form/Button.tsx";
 import { TextField } from "#/ui/form/TextField.tsx";
 import { Subtitle } from "#/ui/Subtitle.tsx";
-import { emailRejectionMessages, recoverySentMessage } from "./messages.ts";
+import { recoverMessages } from "./messages.ts";
 import { useRequestRecovery } from "./useRequestRecovery.mutation.ts";
 
 /**
@@ -15,9 +17,13 @@ import { useRequestRecovery } from "./useRequestRecovery.mutation.ts";
  * rule and copy the claim form uses. A ranking-backed email shows the check-inbox
  * confirmation; any email rejection — empty, malformed, or backing no ranking —
  * comes back as a `RecoveryRejected` code that maps to an inline message, so the
- * person corrects the address without leaving the form.
+ * person corrects the address without leaving the form. The reader's current
+ * Language rides along in the request so the email arrives in that Language.
  */
 export function RequestRecovery() {
+	const messages = useLocalized(recoverMessages);
+	const common = useMessages();
+	const { language } = useLanguage();
 	const requestRecovery = useRequestRecovery();
 
 	// True once a link has been emailed; the form is replaced by the confirmation.
@@ -31,20 +37,23 @@ export function RequestRecovery() {
 		onSubmit: async ({ value }) => {
 			setServerError(null);
 			try {
-				await requestRecovery.mutateAsync(value);
+				// Carry the current Language so the email matches what the person is
+				// reading now — not the Language they claimed in.
+				await requestRecovery.mutateAsync({
+					email: value.email,
+					language,
+				});
 				setSent(true);
 			} catch (error) {
 				// The server re-runs the same email rule and owns the existence check;
 				// map its code to the inline message the field would show.
 				if (Schema.is(RecoveryRejected)(error)) {
-					setServerError(emailRejectionMessages[error.code]);
+					setServerError(messages.rejections[error.code]);
 					return;
 				}
 				// Anything else (network blip, 5xx) is transient: show a generic
-				// retryable message and keep the user on the form.
-				setServerError(
-					`Something went wrong, please try again later. (${String(error)})`,
-				);
+				// retryable message; the raw error is data, appended untranslated.
+				setServerError(`${common.genericError} (${String(error)})`);
 				console.error(error);
 			}
 		},
@@ -53,11 +62,11 @@ export function RequestRecovery() {
 	if (sent) {
 		return (
 			<>
-				<Subtitle>Recover your ranking</Subtitle>
+				<Subtitle>{messages.subtitle}</Subtitle>
 				<div className="max-w-xl mx-auto">
 					<div className="bg-surface/90 rounded-2xl mx-3 p-8">
 						<p role="status" className="text-white">
-							{recoverySentMessage}
+							{messages.sent}
 						</p>
 					</div>
 				</div>
@@ -67,7 +76,7 @@ export function RequestRecovery() {
 
 	return (
 		<>
-			<Subtitle>Recover your ranking</Subtitle>
+			<Subtitle>{messages.subtitle}</Subtitle>
 			<div className="max-w-xl mx-auto">
 				<form
 					// We own validation messaging: suppress the browser's native validation
@@ -83,20 +92,20 @@ export function RequestRecovery() {
 						validators={{
 							onSubmit: ({ value }) => {
 								const code = validateEmail(value);
-								return code ? emailRejectionMessages[code] : undefined;
+								return code ? messages.rejections[code] : undefined;
 							},
 						}}
 					>
 						{(field) => (
 							<TextField
-								label="Email"
-								hint="The address you used when you created your ranking."
+								label={messages.emailLabel}
+								hint={messages.emailHint}
 								icon={Mail}
 								error={field.state.meta.errors[0]}
 								input={{
 									type: "email",
 									required: true,
-									placeholder: "your@email.com",
+									placeholder: messages.emailPlaceholder,
 									name: field.name,
 									value: field.state.value,
 									onBlur: field.handleBlur,
@@ -116,7 +125,7 @@ export function RequestRecovery() {
 					) : null}
 
 					<Button type="submit" loading={requestRecovery.isPending}>
-						Email me a link
+						{messages.submit}
 					</Button>
 				</form>
 			</div>

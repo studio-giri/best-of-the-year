@@ -30,6 +30,7 @@ describe("makeMailer", () => {
 			.sendOwnerLink({
 				to: "someone@example.com",
 				url: "http://localhost:3001/recover/raw-token",
+				language: "en",
 			})
 			.pipe(Effect.runPromise);
 
@@ -41,5 +42,27 @@ describe("makeMailer", () => {
 		// Both parts carry the recovery link.
 		expect(message?.html).toContain("http://localhost:3001/recover/raw-token");
 		expect(message?.text).toContain("http://localhost:3001/recover/raw-token");
+	});
+
+	// The email follows the given Language: subject, copy, and `<html lang>` are
+	// all French when asked, still carrying the same link.
+	test("renders the email in French when the language is fr", async () => {
+		const { mailer, sent } = makeCapturingMailer();
+
+		await mailer
+			.sendOwnerLink({
+				to: "someone@example.com",
+				url: "http://localhost:3001/recover/raw-token",
+				language: "fr",
+			})
+			.pipe(Effect.runPromise);
+
+		const message = sent[0];
+		expect(message?.subject).toBe("Récupérez l'accès à votre classement");
+		expect(message?.html).toContain('lang="fr"');
+		expect(message?.html).toContain("Récupérer mon classement");
+		expect(message?.text).toContain("Récupérer mon classement");
+		// The link survives localization.
+		expect(message?.html).toContain("http://localhost:3001/recover/raw-token");
 	});
 });

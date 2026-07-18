@@ -1,4 +1,5 @@
 import { renderOwnerLink } from "@boty/emails/index";
+import type { Language } from "@boty/shared/language/Language.schema";
 import { Config, Context, Effect, Layer, Option, Redacted } from "effect";
 import type { Transporter } from "nodemailer";
 import nodemailer from "nodemailer";
@@ -6,6 +7,10 @@ import nodemailer from "nodemailer";
 export interface SendOwnerLinkArgs {
 	readonly to: string;
 	readonly url: string;
+	// Language the email is written in. Passing the shared `Language` value
+	// through to the renderer here — the renderer's sole call site — is what
+	// catches any drift with the emails package's own local Language union.
+	readonly language: Language;
 }
 
 interface MailerShape {
@@ -23,14 +28,16 @@ export function makeMailer(
 	from: string,
 ): MailerShape {
 	return {
-		sendOwnerLink: ({ to, url }) =>
+		sendOwnerLink: ({ to, url, language }) =>
 			Effect.gen(function* () {
 				// The template package owns all content — subject, HTML body, and a
-				// plain-text fallback for clients that strip HTML. The Mailer only
-				// adds from/to and dispatches; it knows nothing of the copy.
+				// plain-text fallback for clients that strip HTML — in the given
+				// Language. The Mailer only adds from/to and dispatches; it knows
+				// nothing of the copy.
 				const { subject, html, text } = yield* Effect.promise(() =>
 					renderOwnerLink({
 						url,
+						language,
 					}),
 				);
 				// A send failure is an infrastructure fault, not a domain outcome:

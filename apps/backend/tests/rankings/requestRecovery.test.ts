@@ -15,16 +15,23 @@ const FORTY_EIGHT_HOURS_MS = 48 * 60 * 60 * 1000;
  * POST a recovery request and return the parsed response plus status. The body
  * is either the honest outcome (200) or a validation rejection code (422).
  */
-async function recover(ctx: Ctx, email: string) {
+async function recover(ctx: Ctx, email: string, language?: string) {
 	const res = await ctx.handler(
 		new Request("http://localhost/rankings/recover", {
 			method: "POST",
 			headers: {
 				"content-type": "application/json",
 			},
-			body: JSON.stringify({
-				email,
-			}),
+			body: JSON.stringify(
+				language === undefined
+					? {
+							email,
+						}
+					: {
+							email,
+							language,
+						},
+			),
 		}),
 	);
 	const json = (await res.json()) as {
@@ -194,6 +201,42 @@ describe("POST /rankings/recover (request recovery)", () => {
 
 		expect(ctx.mailerCalls).toHaveLength(2);
 		expect(ctx.mailerCalls[0]?.url).not.toBe(ctx.mailerCalls[1]?.url);
+	});
+
+	// The request's Language is forwarded to the mailer, so the email is written
+	// in the Language the person is currently reading.
+	test("forwards the request Language to the mailer", async () => {
+		await seedRanking(ctx, "fr@example.com");
+
+		const { status } = await recover(ctx, "fr@example.com", "fr");
+
+		expect(status).toBe(200);
+		expect(ctx.mailerCalls).toHaveLength(1);
+		expect(ctx.mailerCalls[0]?.language).toBe("fr");
+	});
+
+	// A missing or unsupported Language never fails recovery — the email falls
+	// back to English rather than the request being refused.
+	test.each([
+		[
+			undefined,
+			"absent",
+		],
+		[
+			"de",
+			"unsupported",
+		],
+		[
+			"EN",
+			"wrong case",
+		],
+	])("falls back to English when the Language is %p (%s)", async (language) => {
+		await seedRanking(ctx, "fallback@example.com");
+
+		const { status } = await recover(ctx, "fallback@example.com", language);
+
+		expect(status).toBe(200);
+		expect(ctx.mailerCalls[0]?.language).toBe("en");
 	});
 
 	// Cross-cutting privacy: the response body never echoes the submitted email

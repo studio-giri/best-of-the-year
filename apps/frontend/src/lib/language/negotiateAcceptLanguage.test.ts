@@ -21,6 +21,24 @@ describe("parseAcceptLanguage", () => {
 	])("returns [] for %p", (header) => {
 		expect(parseAcceptLanguage(header)).toEqual([]);
 	});
+
+	// Structurally invalid tags (and the wildcard `*`) would make
+	// Intl.getCanonicalLocales throw, so they are dropped.
+	test.each([
+		"foo!bar",
+		"*",
+		"----",
+		"en-US-",
+	])("drops the structurally invalid tag %p", (tag) => {
+		expect(parseAcceptLanguage(tag)).toEqual([]);
+	});
+
+	// A single bad tag must not discard the well-formed ones alongside it.
+	test("keeps well-formed tags when mixed with an invalid one", () => {
+		expect(parseAcceptLanguage("*, fr;q=0.9, foo!bar")).toEqual([
+			"fr",
+		]);
+	});
 });
 
 describe("negotiateAcceptLanguage", () => {
@@ -65,6 +83,21 @@ describe("negotiateAcceptLanguage", () => {
 			"",
 			"en",
 			"empty header → English",
+		],
+		[
+			"*",
+			"en",
+			"wildcard → English",
+		],
+		[
+			"foo!bar",
+			"en",
+			"malformed tag → English",
+		],
+		[
+			"foo!bar, fr;q=0.9",
+			"fr",
+			"malformed tag ignored, French still negotiated",
 		],
 	];
 	test.each(cases)("resolves %p to %s (%s)", (header, expected) => {

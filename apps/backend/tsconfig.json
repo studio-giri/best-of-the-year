@@ -7,6 +7,10 @@
 		],
 		"target": "ESNext",
 		"module": "Preserve",
-		"allowJs": true
+		"allowJs": true,
+		// @boty/emails is consumed as raw TS source, so tsgo follows the import
+		// into its react-email `.tsx` templates and needs the JSX runtime set to
+		// type-check them (Bun handles JSX transparently at runtime).
+		"jsx": "react-jsx"
 	}
 }

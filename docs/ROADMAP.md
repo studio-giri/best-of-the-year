@@ -4,7 +4,6 @@ Deferred work we intend to revisit.
 
 ## Auth & account recovery
 
-- Real email provider for the `Mailer` service (recovery ships with a logging/capturing layer only; no provider is wired)
 - Recovery-abuse protection (rate limiting / throttling)
 - Per-device revocation ("reset all tokens for this email")
 - Editing username or email after a Ranking is claimed

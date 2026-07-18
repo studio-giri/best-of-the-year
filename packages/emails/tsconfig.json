@@ -1,0 +1,17 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"include": [
+		"src",
+		"emails"
+	],
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		// react-email templates are JSX; render with the automatic runtime.
+		"jsx": "react-jsx",
+		// Bun's test runner types, matching the other packages.
+		"types": [
+			"bun"
+		]
+	}
+}

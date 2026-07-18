@@ -1,6 +1,6 @@
 # Best Of The Year
 
-Bun monorepo (Turborepo): `apps/backend` (Effect + Drizzle), `apps/frontend` (React + TanStack Start), `packages/shared` (shared schemas & API specs).
+Bun monorepo (Turborepo): `apps/backend` (Effect + Drizzle), `apps/frontend` (React + TanStack Start), `packages/shared` (shared schemas & API specs), `packages/emails` (react-email templates).
 
 ## Setup
 
@@ -21,6 +21,16 @@ bun dev                    # all apps in parallel
 ```
 
 The DB container does not auto-start (`restart: "no"`): after a reboot or a `bun db:down`, run `bun db:up` before `bun dev`.
+
+## Email
+
+`bun db:up` also starts [Mailpit](https://mailpit.axllent.org/), the local SMTP sink the backend sends through in development. No mail leaves the machine — open the captured messages at http://localhost:8025.
+
+Email templates ([react-email](https://react.email/)) live in `packages/emails`. Preview them with live reload:
+
+```bash
+bun run --cwd packages/emails dev   # preview server at http://localhost:3006
+```
 
 ## Checks
 

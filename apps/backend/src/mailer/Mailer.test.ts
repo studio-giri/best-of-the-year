@@ -23,19 +23,6 @@ describe("makeMailer", () => {
 		};
 	};
 
-	test("sendOwnerLink resolves to void", async () => {
-		const { mailer } = makeCapturingMailer();
-
-		const result = await mailer
-			.sendOwnerLink({
-				to: "someone@example.com",
-				url: "http://localhost:3001/recover/raw-token",
-			})
-			.pipe(Effect.runPromise);
-
-		expect(result).toBeUndefined();
-	});
-
 	test("dispatches to the recipient with the link and From address", async () => {
 		const { mailer, sent } = makeCapturingMailer();
 

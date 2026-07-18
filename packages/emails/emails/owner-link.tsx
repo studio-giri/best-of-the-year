@@ -11,9 +11,12 @@ import {
 } from "@react-email/components";
 
 export interface OwnerLinkEmailProps {
-	/** Absolute, single-use recovery URL: `${APP_BASE_URL}/recover/:token`. */
+	// Absolute, single-use recovery URL
 	readonly url: string;
 }
+
+// Subject line of the Owner recovery email
+export const ownerLinkSubject = "Your ranking recovery link";
 
 /**
  * The email carrying an Owner recovery link (S-001-02). One primary action — the
@@ -25,17 +28,17 @@ export function OwnerLinkEmail({ url }: OwnerLinkEmailProps) {
 	return (
 		<Html lang="en">
 			<Head />
-			<Preview>Your link to get back into your ranking</Preview>
+			<Preview>A single-use link to reopen your ranking</Preview>
 			<Body style={body}>
 				<Container style={container}>
-					<Heading style={heading}>Get back into your ranking</Heading>
+					<Heading style={heading}>Let's get you back in</Heading>
 					<Text style={text}>
-						You asked to get back into your ranking. Use the button below — the
-						link is single-use and expires soon.
+						Here's the recovery link you asked for. It's single-use and expires
+						in 48h.
 					</Text>
 					<Section style={buttonSection}>
 						<Button href={url} style={button}>
-							Open my ranking
+							Recover my ranking
 						</Button>
 					</Section>
 					<Text style={mutedText}>

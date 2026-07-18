@@ -12,9 +12,6 @@ interface MailerShape {
 	readonly sendOwnerLink: (args: SendOwnerLinkArgs) => Effect.Effect<void>;
 }
 
-/** Subject line of the Owner recovery email (S-001-02). */
-const OWNER_LINK_SUBJECT = "Get back into your ranking";
-
 /**
  * Build the Mailer service around a ready nodemailer transport and a From
  * address. Factored out of `Live` so a test can drive the exact same render +
@@ -28,9 +25,10 @@ export function makeMailer(
 	return {
 		sendOwnerLink: ({ to, url }) =>
 			Effect.gen(function* () {
-				// One react-email template, rendered to both an HTML body and a
-				// plain-text fallback so clients that strip HTML still get the link.
-				const { html, text } = yield* Effect.promise(() =>
+				// The template package owns all content — subject, HTML body, and a
+				// plain-text fallback for clients that strip HTML. The Mailer only
+				// adds from/to and dispatches; it knows nothing of the copy.
+				const { subject, html, text } = yield* Effect.promise(() =>
 					renderOwnerLink({
 						url,
 					}),
@@ -41,7 +39,7 @@ export function makeMailer(
 					transporter.sendMail({
 						from,
 						to,
-						subject: OWNER_LINK_SUBJECT,
+						subject,
 						html,
 						text,
 					}),

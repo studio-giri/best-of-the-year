@@ -2,20 +2,22 @@ import { render } from "@react-email/render";
 import {
 	OwnerLinkEmail,
 	type OwnerLinkEmailProps,
+	ownerLinkSubject,
 } from "../emails/owner-link.tsx";
 
 export type { OwnerLinkEmailProps };
 
 export interface RenderedEmail {
+	readonly subject: string;
 	readonly html: string;
 	readonly text: string;
 }
 
 /**
- * Render the Owner recovery email to both an HTML body and a plain-text
- * fallback from the one react-email template, so a `sendMail` can attach both
- * parts. Kept pure (no transport, no I/O beyond rendering) so the backend's
- * Mailer layer owns delivery and this package stays a template concern.
+ * Render the Owner recovery email — subject plus an HTML body and a plain-text
+ * fallback — from the one react-email template. Returns the whole email
+ * content so the backend's Mailer only relays from/to and dispatches; all copy
+ * (subject included) stays a template concern in this package.
  */
 export async function renderOwnerLink(
 	props: OwnerLinkEmailProps,
@@ -28,6 +30,7 @@ export async function renderOwnerLink(
 		}),
 	]);
 	return {
+		subject: ownerLinkSubject,
 		html,
 		text,
 	};

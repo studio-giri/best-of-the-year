@@ -46,9 +46,9 @@ export const claimMessages = defineMessages({
 				"Le nom d'utilisateur doit comporter au moins 2 caractères.",
 			username_too_long:
 				"Le nom d'utilisateur ne peut pas dépasser 30 caractères.",
-			username_taken: "Nom d'utilisateur déjà pris. Choisissez-en un autre.",
+			username_taken: "Nom d'utilisateur déjà pris. Choisis-en un autre.",
 		},
 		ownerTokenNotStored:
-			"Votre liste a été créée, mais ce navigateur n'a pas pu enregistrer votre accès. Ouvrez un autre navigateur et utilisez le formulaire de récupération pour y accéder.",
+			"Ta liste a été créée, mais ce navigateur n'a pas pu enregistrer ton accès. Ouvre un autre navigateur et utilise le formulaire de récupération pour y accéder.",
 	},
 });

@@ -19,7 +19,7 @@ export const commonMessages = defineMessages({
 	fr: {
 		siteTitle,
 		footerCredit,
-		genericError: "Une erreur est survenue, veuillez réessayer plus tard.",
+		genericError: "Une erreur est survenue, réessaie plus tard.",
 		languageSwitcherLabel: "Langue",
 		createYourOwn: "Crée ta propre liste !",
 	},

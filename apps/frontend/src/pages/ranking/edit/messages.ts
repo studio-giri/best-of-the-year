@@ -8,8 +8,8 @@ export const editMessages = defineMessages({
 		ownRanking: "You own this list",
 	},
 	fr: {
-		denied: "Vous n'avez pas la permission de modifier cette liste.",
-		editingSubtitle: "Modification de votre liste",
-		ownRanking: "Vous possédez cette liste",
+		denied: "Tu n'as pas la permission de modifier cette liste.",
+		editingSubtitle: "Modification de ta liste",
+		ownRanking: "Tu possèdes cette liste",
 	},
 });

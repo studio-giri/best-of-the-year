@@ -136,7 +136,7 @@ describe("RequestRecovery", () => {
 		fill("E-mail", "moi@example.com");
 		fireEvent.click(
 			screen.getByRole("button", {
-				name: /envoyez-moi un lien/i,
+				name: /envoie-moi un lien/i,
 			}),
 		);
 
@@ -155,7 +155,7 @@ describe("RequestRecovery", () => {
 		expect(screen.getByLabelText("E-mail")).toBeTruthy();
 		expect(
 			screen.getByRole("button", {
-				name: /envoyez-moi un lien/i,
+				name: /envoie-moi un lien/i,
 			}),
 		).toBeTruthy();
 	});

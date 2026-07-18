@@ -14,12 +14,12 @@ export const recoverMessages = defineMessages({
 		rejections: emailRejectionMessages.en,
 	},
 	fr: {
-		subtitle: "Récupérer votre liste",
+		subtitle: "Récupère l'accès à ta liste",
 		emailLabel: "E-mail",
-		emailHint: "L'adresse que vous avez utilisée en créant votre liste.",
-		emailPlaceholder: "vous@email.com",
-		submit: "Envoyez-moi un lien",
-		sent: "Vérifiez votre boîte de réception. Nous vous avons envoyé un lien pour récupérer l'accès à votre liste.",
+		emailHint: "L'adresse que tu as utilisée en créant ta liste.",
+		emailPlaceholder: "toi@email.com",
+		submit: "Envoie-moi un lien",
+		sent: "Vérifie ta boîte de réception. Nous t'avons envoyé un lien pour récupérer l'accès à ta liste.",
 		rejections: emailRejectionMessages.fr,
 	},
 });

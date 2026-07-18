@@ -46,22 +46,22 @@ const copy: Record<Language, Copy> = {
 		ignoreHint: "If you didn't request this, you can safely ignore this email.",
 	},
 	fr: {
-		preview: "Un lien à usage unique pour rouvrir votre liste",
-		heading: "On vous reconnecte",
+		preview: "Un lien à usage unique pour récupérer l'accès",
+		heading: "On te reconnecte",
 		intro:
-			"Voici le lien de récupération que vous avez demandé. Il est à usage unique et expire dans 48 h.",
+			"Voici le lien de récupération que tu as demandé. Il est à usage unique et expire dans 48 h.",
 		button: "Récupérer ma liste",
 		fallbackHint:
-			"Si le bouton ne fonctionne pas, copiez-collez ce lien dans votre navigateur :",
+			"Si le bouton ne fonctionne pas, copie-colle ce lien dans ton navigateur :",
 		ignoreHint:
-			"Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet e-mail.",
+			"Si tu n'es pas à l'origine de cette demande, tu peux ignorer cet e-mail.",
 	},
 };
 
 // Subject line of the Owner recovery email, per Language.
 export const ownerLinkSubject: Record<Language, string> = {
 	en: "Get back into your list",
-	fr: "Récupérez l'accès à votre liste",
+	fr: "Récupère l'accès à ta liste",
 };
 
 /**

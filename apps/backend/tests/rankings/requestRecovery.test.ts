@@ -1,4 +1,11 @@
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import {
+	afterAll,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	test,
+} from "bun:test";
 import { Effect } from "effect";
 import { hashToken } from "../../src/crypto/hashToken.ts";
 import { PgDrizzle } from "../../src/db/PgDrizzle.ts";
@@ -81,14 +88,26 @@ function allRecoveryTokens(ctx: Ctx) {
 describe("POST /rankings/recover (request recovery)", () => {
 	let ctx: Ctx;
 
-	// Fresh isolated schema per test so the row-count and Mailer-call assertions
-	// ("exactly one", "two distinct") stand on their own.
-	beforeEach(async () => {
+	beforeAll(async () => {
 		ctx = await makeTestCtx();
 	});
 
-	afterEach(async () => {
+	afterAll(async () => {
 		await ctx?.cleanup();
+	});
+
+	// The suite shares one schema, so reset before each test — clear the rankings
+	// table (recovery tokens cascade via the FK) and the captured Mailer calls.
+	// This is what lets the row-count and Mailer-call assertions ("exactly one",
+	// "two distinct") stand on their own, in any order or run alone.
+	beforeEach(async () => {
+		await ctx.runDb(
+			Effect.gen(function* () {
+				const db = yield* PgDrizzle;
+				yield* db.delete(rankingsTable);
+			}),
+		);
+		ctx.mailerCalls.length = 0;
 	});
 
 	// A blank / whitespace-only email is refused as email_empty, with no
@@ -142,7 +161,8 @@ describe("POST /rankings/recover (request recovery)", () => {
 
 	// An email backing a ranking creates exactly one link (hash only, ~48h
 	// expiry, unconsumed) and dispatches exactly one email carrying the raw token
-	// in a /recover/ link built from the configured origin.
+	// in a /recover/ link built from the configured origin. The response body
+	// itself echoes neither the submitted email nor the raw token.
 	test("issues one link and dispatches one email when the ranking exists", async () => {
 		const rankingId = await seedRanking(ctx, "owner@example.com");
 
@@ -176,20 +196,28 @@ describe("POST /rankings/recover (request recovery)", () => {
 		expect(rawToken.length).toBeGreaterThan(20);
 		expect(row.tokenHash).toBe(hashToken(rawToken));
 		expect(row.tokenHash).not.toBe(rawToken);
+
+		// Privacy: the "sent" confirmation body leaks neither the email nor the token.
+		const sentBody = JSON.stringify(json);
+		expect(sentBody).not.toContain("owner@example.com");
+		expect(sentBody).not.toContain(rawToken);
 	});
 
 	// An email backing no ranking is refused as email_unknown (422), with no
-	// link created and no email sent.
+	// link created and no email sent — and the refusal never echoes the address.
 	test("refuses email_unknown without issuing or sending when no ranking exists", async () => {
 		const { status, json } = await recover(ctx, "nobody@example.com");
 		expect(status).toBe(422);
 		expect(json.code).toBe("email_unknown");
 		expect(await allRecoveryTokens(ctx)).toHaveLength(0);
 		expect(ctx.mailerCalls).toHaveLength(0);
+		// Privacy: the unknown-email refusal body never echoes the submitted email.
+		expect(JSON.stringify(json)).not.toContain("nobody@example.com");
 	});
 
 	// Two requests create two distinct, independent links; neither dispatch
-	// alters the other, and neither is consumed by issuing.
+	// alters the other, and neither is consumed by issuing. This behaviour is
+	// "request twice", so it is irreducibly two API calls.
 	test("creates two distinct independent links when requested twice", async () => {
 		await seedRanking(ctx, "twice@example.com");
 
@@ -243,25 +271,5 @@ describe("POST /rankings/recover (request recovery)", () => {
 
 		expect(status).toBe(200);
 		expect(ctx.mailerCalls[0]?.language).toBe("en");
-	});
-
-	// Cross-cutting privacy: the response body never echoes the submitted email
-	// nor the raw token, on either a sent confirmation or an unknown-email refusal.
-	test("never echoes the email or the raw token in the response body", async () => {
-		await seedRanking(ctx, "secret@example.com");
-
-		const sent = await recover(ctx, "secret@example.com");
-		const sentBody = JSON.stringify(sent.json);
-		expect(sentBody).not.toContain("secret@example.com");
-		const rawToken = ctx.mailerCalls[0]?.url.slice(
-			`${ctx.appBaseUrl}/recover/`.length,
-		);
-		if (!rawToken) {
-			throw new Error("expected a dispatched token");
-		}
-		expect(sentBody).not.toContain(rawToken);
-
-		const miss = await recover(ctx, "ghost@example.com");
-		expect(JSON.stringify(miss.json)).not.toContain("ghost@example.com");
 	});
 });

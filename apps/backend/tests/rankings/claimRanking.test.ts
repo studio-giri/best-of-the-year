@@ -1,8 +1,10 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { createHash } from "node:crypto";
+import { sql } from "drizzle-orm";
 import { Effect } from "effect";
 import { PgDrizzle } from "../../src/db/PgDrizzle.ts";
 import { ownerTokensTable } from "../../src/db/schema/owner-tokens.table.ts";
+import { rankingsTable } from "../../src/db/schema/rankings.table.ts";
 import { makeTestCtx } from "../setup/make-test-ctx.ts";
 
 type Handler = Awaited<ReturnType<typeof makeTestCtx>>["handler"];
@@ -207,5 +209,64 @@ describe("POST /rankings (claim)", () => {
 		});
 		expect(second.status).toBe(422);
 		expect(second.json.code).toBe("username_taken");
+	});
+
+	// A second claim on an email that already backs a ranking is refused with
+	// email_taken — matched ignoring case and surrounding whitespace, before a
+	// second ranking exists, and without echoing the existing email.
+	test("rejects a case/whitespace-insensitive duplicate email before creating a second ranking", async () => {
+		const { handler, runDb } = ctx;
+
+		const email = "duplicate@example.com";
+		const first = await claim(handler, {
+			email,
+			username: "email-dup-first",
+		});
+		expect(first.status).toBe(200);
+
+		const second = await claim(handler, {
+			email: `  ${email.toUpperCase()}  `,
+			username: "email-dup-second",
+		});
+		expect(second.status).toBe(422);
+		expect(second.json.code).toBe("email_taken");
+		// The refusal never echoes the existing ranking's email.
+		expect(second.json).not.toHaveProperty("email");
+
+		// Refused before a second ranking is created: only the first row backs
+		// this email (the suite shares one schema, so scope the count to it).
+		const rows = await runDb(
+			Effect.gen(function* () {
+				const db = yield* PgDrizzle;
+				return yield* db
+					.select({
+						id: rankingsTable.id,
+					})
+					.from(rankingsTable)
+					.where(
+						sql`lower(trim(${rankingsTable.email})) = ${email.toLowerCase()}`,
+					);
+			}),
+		);
+		expect(rows).toHaveLength(1);
+	});
+
+	// When both email and username already exist, email takes precedence: the
+	// duplicate-email refusal (with its recovery path) wins over username_taken.
+	test("prefers email_taken over username_taken when both collide", async () => {
+		const { handler } = ctx;
+
+		const first = await claim(handler, {
+			email: "both-collide@example.com",
+			username: "both-collide",
+		});
+		expect(first.status).toBe(200);
+
+		const second = await claim(handler, {
+			email: "both-collide@example.com",
+			username: "both-collide",
+		});
+		expect(second.status).toBe(422);
+		expect(second.json.code).toBe("email_taken");
 	});
 });

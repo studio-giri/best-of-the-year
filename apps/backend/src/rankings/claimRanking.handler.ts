@@ -4,10 +4,12 @@ import {
 	validateEmail,
 	validateUsername,
 } from "@boty/shared/api/rankings/claim/claimRules";
+import { sql } from "drizzle-orm";
 import { Effect } from "effect";
 import { isUniqueViolation } from "../db/helpers/isUniqueViolation.ts";
 import { PgDrizzle } from "../db/PgDrizzle.ts";
 import {
+	RANKINGS_EMAIL_UNIQUE_INDEX,
 	RANKINGS_USERNAME_UNIQUE_INDEX,
 	rankingsTable,
 } from "../db/schema/rankings.table.ts";
@@ -41,11 +43,20 @@ export function claimRanking(body: ClaimRankingBody) {
 			);
 		}
 
-		// Insert the ranking. The functional unique index on lower(trim(username))
-		// is the authoritative duplicate guard: a violation of THAT index is the
-		// race-free signal that the name is taken (never a server error). A unique
-		// violation on any other constraint is not a username clash, and any other DB
-		// failure is a genuine defect — both die rather than misreporting "name taken".
+		// Insert the ranking. The functional unique indexes on lower(trim(username))
+		// and lower(trim(email)) are the authoritative duplicate guards: a violation
+		// of one of THOSE indexes is the race-free signal that the name/email is taken
+		// (never a server error). Any other DB failure is a genuine defect and dies
+		// rather than misreporting a duplicate.
+		//
+		// Email takes precedence over username: the identity key wins, so a
+		// duplicate email routes toward recovery even when the username also clashes.
+		// Postgres reports only one violated constraint per failed insert, so a
+		// username violation is not proof the email is free — before concluding
+		// username_taken we look the email up (against the same lower(trim(email))
+		// expression the unique index and recovery lookup use) and prefer email_taken
+		// if a ranking already backs it. The extra read runs only on the
+		// username-collision branch, never on the happy or pure-email-duplicate path.
 		const db = yield* PgDrizzle;
 		const insertedRows = yield* db
 			.insert(rankingsTable)
@@ -58,15 +69,34 @@ export function claimRanking(body: ClaimRankingBody) {
 				username: rankingsTable.username,
 			})
 			.pipe(
-				Effect.catchTag("EffectDrizzleQueryError", (error) =>
-					isUniqueViolation(error, RANKINGS_USERNAME_UNIQUE_INDEX)
-						? Effect.fail(
+				Effect.catchTag("EffectDrizzleQueryError", (error) => {
+					if (isUniqueViolation(error, RANKINGS_EMAIL_UNIQUE_INDEX)) {
+						return Effect.fail(
+							new ClaimRejected({
+								code: "email_taken",
+							}),
+						);
+					}
+					if (isUniqueViolation(error, RANKINGS_USERNAME_UNIQUE_INDEX)) {
+						return Effect.gen(function* () {
+							const emailMatches = yield* db
+								.select({
+									id: rankingsTable.id,
+								})
+								.from(rankingsTable)
+								.where(
+									sql`lower(trim(${rankingsTable.email})) = ${trimmedEmail.toLowerCase()}`,
+								)
+								.pipe(Effect.orDie);
+							return yield* Effect.fail(
 								new ClaimRejected({
-									code: "username_taken",
+									code: emailMatches[0] ? "email_taken" : "username_taken",
 								}),
-							)
-						: Effect.die(error),
-				),
+							);
+						});
+					}
+					return Effect.die(error);
+				}),
 			);
 		const ranking = insertedRows[0];
 		if (!ranking) {

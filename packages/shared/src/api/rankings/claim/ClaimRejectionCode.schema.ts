@@ -15,6 +15,7 @@ export const ClaimRejectionCode = Schema.Literals([
 	"username_too_short",
 	"username_too_long",
 	"username_taken",
+	"email_taken",
 ]);
 
 export type ClaimRejectionCode = Schema.Schema.Type<typeof ClaimRejectionCode>;

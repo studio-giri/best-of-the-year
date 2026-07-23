@@ -7,7 +7,7 @@ import {
 	screen,
 	waitFor,
 } from "@testing-library/react";
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { LanguageProvider } from "#/lib/language/LanguageProvider.tsx";
 
@@ -19,6 +19,10 @@ import { LanguageProvider } from "#/lib/language/LanguageProvider.tsx";
 const navigateMock = vi.fn();
 vi.mock("@tanstack/react-router", () => ({
 	useNavigate: () => navigateMock,
+	// The recovery CTA renders a router Link; a plain anchor is enough here.
+	Link: ({ to, children }: { to: string; children: ReactNode }) => (
+		<a href={to}>{children}</a>
+	),
 }));
 
 const mutateAsyncMock = vi.fn();
@@ -146,6 +150,37 @@ describe("ClaimRanking", () => {
 		expect(
 			await screen.findByText("Username taken. Pick another."),
 		).toBeTruthy();
+		expect(navigateMock).not.toHaveBeenCalled();
+		// Only the email case routes toward recovery; the username case stays a
+		// plain inline "choose another" with no recovery link.
+		expect(
+			screen.queryByRole("link", {
+				name: "you can recover access to it.",
+			}),
+		).toBeNull();
+	});
+
+	// A server email_taken refusal shows its message inline AND offers a path
+	// into recovery: a link to /recover. The user stays on the form.
+	test("shows the email-taken message with a recovery link and stays on the form", async () => {
+		mutateAsyncMock.mockRejectedValue(
+			new ClaimRejected({
+				code: "email_taken",
+			}),
+		);
+
+		renderWithLanguage(<ClaimRanking />);
+		fill("Email", "taken@example.com");
+		fill("Username", "valid-name");
+		submit();
+
+		expect(
+			await screen.findByText("This email already has a list. If it's yours,"),
+		).toBeTruthy();
+		const recoveryLink = screen.getByRole("link", {
+			name: "you can recover access to it.",
+		});
+		expect(recoveryLink.getAttribute("href")).toBe("/recover");
 		expect(navigateMock).not.toHaveBeenCalled();
 	});
 

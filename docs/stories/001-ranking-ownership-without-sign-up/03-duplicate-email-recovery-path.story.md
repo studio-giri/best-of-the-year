@@ -1,7 +1,7 @@
 # Be refused a duplicate email at claim time, with a clear path into recovery
 
 **ID:** S-001-03
-**Status:** Needs refinement
+**Status:** Done
 
 ## Story
 
@@ -9,10 +9,11 @@ As a person trying to claim a ranking with an email that already has one, I want
 
 ## Acceptance Criteria
 
-- **Given** an email that already backs a ranking (matched ignoring case and surrounding whitespace), **when** I submit a claim, **then** the claim is refused *before* a second ranking is created, with an explanation that one email backs at most one ranking.
-- **Given** that refusal, **when** it is shown, **then** it offers a clear path into recovery (a link to the recovery-request flow), not a dead end.
+- **Given** an email that already backs a ranking (matched ignoring case and surrounding whitespace), **when** I submit a claim, **then** the claim is refused *before* a second ranking is created, with the explanation **"This email already has a list, you can't create another one. Did you lose access to your list?"** (FR equivalent per the build brief).
+- **Given** that refusal, **when** it is shown, **then** it offers a clear path into recovery — a link labelled **"Recover access to my list"** that navigates to the recovery-request form (`/recover`) — not a dead end.
 - **Given** the duplicate-email refusal, **when** I compare it to the duplicate-username refusal, **then** only the email case routes toward recovery — the username case (S-001-01) stays an inline "choose another" with no recovery path.
 - **Given** the refusal response, **when** it is returned, **then** it never includes the email of the existing ranking beyond what the submitter already typed.
+- **Given** a claim whose email *and* username both already exist, **when** I submit, **then** the duplicate-email refusal (with its recovery path) is shown — email, the identity key, takes precedence over the username refusal.
 
 ## Out of scope for this Story
 
@@ -26,10 +27,6 @@ S-001-02 — the "path back" links to the recovery-request page, which must exis
 ## Satisfies
 
 REQ-6, REQ-7
-
-## Open questions
-
-- **Refusal copy** — exact wording of the "this email already has a ranking" explanation and the recovery call-to-action.
 
 ## References
 

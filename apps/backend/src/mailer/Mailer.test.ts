@@ -58,7 +58,7 @@ describe("makeMailer", () => {
 			.pipe(Effect.runPromise);
 
 		const message = sent[0];
-		expect(message?.subject).toBe("Récupérez l'accès à votre liste");
+		expect(message?.subject).toBe("Récupère l'accès à ta liste");
 		expect(message?.html).toContain('lang="fr"');
 		expect(message?.html).toContain("Récupérer ma liste");
 		expect(message?.text).toContain("Récupérer ma liste");

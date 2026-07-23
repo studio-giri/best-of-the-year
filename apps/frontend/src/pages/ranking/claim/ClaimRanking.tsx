@@ -4,7 +4,7 @@ import {
 	validateUsername,
 } from "@boty/shared/api/rankings/claim/claimRules";
 import { useForm } from "@tanstack/react-form";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Schema } from "effect";
 import { Mail, User2 } from "lucide-react";
 import { useState } from "react";
@@ -35,7 +35,12 @@ export function ClaimRanking() {
 	// The one rejection that can only come from the server (the case/whitespace-
 	// insensitive uniqueness check at claim time). Held separately from the
 	// field validators so it can be cleared the moment the user edits again.
-	const [serverError, setServerError] = useState<string | null>(null);
+	// `offerRecovery` marks the duplicate-email case, the only refusal rendered
+	// with a link into the recovery flow rather than as plain inline text.
+	const [serverError, setServerError] = useState<{
+		message: string;
+		offerRecovery: boolean;
+	} | null>(null);
 
 	const form = useForm({
 		defaultValues: {
@@ -53,20 +58,31 @@ export function ClaimRanking() {
 					},
 				});
 			} catch (error) {
-				// Map a username-taken refusal to its inline message.
+				// Map a claim refusal to its inline message. A duplicate email is the
+				// one refusal that also offers a recovery link; every other code stays
+				// plain inline text.
 				if (Schema.is(ClaimRejected)(error)) {
-					setServerError(messages.rejections[error.code]);
+					setServerError({
+						message: messages.rejections[error.code],
+						offerRecovery: error.code === "email_taken",
+					});
 					return;
 				}
 				// The claim succeeded but its token couldn't be saved to this browser:
 				// terminal, not retryable, so explain it rather than invite a resubmit
 				if (error instanceof OwnerTokenNotStored) {
-					setServerError(messages.ownerTokenNotStored);
+					setServerError({
+						message: messages.ownerTokenNotStored,
+						offerRecovery: false,
+					});
 					return;
 				}
 				// Anything else (network blip, 5xx) is transient, so show a generic
 				// retryable message; the raw error is data, appended untranslated.
-				setServerError(`${common.genericError} (${String(error)})`);
+				setServerError({
+					message: `${common.genericError} (${String(error)})`,
+					offerRecovery: false,
+				});
 				console.error(error);
 			}
 		},
@@ -117,7 +133,6 @@ export function ClaimRanking() {
 							</>
 						)}
 					</form.Field>
-
 					<form.Field
 						name="email"
 						validators={{
@@ -148,13 +163,16 @@ export function ClaimRanking() {
 							/>
 						)}
 					</form.Field>
-
 					{serverError ? (
-						<span role="alert" className="text-sm text-danger">
-							{serverError}
-						</span>
+						<div role="alert" className="text-sm text-danger">
+							<span>{serverError.message}</span>{" "}
+							{serverError.offerRecovery ? (
+								<Link to="/recover" className="underline">
+									{messages.recoverCtaLabel}
+								</Link>
+							) : null}
+						</div>
 					) : null}
-
 					<Button type="submit" loading={claimRanking.isPending}>
 						{messages.submit}
 					</Button>

@@ -6,14 +6,14 @@ import {
 } from "@boty/shared/api/rankings/claim/claimRules";
 import { sql } from "drizzle-orm";
 import { Effect } from "effect";
-import { isUniqueViolation } from "../db/helpers/isUniqueViolation.ts";
-import { PgDrizzle } from "../db/PgDrizzle.ts";
+import { isUniqueViolation } from "../../db/helpers/isUniqueViolation.ts";
+import { PgDrizzle } from "../../db/PgDrizzle.ts";
 import {
 	RANKINGS_EMAIL_UNIQUE_INDEX,
 	RANKINGS_USERNAME_UNIQUE_INDEX,
 	rankingsTable,
-} from "../db/schema/rankings.table.ts";
-import { mintOwnerToken } from "../ownerTokens/ownerToken.service.ts";
+} from "../../db/schema/rankings.table.ts";
+import { mintOwnerToken } from "../ownerToken.service.ts";
 
 /**
  * Claim a ranking: validate the input, persist the ranking and a fresh Owner token,

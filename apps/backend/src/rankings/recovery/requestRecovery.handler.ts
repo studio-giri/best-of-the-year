@@ -4,12 +4,12 @@ import type { RequestRecoveryBody } from "@boty/shared/api/rankings/recover/Requ
 import type { RequestRecoveryResponse } from "@boty/shared/api/rankings/recover/RequestRecoveryResponse.schema";
 import { sql } from "drizzle-orm";
 import { Effect } from "effect";
-import { PgDrizzle } from "../db/PgDrizzle.ts";
-import { rankingsTable } from "../db/schema/rankings.table.ts";
-import { Env } from "../env.ts";
-import { Mailer } from "../mailer/Mailer.ts";
-import { issueRecoveryToken } from "../recoveryTokens/recoveryToken.service.ts";
+import { PgDrizzle } from "../../db/PgDrizzle.ts";
+import { rankingsTable } from "../../db/schema/rankings.table.ts";
+import { Env } from "../../env.ts";
+import { Mailer } from "../../mailer/Mailer.ts";
 import { coerceLanguage } from "./coerceLanguage.ts";
+import { issueRecoveryToken } from "./recoveryToken.service.ts";
 
 /**
  * Request recovery by email: validate the email (first failure wins, before any

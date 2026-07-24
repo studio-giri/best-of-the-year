@@ -7,12 +7,12 @@ import {
 	test,
 } from "bun:test";
 import { Effect } from "effect";
-import { hashToken } from "../../src/crypto/hashToken.ts";
-import { PgDrizzle } from "../../src/db/PgDrizzle.ts";
-import { rankingsTable } from "../../src/db/schema/rankings.table.ts";
-import { recoveryTokensTable } from "../../src/db/schema/recovery-tokens.table.ts";
-import { newRanking } from "../fixtures/ranking.fixture.ts";
-import { makeTestCtx } from "../setup/make-test-ctx.ts";
+import { hashToken } from "../../../src/crypto/hashToken.ts";
+import { PgDrizzle } from "../../../src/db/PgDrizzle.ts";
+import { rankingsTable } from "../../../src/db/schema/rankings.table.ts";
+import { recoveryTokensTable } from "../../../src/db/schema/recovery-tokens.table.ts";
+import { newRanking } from "../../fixtures/ranking.fixture.ts";
+import { makeTestCtx } from "../../setup/make-test-ctx.ts";
 
 type Ctx = Awaited<ReturnType<typeof makeTestCtx>>;
 

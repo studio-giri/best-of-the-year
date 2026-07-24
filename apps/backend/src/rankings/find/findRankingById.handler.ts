@@ -1,6 +1,6 @@
 import { RankingNotFound } from "@boty/shared/api/rankings/RankingNotFound.error";
 import { Effect } from "effect";
-import { PgDrizzle } from "../db/PgDrizzle.ts";
+import { PgDrizzle } from "../../db/PgDrizzle.ts";
 
 export function findRankingById(id: string) {
 	return Effect.gen(function* () {

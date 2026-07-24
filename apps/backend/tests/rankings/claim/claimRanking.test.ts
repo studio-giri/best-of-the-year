@@ -9,10 +9,10 @@ import {
 import { createHash } from "node:crypto";
 import { sql } from "drizzle-orm";
 import { Effect } from "effect";
-import { PgDrizzle } from "../../src/db/PgDrizzle.ts";
-import { ownerTokensTable } from "../../src/db/schema/owner-tokens.table.ts";
-import { rankingsTable } from "../../src/db/schema/rankings.table.ts";
-import { makeTestCtx } from "../setup/make-test-ctx.ts";
+import { PgDrizzle } from "../../../src/db/PgDrizzle.ts";
+import { ownerTokensTable } from "../../../src/db/schema/owner-tokens.table.ts";
+import { rankingsTable } from "../../../src/db/schema/rankings.table.ts";
+import { makeTestCtx } from "../../setup/make-test-ctx.ts";
 
 type Ctx = Awaited<ReturnType<typeof makeTestCtx>>;
 type Handler = Ctx["handler"];

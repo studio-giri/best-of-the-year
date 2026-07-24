@@ -3,10 +3,10 @@ import type { ConsumeRecoveryResponse } from "@boty/shared/api/rankings/recover/
 import { RecoveryLinkRejected } from "@boty/shared/api/rankings/recover/consume/RecoveryLinkRejected.error";
 import { eq } from "drizzle-orm";
 import { Effect } from "effect";
-import { hashToken } from "../crypto/hashToken.ts";
-import { PgDrizzle } from "../db/PgDrizzle.ts";
-import { recoveryTokensTable } from "../db/schema/recovery-tokens.table.ts";
-import { mintOwnerToken } from "../ownerTokens/ownerToken.service.ts";
+import { hashToken } from "../../crypto/hashToken.ts";
+import { PgDrizzle } from "../../db/PgDrizzle.ts";
+import { recoveryTokensTable } from "../../db/schema/recovery-tokens.table.ts";
+import { mintOwnerToken } from "../ownerToken.service.ts";
 
 /**
  * Consume a recovery link: look the link up by the hash of its raw token, then

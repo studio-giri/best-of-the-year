@@ -1,8 +1,8 @@
 import { randomBytes } from "node:crypto";
 import { Clock, Effect } from "effect";
-import { hashToken } from "../crypto/hashToken.ts";
-import { PgDrizzle } from "../db/PgDrizzle.ts";
-import { recoveryTokensTable } from "../db/schema/recovery-tokens.table.ts";
+import { hashToken } from "../../crypto/hashToken.ts";
+import { PgDrizzle } from "../../db/PgDrizzle.ts";
+import { recoveryTokensTable } from "../../db/schema/recovery-tokens.table.ts";
 
 // A recovery link is valid for 48h from issue (ADR-001).
 const RECOVERY_TOKEN_TTL_MS = 48 * 60 * 60 * 1000;

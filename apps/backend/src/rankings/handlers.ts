@@ -1,9 +1,9 @@
 import { Api } from "@boty/shared/api/Api";
 import { HttpApiBuilder } from "effect/unstable/httpapi";
-import { claimRanking } from "./claimRanking.handler.ts";
-import { consumeRecovery } from "./consumeRecovery.handler.ts";
-import { findRankingById } from "./findRankingById.handler.ts";
-import { requestRecovery } from "./requestRecovery.handler.ts";
+import { claimRanking } from "./claim/claimRanking.handler.ts";
+import { findRankingById } from "./find/findRankingById.handler.ts";
+import { consumeRecovery } from "./recovery/consumeRecovery.handler.ts";
+import { requestRecovery } from "./recovery/requestRecovery.handler.ts";
 
 export const HttpRankingsLive = HttpApiBuilder.group(
 	Api,

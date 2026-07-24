@@ -199,4 +199,11 @@ describe("POST /recover/consume (consume recovery link)", () => {
 		expect(await ownerTokenHashesFor(ctx, rankingA)).toHaveLength(1);
 		expect(await ownerTokenHashesFor(ctx, rankingB)).toHaveLength(0);
 	});
+
+	test("refuses an unknown token as link_invalid", async () => {
+		const { status, json } = await consume(ctx, "never-issued-token");
+
+		expect(status).toBe(422);
+		expect(json.code).toBe("link_invalid");
+	});
 });

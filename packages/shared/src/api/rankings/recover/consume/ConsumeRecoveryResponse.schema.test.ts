@@ -18,6 +18,7 @@ describe("ConsumeRecoveryResponse", () => {
 		const decoded = Schema.decodeUnknownSync(ConsumeRecoveryResponse)({
 			id: "ranking-1",
 			ownerToken: "tok",
+			email: "my@email.test",
 		});
 		expect(decoded).not.toHaveProperty("email");
 	});

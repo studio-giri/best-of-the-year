@@ -199,15 +199,4 @@ describe("POST /recover/consume (consume recovery link)", () => {
 		expect(await ownerTokenHashesFor(ctx, rankingA)).toHaveLength(1);
 		expect(await ownerTokenHashesFor(ctx, rankingB)).toHaveLength(0);
 	});
-
-	// The consume response never exposes the email the recovery keyed on.
-	test("never exposes the email in the response", async () => {
-		const rankingId = await seedRanking(ctx, "secret@example.com");
-		await seedRecoveryLink(ctx, rankingId, "raw-recovery-token");
-
-		const { status, json } = await consume(ctx, "raw-recovery-token");
-		expect(status).toBe(200);
-		expect(json).not.toHaveProperty("email");
-		expect(JSON.stringify(json)).not.toContain("secret@example.com");
-	});
 });

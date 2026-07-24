@@ -1,9 +1,11 @@
+import { RecoveryLinkRejected } from "@boty/shared/api/rankings/recover/consume/RecoveryLinkRejected.error";
 import type { Language } from "@boty/shared/language/Language.schema";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import type { ReactElement, ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { LanguageProvider } from "#/lib/language/LanguageProvider.tsx";
 import { getOwnerToken } from "#/lib/ownerTokens.ts";
+import { consumeMessages } from "./messages.ts";
 
 /**
  * Mock the two side-effecting seams: navigation (needs a router context we do
@@ -106,4 +108,45 @@ describe("ConsumeRecovery", () => {
 		expect(retryLink.getAttribute("href")).toBe("/recover/request");
 		expect(navigateMock).not.toHaveBeenCalled();
 	});
+
+	// A link the server refuses (used / expired / invalid) is a permanent dead
+	// end, not a transient blip: each code shows its own fixed message — never the
+	// "try again later" generic — with a path to a fresh link, and opens no view.
+	const rejections = [
+		{
+			code: "link_used" as const,
+			message: consumeMessages.en.rejections.link_used,
+		},
+		{
+			code: "link_expired" as const,
+			message: consumeMessages.en.rejections.link_expired,
+		},
+		{
+			code: "link_invalid" as const,
+			message: consumeMessages.en.rejections.link_invalid,
+		},
+	];
+
+	for (const { code, message } of rejections) {
+		test(`shows the permanent per-code message and a request-form link for ${code}`, async () => {
+			mutateAsyncMock.mockRejectedValue(
+				new RecoveryLinkRejected({
+					code,
+				}),
+			);
+
+			renderWithLanguage(<ConsumeRecovery token="raw-token" />);
+
+			expect(await screen.findByText(message)).toBeTruthy();
+			// The permanent copy is distinct from the transient generic.
+			expect(
+				screen.queryByText(/Something went wrong, please try again later\./),
+			).toBeNull();
+			const retryLink = screen.getByRole("link", {
+				name: "request a new link",
+			});
+			expect(retryLink.getAttribute("href")).toBe("/recover/request");
+			expect(navigateMock).not.toHaveBeenCalled();
+		});
+	}
 });

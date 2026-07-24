@@ -1,7 +1,7 @@
 # Be told a used or expired link no longer works, while other valid links keep working
 
 **ID:** S-001-05
-**Status:** Needs refinement
+**Status:** Done
 
 ## Story
 
@@ -9,8 +9,9 @@ As a person following a recovery link that has already been used or has aged out
 
 ## Acceptance Criteria
 
-- **Given** a recovery link that has already been consumed once, **when** I open it again, **then** it does not grant access, I am told it no longer works, and I am directed to request a fresh one.
+- **Given** a recovery link that has already been consumed once, **when** I open it again, **then** it does not grant access, I am told it no longer works, and I am directed to request a fresh one — and this holds even if the link has also since expired (a used link is reported as used, not expired).
 - **Given** a recovery link issued more than 48 hours ago, **when** I open it, **then** it does not grant access, I am told it has expired, and I am directed to request a fresh one.
+- **Given** a link whose token matches no outstanding recovery link (never issued, or truncated/garbled), **when** I open it, **then** it does not grant access, I am told the link isn't valid, and I am directed to request a fresh one — a permanent message, distinct from the transient "try again later" shown only for a network/server error.
 - **Given** a recovery link issued less than 48 hours ago and never used, **when** I open it, **then** it still grants access (the expiry boundary is 48h from issuance).
 - **Given** several recovery links were issued for the same ranking, **when** I request and obtain a new one, **then** the earlier unexpired links remain valid — requesting a new link does not invalidate the others.
 - **Given** several valid links exist, **when** I consume one, **then** only that link is marked used; the others remain independently usable until they are each used or expire.
@@ -26,11 +27,6 @@ S-001-04 — adds the used/expired/coexistence rules to the consume flow it esta
 ## Satisfies
 
 REQ-18, REQ-19, REQ-20, REQ-21
-
-## Open questions
-
-- **Expiry boundary precision** — whether expiry is evaluated strictly at the 48h mark (inclusive/exclusive) and the time source used, so the boundary AC is deterministic in tests.
-- **Used vs expired copy** — whether the "no longer works" message distinguishes used from expired, or shows one unified message.
 
 ## References
 

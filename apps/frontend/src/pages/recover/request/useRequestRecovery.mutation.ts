@@ -14,7 +14,7 @@ async function submitRecovery(
 	input: RequestRecoveryBody,
 ): Promise<RequestRecoveryResponse> {
 	return Effect.runPromise(
-		client.rankings.recover({
+		client.rankings.requestRecovery({
 			payload: input,
 		}),
 	);

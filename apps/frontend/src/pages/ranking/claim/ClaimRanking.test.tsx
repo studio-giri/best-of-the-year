@@ -161,7 +161,7 @@ describe("ClaimRanking", () => {
 	});
 
 	// A server email_taken refusal shows its message inline AND offers a path
-	// into recovery: a link to /recover. The user stays on the form.
+	// into recovery: a link to /recover/request. The user stays on the form.
 	test("shows the email-taken message with a recovery link and stays on the form", async () => {
 		mutateAsyncMock.mockRejectedValue(
 			new ClaimRejected({
@@ -180,7 +180,7 @@ describe("ClaimRanking", () => {
 		const recoveryLink = screen.getByRole("link", {
 			name: "you can recover access to it.",
 		});
-		expect(recoveryLink.getAttribute("href")).toBe("/recover");
+		expect(recoveryLink.getAttribute("href")).toBe("/recover/request");
 		expect(navigateMock).not.toHaveBeenCalled();
 	});
 

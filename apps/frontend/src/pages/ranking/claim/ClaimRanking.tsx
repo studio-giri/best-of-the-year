@@ -167,7 +167,7 @@ export function ClaimRanking() {
 						<div role="alert" className="text-sm text-danger">
 							<span>{serverError.message}</span>{" "}
 							{serverError.offerRecovery ? (
-								<Link to="/recover" className="underline">
+								<Link to="/recover/request" className="underline">
 									{messages.recoverCtaLabel}
 								</Link>
 							) : null}

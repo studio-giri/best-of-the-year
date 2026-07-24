@@ -10,6 +10,9 @@ import { ClaimRankingResponse } from "./claim/ClaimRankingResponse.schema.ts";
 import { ClaimRejected } from "./claim/ClaimRejected.error.ts";
 import { Ranking } from "./Ranking.schema.ts";
 import { RankingNotFound } from "./RankingNotFound.error.ts";
+import { ConsumeRecoveryBody } from "./recover/consume/ConsumeRecoveryBody.schema.ts";
+import { ConsumeRecoveryResponse } from "./recover/consume/ConsumeRecoveryResponse.schema.ts";
+import { RecoveryLinkRejected } from "./recover/consume/RecoveryLinkRejected.error.ts";
 import { RecoveryRejected } from "./recover/RecoveryRejected.error.ts";
 import { RequestRecoveryBody } from "./recover/RequestRecoveryBody.schema.ts";
 import { RequestRecoveryResponse } from "./recover/RequestRecoveryResponse.schema.ts";
@@ -40,10 +43,17 @@ export const RankingsApi = HttpApiGroup.make(endpoint)
 		}),
 	)
 	.add(
-		HttpApiEndpoint.post("recover", `/${endpoint}/recover`, {
+		HttpApiEndpoint.post("requestRecovery", "/recover/request", {
 			payload: RequestRecoveryBody,
 			success: RequestRecoveryResponse,
 			error: HttpApiSchema.status(422)(RecoveryRejected),
+		}),
+	)
+	.add(
+		HttpApiEndpoint.post("consumeRecovery", "/recover/consume", {
+			payload: ConsumeRecoveryBody,
+			success: ConsumeRecoveryResponse,
+			error: HttpApiSchema.status(422)(RecoveryLinkRejected),
 		}),
 	)
 	.annotate(OpenApi.Title, "Rankings")

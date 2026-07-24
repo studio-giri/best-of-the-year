@@ -24,7 +24,7 @@ const FORTY_EIGHT_HOURS_MS = 48 * 60 * 60 * 1000;
  */
 async function recover(ctx: Ctx, email: string, language?: string) {
 	const res = await ctx.handler(
-		new Request("http://localhost/rankings/recover", {
+		new Request("http://localhost/recover/request", {
 			method: "POST",
 			headers: {
 				"content-type": "application/json",
@@ -85,7 +85,7 @@ function allRecoveryTokens(ctx: Ctx) {
 	);
 }
 
-describe("POST /rankings/recover (request recovery)", () => {
+describe("POST /recover/request (request recovery)", () => {
 	let ctx: Ctx;
 
 	beforeAll(async () => {
@@ -161,8 +161,8 @@ describe("POST /rankings/recover (request recovery)", () => {
 
 	// An email backing a ranking creates exactly one link (hash only, ~48h
 	// expiry, unconsumed) and dispatches exactly one email carrying the raw token
-	// in a /recover/ link built from the configured origin. The response body
-	// itself echoes neither the submitted email nor the raw token.
+	// in a /recover/consume/ link built from the configured origin. The response
+	// body itself echoes neither the submitted email nor the raw token.
 	test("issues one link and dispatches one email when the ranking exists", async () => {
 		const rankingId = await seedRanking(ctx, "owner@example.com");
 
@@ -188,11 +188,15 @@ describe("POST /rankings/recover (request recovery)", () => {
 			throw new Error("expected a Mailer call");
 		}
 		expect(call.to).toBe("owner@example.com");
-		expect(call.url.startsWith(`${ctx.appBaseUrl}/recover/`)).toBe(true);
+		expect(call.url.startsWith(`${ctx.appBaseUrl}/recover/consume/`)).toBe(
+			true,
+		);
 
 		// The link carries the RAW token; the DB holds only its hash. Verifying the
 		// stored hash is the hash of the emailed token proves both at once.
-		const rawToken = call.url.slice(`${ctx.appBaseUrl}/recover/`.length);
+		const rawToken = call.url.slice(
+			`${ctx.appBaseUrl}/recover/consume/`.length,
+		);
 		expect(rawToken.length).toBeGreaterThan(20);
 		expect(row.tokenHash).toBe(hashToken(rawToken));
 		expect(row.tokenHash).not.toBe(rawToken);

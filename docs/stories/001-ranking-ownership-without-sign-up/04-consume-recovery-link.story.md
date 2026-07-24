@@ -1,7 +1,7 @@
 # Click a valid recovery link and land in edit mode on a new browser
 
 **ID:** S-001-04
-**Status:** Needs refinement
+**Status:** Done
 
 ## Story
 
@@ -14,6 +14,8 @@ As a person who received a recovery link, I want clicking it to put me straight 
 - **Given** another browser already held a valid owner token for the same ranking, **when** I recover on the new browser, **then** the previously authorized browser still authorizes — recovery is additive and revokes nothing, so the ranking is editable from both at once.
 - **Given** a recovery link, **when** it is consumed, **then** it only ever restores access to the requester's own ranking and never to anyone else's.
 - **Given** the consume flow, **when** I complete it, **then** I was not asked for a password, an account, or any email confirmation, and the response never exposes the email.
+- **Given** a valid recovery link, **when** the browser is exchanging it for an owner token, **then** I see a brief in-progress indication and am asked to confirm or click nothing — the exchange resolves on its own into the editor.
+- **Given** a valid recovery link, **when** the exchange fails for a transient reason — a network or server error, *not* a used or expired link (that is S-001-05) — **then** I am shown a generic "try again" message with a link back to the recovery-request form, and no owner view is opened.
 
 ## Out of scope for this Story
 
@@ -27,10 +29,6 @@ S-001-02 — consumes the recovery links that flow issues.
 ## Satisfies
 
 REQ-15, REQ-16, REQ-17, REQ-24, REQ-25, REQ-26
-
-## Open questions
-
-- **Recovery link route shape** — the frontend route that receives the token and the request shape that exchanges it for an owner token (resolved together with S-001-02).
 
 ## References
 

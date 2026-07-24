@@ -67,7 +67,7 @@ export function requestRecovery(
 		// an absolute URL built from the configured frontend origin.
 		const rawToken = yield* issueRecoveryToken(ranking.id);
 		const env = yield* Env;
-		const url = `${env.appBaseUrl}/recover/${rawToken}`;
+		const url = `${env.appBaseUrl}/recover/consume/${rawToken}`;
 
 		// The email follows the reader's current Language, carried in the request
 		// body and coerced with an English fallback.

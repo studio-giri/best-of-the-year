@@ -1,4 +1,6 @@
+import { RecoveryLinkRejected } from "@boty/shared/api/rankings/recover/consume/RecoveryLinkRejected.error";
 import { Link, useNavigate } from "@tanstack/react-router";
+import { Schema } from "effect";
 import { Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useMessages } from "#/lib/language/commonMessages.ts";
@@ -24,8 +26,11 @@ export function ConsumeRecovery({ token }: Props) {
 	const navigate = useNavigate();
 	const consumeRecovery = useConsumeRecovery();
 
-	// True once the exchange has failed; flips the in-progress card to the retry.
-	const [failed, setFailed] = useState(false);
+	// The message shown once the exchange has failed; null while still in flight or
+	// on the happy path. A server refusal (used / expired / invalid link) sets a
+	// permanent per-code line; a transport failure sets the transient generic. Both
+	// flip the in-progress card to the same retry layout.
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
 	// The exchange is a one-shot side effect: a ref guards against a second fire
 	// (e.g. a StrictMode double mount) re-consuming the same link.
@@ -51,24 +56,32 @@ export function ConsumeRecovery({ token }: Props) {
 					},
 				});
 			})
-			.catch((error) => {
-				// A transport failure (or a token that can't be stored) falls back to a
-				// generic retry; the owner view is never opened.
-				setFailed(true);
+			.catch((error: unknown) => {
+				// A server refusal is a permanent dead end: render the fixed per-code
+				// line, no "try again later". Anything else (transport failure, or a
+				// token that can't be stored) is transient and falls back to the generic
+				// retry. Either way the owner view is never opened.
+				if (Schema.is(RecoveryLinkRejected)(error)) {
+					setErrorMessage(messages.rejections[error.code]);
+					return;
+				}
+				setErrorMessage(common.genericError);
 				console.error(error);
 			});
 	}, [
 		mutateAsync,
 		token,
 		navigate,
+		messages,
+		common,
 	]);
 
-	if (failed) {
+	if (errorMessage !== null) {
 		return (
 			<div className="max-w-xl mx-auto">
 				<div className="bg-surface/90 rounded-2xl mx-3 p-8">
 					<p role="alert" className="text-white">
-						{common.genericError}{" "}
+						<span>{errorMessage}</span>{" "}
 						<Link to="/recover/request" className="underline">
 							{messages.retryCtaLabel}
 						</Link>

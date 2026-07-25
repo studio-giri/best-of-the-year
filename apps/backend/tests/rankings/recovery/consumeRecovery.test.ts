@@ -72,18 +72,46 @@ function seedRanking(ctx: Ctx, email: string) {
 }
 
 /**
- * Seed a valid, unused, unexpired recovery link for a ranking, storing only the
- * hash of the given raw token — the same at-rest shape the request flow writes.
+ * Seed a recovery link for a ranking, storing only the hash of the given raw
+ * token — the same at-rest shape the request flow writes. Defaults to a valid,
+ * unused, unexpired link (expires 48h out, never consumed); `expiresAt` and
+ * `consumedAt` can be overridden to stand up expired or already-used links.
  */
-function seedRecoveryLink(ctx: Ctx, rankingId: string, rawToken: string) {
+function seedRecoveryLink(
+	ctx: Ctx,
+	rankingId: string,
+	rawToken: string,
+	overrides: {
+		expiresAt?: Date;
+		consumedAt?: Date;
+	} = {},
+) {
 	return ctx.runDb(
 		Effect.gen(function* () {
 			const db = yield* PgDrizzle;
 			yield* db.insert(recoveryTokensTable).values({
 				rankingId,
 				tokenHash: hashToken(rawToken),
-				expiresAt: new Date(Date.now() + FORTY_EIGHT_HOURS_MS),
+				expiresAt:
+					overrides.expiresAt ?? new Date(Date.now() + FORTY_EIGHT_HOURS_MS),
+				consumedAt: overrides.consumedAt ?? null,
 			});
+		}),
+	);
+}
+
+/** The `consumedAt` timestamp currently held for a link, by its raw token. */
+function consumedAtFor(ctx: Ctx, rawToken: string) {
+	return ctx.runDb(
+		Effect.gen(function* () {
+			const db = yield* PgDrizzle;
+			const rows = yield* db
+				.select({
+					consumedAt: recoveryTokensTable.consumedAt,
+				})
+				.from(recoveryTokensTable)
+				.where(eq(recoveryTokensTable.tokenHash, hashToken(rawToken)));
+			return rows[0]?.consumedAt ?? null;
 		}),
 	);
 }
@@ -205,5 +233,100 @@ describe("POST /recover/consume (consume recovery link)", () => {
 
 		expect(status).toBe(422);
 		expect(json.code).toBe("link_invalid");
+	});
+
+	// A link that was already spent no longer grants access: it is refused as
+	// used and mints nothing new.
+	test("refuses an already-consumed link as link_used, minting no token", async () => {
+		const rankingId = await seedRanking(ctx, "used@example.com");
+		await seedRecoveryLink(ctx, rankingId, "spent-token", {
+			consumedAt: new Date(Date.now() - 60 * 1000),
+		});
+
+		const { status, json } = await consume(ctx, "spent-token");
+
+		expect(status).toBe(422);
+		expect(json.code).toBe("link_used");
+		expect(await ownerTokenHashesFor(ctx, rankingId)).toHaveLength(0);
+	});
+
+	// Used wins over expired: a link that is both consumed and past its expiry is
+	// reported as used, not expired.
+	test("reports a link that is both used and expired as link_used", async () => {
+		const rankingId = await seedRanking(ctx, "used-and-expired@example.com");
+		await seedRecoveryLink(ctx, rankingId, "spent-and-stale-token", {
+			consumedAt: new Date(Date.now() - 60 * 1000),
+			expiresAt: new Date(Date.now() - FORTY_EIGHT_HOURS_MS),
+		});
+
+		const { status, json } = await consume(ctx, "spent-and-stale-token");
+
+		expect(status).toBe(422);
+		expect(json.code).toBe("link_used");
+	});
+
+	// A link issued more than 48h ago no longer grants access: it is refused as
+	// expired and mints nothing new.
+	test("refuses an expired, unused link as link_expired, minting no token", async () => {
+		const rankingId = await seedRanking(ctx, "expired@example.com");
+		await seedRecoveryLink(ctx, rankingId, "stale-token", {
+			expiresAt: new Date(Date.now() - 60 * 1000),
+		});
+
+		const { status, json } = await consume(ctx, "stale-token");
+
+		expect(status).toBe(422);
+		expect(json.code).toBe("link_expired");
+		expect(await ownerTokenHashesFor(ctx, rankingId)).toHaveLength(0);
+	});
+
+	// A link comfortably inside the 48h window still grants access — the boundary
+	// is future expiry, so a link that expires shortly from now is valid.
+	test("still grants access to an unused link whose expiry is in the future", async () => {
+		const rankingId = await seedRanking(ctx, "fresh@example.com");
+		await seedRecoveryLink(ctx, rankingId, "fresh-token", {
+			expiresAt: new Date(Date.now() + 60 * 1000),
+		});
+
+		const { status, json } = await consume(ctx, "fresh-token");
+
+		expect(status).toBe(200);
+		expect(json.id).toBe(rankingId);
+	});
+
+	// Consuming one link never touches the others issued for the same ranking:
+	// after spending the first, a second valid link still grants access.
+	test("leaves other outstanding links for the same ranking usable", async () => {
+		const rankingId = await seedRanking(ctx, "many-links@example.com");
+		await seedRecoveryLink(ctx, rankingId, "first-token");
+		await seedRecoveryLink(ctx, rankingId, "second-token");
+
+		const first = await consume(ctx, "first-token");
+		expect(first.status).toBe(200);
+		expect(first.json.id).toBe(rankingId);
+
+		const second = await consume(ctx, "second-token");
+		expect(second.status).toBe(200);
+		expect(second.json.id).toBe(rankingId);
+	});
+
+	// Consuming a link marks only that link used: its own `consumedAt` is set
+	// while a sibling link's stays null and remains consumable.
+	test("marks only the consumed link, leaving its siblings unconsumed", async () => {
+		const rankingId = await seedRanking(ctx, "mark-one@example.com");
+		await seedRecoveryLink(ctx, rankingId, "consumed-token");
+		await seedRecoveryLink(ctx, rankingId, "sibling-token");
+
+		const { status } = await consume(ctx, "consumed-token");
+		expect(status).toBe(200);
+
+		// The consumed link now carries a timestamp; the sibling is untouched.
+		expect(await consumedAtFor(ctx, "consumed-token")).not.toBeNull();
+		expect(await consumedAtFor(ctx, "sibling-token")).toBeNull();
+
+		// And the untouched sibling still grants access.
+		const sibling = await consume(ctx, "sibling-token");
+		expect(sibling.status).toBe(200);
+		expect(sibling.json.id).toBe(rankingId);
 	});
 });

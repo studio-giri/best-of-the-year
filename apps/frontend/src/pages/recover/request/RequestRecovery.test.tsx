@@ -96,7 +96,7 @@ describe("RequestRecovery", () => {
 
 		expect(
 			await screen.findByText(
-				"Check your inbox. We've emailed you a link to get back into your list.",
+				"We've emailed you a link to get back into your list.",
 			),
 		).toBeTruthy();
 	});
@@ -120,7 +120,7 @@ describe("RequestRecovery", () => {
 		expect(screen.getByLabelText("Email")).toBeTruthy();
 		expect(
 			screen.queryByText(
-				"Check your inbox. We've emailed you a link to get back into your list.",
+				"We've emailed you a link to get back into your list.",
 			),
 		).toBeNull();
 	});

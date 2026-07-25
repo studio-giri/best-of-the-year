@@ -103,7 +103,7 @@ describe("ConsumeRecovery", () => {
 			await screen.findByText(/Something went wrong, please try again later\./),
 		).toBeTruthy();
 		const retryLink = screen.getByRole("link", {
-			name: "request a new link",
+			name: "Request a new link",
 		});
 		expect(retryLink.getAttribute("href")).toBe("/recover/request");
 		expect(navigateMock).not.toHaveBeenCalled();
@@ -143,7 +143,7 @@ describe("ConsumeRecovery", () => {
 				screen.queryByText(/Something went wrong, please try again later\./),
 			).toBeNull();
 			const retryLink = screen.getByRole("link", {
-				name: "request a new link",
+				name: "Request a new link",
 			});
 			expect(retryLink.getAttribute("href")).toBe("/recover/request");
 			expect(navigateMock).not.toHaveBeenCalled();

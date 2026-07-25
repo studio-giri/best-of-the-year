@@ -10,7 +10,7 @@ export const recoverMessages = defineMessages({
 		emailHint: "The address you used when you created your list.",
 		emailPlaceholder: "your@email.com",
 		submit: "Email me a link",
-		sent: "Check your inbox. We've emailed you a link to get back into your list.",
+		sent: "We've emailed you a link to get back into your list.",
 		rejections: emailRejectionMessages.en,
 	},
 	fr: {
@@ -19,7 +19,7 @@ export const recoverMessages = defineMessages({
 		emailHint: "L'adresse que tu as utilisée en créant ta liste.",
 		emailPlaceholder: "toi@email.com",
 		submit: "Envoie-moi un lien",
-		sent: "Vérifie ta boîte de réception. Nous t'avons envoyé un lien pour récupérer l'accès à ta liste.",
+		sent: "Nous t'avons envoyé un lien par mail pour récupérer l'accès à ta liste.",
 		rejections: emailRejectionMessages.fr,
 	},
 });

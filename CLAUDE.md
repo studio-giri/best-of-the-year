@@ -30,7 +30,11 @@ The backend uses [Effect](https://effect.website/) (v4 beta). Write idiomatic Ef
 
 API specs (`HttpApi` groups) live in `packages/shared/src/api/` so both sides share one contract: the backend implements them (`HttpApiBuilder.group` in `apps/backend/src/<group>/handlers.ts`), the frontend derives a typed client from them (`HttpApiClient` in `apps/frontend/src/lib/api/client.ts`).
 
-The frontend calls the API exclusively through that derived client. Effect runtime usage (`Effect.runPromise`, `Effect.provide`) is confined to `lib/api/client.ts` and inside TanStack Query `queryFn`s — components and hooks expose plain Promises/data via TanStack Query. Do not introduce broader Effect runtime patterns (`Effect.gen`, `Layer` composition, services) in the frontend.
+The frontend calls the API exclusively through that derived client, and **`apps/frontend/src/lib/api/` is the only folder that may import the Effect runtime**. Every endpoint gets a Promise-returning helper there (one per file, verb-named: `saveRankingItems.ts`, `claimRanking.ts`); pages, components and hooks call those helpers and deal only in plain Promises and data. Queries wrap the same helper in `queryOptions` (`rankingQueryOptions.ts`).
+
+Stated as the rule a reader can check at a glance: outside `lib/api/`, no `import` from `effect` or `effect/**`, except the pure synchronous `Schema`, `Data` and `Types`. Biome enforces this (`noRestrictedImports` override in `apps/frontend/biome.json`), so a violation fails `bun check` rather than waiting for review. Test files are exempt — they mock the client at its Effect-returning seam.
+
+Do not introduce broader Effect runtime patterns (`Effect.gen`, `Layer` composition, services) in the frontend, even inside `lib/api/`: a helper there is one `Effect.runPromise` around one client call, nothing more.
 
 The restriction is on the Effect **runtime**, not on Effect **Schema**. Pure synchronous schema ops reusing a `@boty/shared` schema are allowed anywhere (e.g. `Schema.is`/`Schema.decodeUnknown` — decoding responses, or guarding a param against the shared `Uuid` schema rather than a hand-rolled regex). Never define domain schemas frontend-side.
 

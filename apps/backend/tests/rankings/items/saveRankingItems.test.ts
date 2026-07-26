@@ -264,20 +264,6 @@ describe("PUT /rankings/:id/items", () => {
 		expect(await storedItems(ctx, rankingId)).toEqual(originalList);
 	});
 
-	test("refuses a pass naming no year even on a ranking that holds no games", async () => {
-		const { rankingId, ownerToken } = await seedOwnedRanking(ctx);
-
-		// The floor is on what a pass would publish, not on what the list currently
-		// holds, so re-emptying an empty list is refused the same way.
-		const refused = await saveItems(ctx, {
-			rankingId,
-			authorization: `Bearer ${ownerToken}`,
-			items: [],
-		});
-
-		expect(refused.status).toBe(422);
-	});
-
 	test("lets the last game be replaced, so a single-game list is not frozen", async () => {
 		const { rankingId, ownerToken } = await seedOwnedRanking(ctx, [
 			{

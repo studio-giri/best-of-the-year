@@ -1,5 +1,6 @@
 import type { EditAccessDenied } from "@boty/shared/api/rankings/EditAccessDenied.error";
 import { FIRST_COVERED_YEAR } from "@boty/shared/api/rankings/items/coveredYears";
+import { RankingWouldBeEmpty } from "@boty/shared/api/rankings/items/RankingWouldBeEmpty.error";
 import type { SaveRankingItemsBody } from "@boty/shared/api/rankings/items/SaveRankingItemsBody.schema";
 import { YearNotCovered } from "@boty/shared/api/rankings/items/YearNotCovered.error";
 import type { Ranking } from "@boty/shared/api/rankings/Ranking.schema";
@@ -34,13 +35,21 @@ export function saveRankingItems(args: {
 	body: SaveRankingItemsBody;
 }): Effect.Effect<
 	Ranking,
-	RankingNotFound | EditAccessDenied | YearNotCovered,
+	RankingNotFound | EditAccessDenied | YearNotCovered | RankingWouldBeEmpty,
 	PgDrizzle
 > {
 	return Effect.gen(function* () {
 		// Prove this credential grants edit access to this Ranking before reading or
 		// writing anything of it.
 		yield* resolveOwnedRanking(args.rankingId, args.authorization);
+
+		// Refuse a pass that would publish no games at all. The judgement is on the
+		// pass alone, never on what the Ranking currently holds: a pass naming none is
+		// refused whether it would empty a full list or re-empty an empty one, which
+		// keeps the rule one comparison rather than a state machine (ADR-003).
+		if (args.body.items.length === 0) {
+			return yield* Effect.fail(new RankingWouldBeEmpty());
+		}
 
 		// Refuse the whole pass if it names a year the site does not cover. The span
 		// is read from the clock per request, since a bound derived at import would
@@ -68,39 +77,35 @@ export function saveRankingItems(args: {
 		yield* db
 			.transaction((tx) =>
 				Effect.gen(function* () {
-					if (args.body.items.length > 0) {
-						yield* tx
-							.insert(rankingItemsTable)
-							.values(
-								args.body.items.map((item) => ({
-									rankingId: args.rankingId,
-									year: item.year,
-									name: item.name,
-								})),
-							)
-							.onConflictDoUpdate({
-								target: [
-									rankingItemsTable.rankingId,
-									rankingItemsTable.year,
-								],
-								set: {
-									name: sql`excluded.name`,
-									updatedAt: committedAt,
-								},
-							});
-					}
+					yield* tx
+						.insert(rankingItemsTable)
+						.values(
+							args.body.items.map((item) => ({
+								rankingId: args.rankingId,
+								year: item.year,
+								name: item.name,
+							})),
+						)
+						.onConflictDoUpdate({
+							target: [
+								rankingItemsTable.rankingId,
+								rankingItemsTable.year,
+							],
+							set: {
+								name: sql`excluded.name`,
+								updatedAt: committedAt,
+							},
+						});
 
-					// Every year the pass left unnamed holds no game once it lands —
-					// which, for a pass naming none, is the whole list.
+					// Every year the pass left unnamed holds no game once it lands. A pass
+					// always names at least one, so there is always a year to keep.
 					yield* tx
 						.delete(rankingItemsTable)
 						.where(
-							namedYears.length > 0
-								? and(
-										eq(rankingItemsTable.rankingId, args.rankingId),
-										notInArray(rankingItemsTable.year, namedYears),
-									)
-								: eq(rankingItemsTable.rankingId, args.rankingId),
+							and(
+								eq(rankingItemsTable.rankingId, args.rankingId),
+								notInArray(rankingItemsTable.year, namedYears),
+							),
 						);
 
 					yield* tx

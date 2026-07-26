@@ -1,6 +1,6 @@
 import { coveredYears } from "@boty/shared/api/rankings/items/coveredYears";
 import type { Ranking } from "@boty/shared/api/rankings/Ranking.schema";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useMessages } from "#/lib/language/commonMessages.ts";
 import { useLocalized } from "#/lib/language/LanguageProvider.tsx";
 import { Button } from "#/ui/form/Button.tsx";
@@ -28,16 +28,23 @@ export function RankingEditForm({ rankingId, items }: Props) {
 	const messages = useLocalized(editMessages);
 	const common = useMessages();
 	const saveItems = useSaveRankingItems(rankingId);
+	const emptyPassReasonId = useId();
 
 	// The pass is held here and nowhere else until it is committed: a reader
 	// loading the public list meets what was published, not what is being typed.
 	const [names, setNames] = useState(() => toRankingItems(items));
 
+	// What the pass would carry, so the commit is withheld on the games it would
+	// actually publish rather than on how many fields merely look filled in — the
+	// same count the server judges, which is what keeps the two from disagreeing.
+	const pass = toSaveItems(names);
+	const wouldPublishNothing = pass.length === 0;
+
 	return (
 		<form
 			onSubmit={(event) => {
 				event.preventDefault();
-				saveItems.mutate(toSaveItems(names), {
+				saveItems.mutate(pass, {
 					// The answer is the stored list, so the form adopts it rather than
 					// what it sent: what a person sees as committed is what everyone else
 					// will read.
@@ -80,7 +87,23 @@ export function RankingEditForm({ rankingId, items }: Props) {
 							{common.genericError}
 						</span>
 					) : null}
-					<Button type="submit" loading={saveItems.isPending}>
+
+					{/* A pass that would publish nothing says so where the commit it
+					    withholds sits, so the reason is read alongside the control it
+					    explains rather than after a refusal. */}
+					{wouldPublishNothing ? (
+						<span id={emptyPassReasonId} className="text-sm text-muted">
+							{messages.needsOneGame}
+						</span>
+					) : null}
+					<Button
+						type="submit"
+						loading={saveItems.isPending}
+						disabled={wouldPublishNothing}
+						aria-describedby={
+							wouldPublishNothing ? emptyPassReasonId : undefined
+						}
+					>
 						{messages.save}
 					</Button>
 				</div>

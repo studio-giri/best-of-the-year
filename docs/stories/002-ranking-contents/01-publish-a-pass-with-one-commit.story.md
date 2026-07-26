@@ -18,13 +18,17 @@ As the owner of a ranking, I want to type a game into any year of my list and pu
 - **Given** changes across several years, **when** I take the one commit action, **then** all of them are published together — there is no per-year save and no save that happens on its own.
 - **Given** a committed pass, **when** the public list is loaded afterwards, **then** it shows every change from that pass, and the same list is what the editor now shows as saved.
 - **Given** a commit that succeeded, **when** it lands, **then** I am still in the editor with my list in front of me, free to keep going.
-- **Given** a ranking with no games at all, **when** I commit without filling anything, **then** the ranking is accepted as holding no games; **and given** a ranking that held games, **when** I commit having emptied every year, **then** it holds none.
+- **Given** a list where no year holds a game, **when** I look at the editor, **then** the commit action is not offered, and I am told a list needs at least one game.
+- **Given** a ranking holding exactly one game, **when** I clear that year, **then** the commit action is not offered until some year holds a game again; **and when** I type a game into a different year instead, **then** committing is offered and publishes both changes together.
+- **Given** a browser attempting to commit a list in which no year holds a game, **when** the commit is submitted, **then** it is refused and nothing is written.
 - **Given** a browser that does not hold edit access for a ranking, **when** it attempts to commit changes to it, **then** the commit is refused and nothing is written.
 - **Given** a commit naming a year the site does not cover, **when** it is submitted, **then** it is refused and nothing is written.
 
 ## Out of scope for this Story
 
 How the editor reports the state of the pass (counts, in-progress, saved-when — S-002-02), what happens to a name's whitespace and control characters (S-002-05), and anything about a second browser committing at the same time (S-002-09). This slice is the write itself, end to end.
+
+Withholding the commit action because *nothing has changed* belongs to S-002-02 (REQ-13); this slice withholds it only for a pass that would leave the list holding no games.
 
 ## Depends on
 

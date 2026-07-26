@@ -10,8 +10,8 @@ As someone typing game titles, I want stray whitespace and invisible characters 
 ## Acceptance Criteria
 
 - **Given** a year where I type `"  Elden Ring\n"`, **when** I commit, **then** the published name is `Elden Ring`, and the field shows that tidied form once the commit has landed.
-- **Given** a year where I type only spaces or tabs, **when** I commit, **then** that year holds no game — exactly as if I had left it blank — and it is not published as an empty name.
-- **Given** a year that held a game, **when** I clear its field and commit, **then** the game is gone from the ranking and the public list no longer shows a name for that year.
+- **Given** a year where I type only spaces or tabs, while other years hold games, **when** I commit, **then** that year holds no game — exactly as if I had left it blank — and it is not published as an empty name.
+- **Given** a year that held a game, while other years hold games too, **when** I clear its field and commit, **then** the game is gone from the ranking and the public list no longer shows a name for that year.
 - **Given** a name into which invisible control characters have been pasted, **when** I commit, **then** they are discarded: neither stored nor published, while the visible text survives.
 - **Given** a name in any language or script — accents, non-Latin characters, punctuation, emoji — **when** I commit, **then** it is accepted and published exactly as typed, character for character.
 - **Given** a request that reaches the server with an untidied name, **when** it is handled, **then** the server tidies it the same way rather than trusting the sender to have done it.
@@ -19,6 +19,8 @@ As someone typing game titles, I want stray whitespace and invisible characters 
 ## Out of scope for this Story
 
 The 255-character ceiling and the refusal it triggers — that is S-002-06. This slice is only about what a name is *silently* reduced to.
+
+Tidying a name to nothing is how a year is emptied, but keeping the list's *last* game is REQ-9's floor, owned by S-002-01: every emptying case here assumes another year still holds a game.
 
 ## Depends on
 

@@ -32,6 +32,9 @@ action commits the whole list at once, and until then the published Ranking is
 untouched. That single moment of commitment is also what makes the list feel
 worth crafting, and it means a person can leave a year blank, fill it, empty it
 again, and reconsider without ever publishing a thought they hadn't finished.
+The one thing a pass cannot do is publish nothing at all: a list that has held a
+game keeps at least one, so what a reader meets is never a bare frame where a
+Ranking used to be.
 
 Because a pass is a batch, the editor keeps it safe: it says how many years are
 unsaved, warns before a person walks away from them, and can resume a pass that
@@ -45,6 +48,7 @@ is something a person almost never meets.
 - **A pass is private until committed.** This is the load-bearing constraint, and the reason changes are committed as one list rather than saved a year at a time. A Ranking is publicly readable, so anything written through immediately is immediately on show.
 - **Editing happens in place.** The editor is the published page with its year names made editable, not a separate form. A person should never have to imagine how their choice will look.
 - **Every covered year is present, filled or not.** Years without a game are bands like any other. Filling one in moves nothing else on screen.
+- **A Ranking never becomes empty once it holds a game.** A pass that would remove every game is not committed: the last game standing can be replaced, but not removed. The floor is on what a commit may *produce*, not on what a Ranking may *be* — a Ranking is created empty (PRD-001 REQ-3 asks for an email and a username and nothing more) and holds no games until its first commit, so an unfilled Ranking stays a normal state that this rule does not retroactively forbid. Two consequences are accepted rather than solved: a person holding exactly one game has no route back to zero, and emptying a list wholesale is deletion, which is out of scope.
 - **Covered Years starts at 1985.** A floor had to be chosen; the arrival of the NES is where the era this site is about begins. It is a product choice, not a technical limit, and years before it are excluded rather than deferred.
 - **Covered Years only ever grows.** It gains each new year as that year begins and never gives one back, so a year that could hold a game last week can still hold one today.
 - **A brief wait for a new year is acceptable.** A person should not have to wait more than roughly a week into January before the year that just ended can be filled in. Sub-day precision is explicitly not required.
@@ -67,7 +71,7 @@ is something a person almost never meets.
 - REQ-6: Each year's field identifies the year it belongs to for someone who cannot see the screen.
 - REQ-7: A person can see how many of the Covered Years hold a game, out of how many years in total.
 - REQ-8: A year holds at most one game, and the editor offers no way to give a year two.
-- REQ-9: A Ranking may hold no games at all, and a person may empty one that was previously full.
+- REQ-9: A commit never leaves a Ranking holding no games at all: any year can be emptied, but not the last year still holding a game. The editor does not offer a commit that would empty the list and says why, and such a commit is refused if it is attempted regardless of what the editor offered.
 
 ### Committing a pass
 
@@ -88,7 +92,7 @@ is something a person almost never meets.
 
 - REQ-22: Whitespace around a name is forgiven: the name is stored and published as its visible text, and the field shows that tidied form once committed.
 - REQ-23: A name that is only whitespace is not a game — the year ends up holding none, exactly as if it had been left blank.
-- REQ-24: Clearing a year that held a game removes that game from the Ranking.
+- REQ-24: Clearing a year that held a game removes that game from the Ranking — unless it is the only game the Ranking holds, which REQ-9 keeps.
 - REQ-25: Invisible control characters pasted into a name are discarded rather than stored or published.
 - REQ-26: A name over 255 characters cannot be committed; the person is told which year is at fault, and nothing is silently shortened.
 - REQ-27: Typing is never blocked or truncated as a person writes — an over-long name is reported after the fact, never prevented as it happens.
@@ -129,7 +133,7 @@ is something a person almost never meets.
 - **Anything about a game beyond its name** — no rating, note, platform, release date, cover art, or link.
 - **A game catalogue, autocomplete, or verifying a title names a real game.**
 - **Offline editing**, or queuing a commit made without a connection.
-- **Archiving or deleting a Ranking**, and **editing the username or email** (the latter already out of scope in PRD-001). Both on `docs/ROADMAP.md`.
+- **Archiving or deleting a Ranking**, and **editing the username or email** (the latter already out of scope in PRD-001). Both on `docs/ROADMAP.md`. With REQ-9's floor in place, deletion becomes the only route by which a Ranking that has held a game ends up holding none — so a person asking to empty their list entirely is asking for a feature this release does not have.
 - **Rate limiting or abuse protection on commits.** As in PRD-001, acknowledged and deferred.
 
 ## Further Notes
@@ -140,6 +144,15 @@ cheaper alternative: saving each year as it is typed would need no unsaved-chang
 count, no leave-confirmation, no resumable draft, and no conflict handling at all,
 because there would never be a batch to conflict with. All of that machinery is
 the price of letting a person be undecided in private on a page anyone can read.
+
+The floor on emptiness (REQ-9) sits a little awkwardly beside a Ranking being
+created empty, and that asymmetry is deliberate rather than overlooked. The rule
+exists to stop a person publishing a bare list over one they had already filled —
+a destructive act, and the only one this PRD can produce — not to police the
+ordinary state of a Ranking nobody has got to yet. Closing the gap properly would
+mean asking for a first game at claim time, which would cost PRD-001 its promise
+that claiming asks for an email and a username and nothing more; that is a higher
+price than the gap charges.
 
 The second-order effect is that the list reads as something to complete. Because
 every covered year is present whether or not it holds a game, a person sees the

@@ -10,6 +10,7 @@ import { ClaimRankingBody } from "./claim/ClaimRankingBody.schema.ts";
 import { ClaimRankingResponse } from "./claim/ClaimRankingResponse.schema.ts";
 import { ClaimRejected } from "./claim/ClaimRejected.error.ts";
 import { EditAccessDenied } from "./EditAccessDenied.error.ts";
+import { RankingWouldBeEmpty } from "./items/RankingWouldBeEmpty.error.ts";
 import { SaveRankingItemsBody } from "./items/SaveRankingItemsBody.schema.ts";
 import { YearNotCovered } from "./items/YearNotCovered.error.ts";
 import { Ranking } from "./Ranking.schema.ts";
@@ -61,6 +62,7 @@ export const RankingsApi = HttpApiGroup.make(endpoint)
 				HttpApiSchema.status(404)(RankingNotFound),
 				HttpApiSchema.status(401)(EditAccessDenied),
 				HttpApiSchema.status(422)(YearNotCovered),
+				HttpApiSchema.status(422)(RankingWouldBeEmpty),
 			],
 		}),
 	)

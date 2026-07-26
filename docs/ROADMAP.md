@@ -15,6 +15,9 @@ Deferred work we intend to revisit.
 - Warn before a save replaces an Item another session changed in the meantime
   (the editor currently keeps the typing session's version without saying so)
 - Conflict resolution UI: show both versions of a year and let the person choose
+- Confirmation prompt before a save that empties many Items at once, so nobody
+  wipes their list by accident (threshold to define — e.g. 3+ removals, or any
+  save that clears most of the list)
 - Archive ranking
 
 ## Localization

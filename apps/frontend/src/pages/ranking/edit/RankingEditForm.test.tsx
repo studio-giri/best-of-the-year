@@ -83,12 +83,14 @@ function type(year: number, value: string) {
 	});
 }
 
+function commitAction() {
+	return screen.getByRole("button", {
+		name: "Save all",
+	});
+}
+
 function commit() {
-	fireEvent.click(
-		screen.getByRole("button", {
-			name: "Save all",
-		}),
-	);
+	fireEvent.click(commitAction());
 }
 
 /** What the one commit of a pass carried, and the callbacks it was given. */
@@ -271,11 +273,46 @@ describe("RankingEditForm", () => {
 		// again.
 		expect(renderedYears(container)).toEqual(EXPECTED_YEARS);
 		expect(fieldFor(2022)).toHaveProperty("value", "Tunic");
-		expect(
-			screen.getByRole("button", {
-				name: "Save all",
-			}),
-		).toBeTruthy();
+		expect(commitAction()).toBeTruthy();
+	});
+
+	describe("a pass that would publish nothing", () => {
+		test("does not offer the commit, and says why", () => {
+			renderForm();
+
+			expect(commitAction()).toHaveProperty("disabled", true);
+			expect(screen.getByText("A list needs at least one game.")).toBeTruthy();
+
+			// Withheld means withheld: taking the action anyway sends nothing.
+			commit();
+			expect(mutateMock).not.toHaveBeenCalled();
+		});
+
+		test("withholds the commit until some year holds a game again", () => {
+			renderForm([
+				seededItem(2020, "Hades"),
+			]);
+
+			// A list holding one game commits like any other, until that game is the
+			// one being cleared.
+			expect(commitAction()).toHaveProperty("disabled", false);
+			type(2020, "");
+			expect(commitAction()).toHaveProperty("disabled", true);
+
+			// Filling a different year is what brings the commit back — and it then
+			// publishes both changes, the year emptied and the year filled, together.
+			type(2011, "Portal 2");
+			expect(commitAction()).toHaveProperty("disabled", false);
+			expect(screen.queryByText("A list needs at least one game.")).toBeNull();
+
+			commit();
+			expect(theCommit().items).toEqual([
+				{
+					year: 2011,
+					name: "Portal 2",
+				},
+			]);
+		});
 	});
 
 	test("announces a refused commit rather than leaving it silent", () => {

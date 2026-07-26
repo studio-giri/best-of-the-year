@@ -1,25 +1,10 @@
-import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
-import { Effect } from "effect";
-import { client } from "#/lib/api/client.ts";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { rankingQueryOptions } from "#/lib/api/rankingQueryOptions.ts";
 
-export function rankingQueryOptions(id: string) {
-	return queryOptions({
-		queryKey: [
-			"ranking",
-			id,
-		],
-		retry: false,
-		queryFn: () =>
-			Effect.runPromise(
-				client.rankings.findById({
-					params: {
-						id,
-					},
-				}),
-			),
-	});
-}
-
+/**
+ * The public view's read of a Ranking. It suspends rather than rendering a
+ * pending state, which the route's prefetch has already made unreachable.
+ */
 export function useRanking(id: string) {
 	return useSuspenseQuery(rankingQueryOptions(id));
 }

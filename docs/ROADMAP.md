@@ -10,9 +10,11 @@ Deferred work we intend to revisit.
 
 ## Ranking editing & management
 
-- Edit ranking contents in claim ranking ui
-- Edit ranking contents in edit ranking ui
+- Compose a Ranking before claiming it (promised by PRD-001 REQ-1, not built)
 - Add edit ranking button in view ranking page
+- Warn before a save replaces an Item another session changed in the meantime
+  (the editor currently keeps the typing session's version without saying so)
+- Conflict resolution UI: show both versions of a year and let the person choose
 - Archive ranking
 
 ## Localization

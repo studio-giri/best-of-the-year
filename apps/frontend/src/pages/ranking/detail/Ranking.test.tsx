@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import { expect, test } from "vitest";
 import { Ranking } from "./Ranking.tsx";
 
@@ -8,7 +8,7 @@ test("renders one row per item, mapping year and name as received", () => {
 	 * order given. This guards the field mapping (year shown, name → game label)
 	 * and that every item produces a row.
 	 */
-	render(
+	const { container } = render(
 		<Ranking
 			items={[
 				{
@@ -30,9 +30,11 @@ test("renders one row per item, mapping year and name as received", () => {
 		/>,
 	);
 
-	const rows = screen
-		.getAllByText(/^\d{4} -/)
-		.map((element) => element.textContent);
+	// A row renders its year and its name as separate nodes of one paragraph, so
+	// the paragraph is the line — read them in document order.
+	const rows = Array.from(container.querySelectorAll("p")).map(
+		(row) => row.textContent,
+	);
 	expect(rows).toEqual([
 		"2023 - Baldur's Gate 3",
 		"2022 - Elden Ring",

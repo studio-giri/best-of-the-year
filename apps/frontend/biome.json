@@ -14,5 +14,45 @@
 		"parser": {
 			"tailwindDirectives": true
 		}
-	}
+	},
+	"overrides": [
+		{
+			"includes": [
+				"src/**/*.ts",
+				"src/**/*.tsx",
+				"!src/lib/api/**",
+				"!src/**/*.test.ts",
+				"!src/**/*.test.tsx"
+			],
+			"linter": {
+				"rules": {
+					"style": {
+						"noRestrictedImports": {
+							"level": "error",
+							"options": {
+								"paths": {
+									"effect": {
+										"allowImportNames": [
+											"Schema",
+											"Data",
+											"Types"
+										],
+										"message": "The Effect runtime stays in src/lib/api/. Add a Promise-returning helper there and call it from here. Pure synchronous Schema/Data/Types are allowed."
+									}
+								},
+								"patterns": [
+									{
+										"group": [
+											"effect/**"
+										],
+										"message": "The Effect runtime stays in src/lib/api/. Add a Promise-returning helper there and call it from here."
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	]
 }

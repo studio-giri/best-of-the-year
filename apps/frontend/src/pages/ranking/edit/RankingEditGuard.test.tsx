@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { cleanup, render, screen } from "@testing-library/react";
 import type { ReactElement, ReactNode } from "react";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -10,11 +11,25 @@ vi.mock("@tanstack/react-router", () => ({
 	),
 }));
 
+// The shell the guard grants access to fetches the Ranking; stub that read so
+// these tests stay about the grant and never reach the network.
+vi.mock("./useRankingForEdit.query.ts", () => ({
+	useRankingForEdit: () => ({
+		data: undefined,
+		isError: false,
+	}),
+}));
+
 import { RankingEditGuard } from "./RankingEditGuard.tsx";
 
-// The guard's copy reads through the LanguageProvider; render inside one.
+// The guard's copy reads through the LanguageProvider, and the shell behind it
+// reads through a query client; render inside both.
 function renderWithLanguage(ui: ReactElement) {
-	return render(<LanguageProvider initialLanguage="en">{ui}</LanguageProvider>);
+	return render(
+		<QueryClientProvider client={new QueryClient()}>
+			<LanguageProvider initialLanguage="en">{ui}</LanguageProvider>
+		</QueryClientProvider>,
+	);
 }
 
 afterEach(() => {

@@ -3,17 +3,34 @@
 The shared language for the games-ranking site. This is a glossary, not a spec:
 it defines what terms *mean*, with no implementation details.
 
+An _Avoid_ list bans a word as **domain vocabulary** — the name the code, the
+schemas and these docs give the thing itself. It reaches neither names for purely
+visual or structural parts that happen to reuse the word, nor user-facing copy,
+which answers to its own register (see Ranking).
+
 ## Language
 
 **Ranking**:
 One person's selection of their best game for each year. Belongs to exactly one
 person, and a person has at most one — its scarcity is deliberate.
-_Avoid_: List, board, chart
+The interface calls it a **list** — "your list", "ta liste". To a reader
+"ranking" suggests a leaderboard of everybody, which this is not, and its French
+counterpart is stiffer still. Both registers are deliberate: the code keeps the
+rarer word because it is unambiguous and greppable, where "list" collides with
+every generic collection.
+_Avoid_: List, board, chart — as the domain term; the interface is exempt
 
 **Ranking Item**:
 A single entry in a Ranking: the chosen game for one specific year. At most one
 Item per year within a Ranking.
 _Avoid_: Entry, pick, row
+
+**Covered Years**:
+The span of years a Ranking can hold an Item for: 1985 — the arrival of the NES,
+where the era this site is about begins — up to the current year. It gains a year
+as each one begins and never gives one back. A year outside the span can hold no
+Item; a year inside it may simply have none.
+_Avoid_: Range, window, period, era
 
 **Claim**:
 The act of taking ownership of a Ranking by submitting an Email and a Username.

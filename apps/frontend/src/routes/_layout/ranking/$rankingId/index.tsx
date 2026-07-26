@@ -2,9 +2,9 @@ import { Uuid } from "@boty/shared/api/primitives/Uuid.schema";
 import { RankingNotFound as RankingNotFoundError } from "@boty/shared/api/rankings/RankingNotFound.error";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { Schema } from "effect";
+import { rankingQueryOptions } from "#/lib/api/rankingQueryOptions.ts";
 import { RankingNotFound } from "#/pages/ranking/detail/RankingNotFound.tsx";
 import { RankingPage } from "#/pages/ranking/detail/RankingPage.tsx";
-import { rankingQueryOptions } from "#/pages/ranking/detail/useRanking.query.ts";
 
 export const Route = createFileRoute("/_layout/ranking/$rankingId/")({
 	loader: async ({ context, params }) => {

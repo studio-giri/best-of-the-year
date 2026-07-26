@@ -1,3 +1,4 @@
+import { MAX_ITEM_NAME_LENGTH } from "@boty/shared/api/rankings/items/rankingItemRules";
 import { sql } from "drizzle-orm";
 import {
 	integer,
@@ -25,7 +26,7 @@ export const rankingItemsTable = pgTable(
 		year: integer().notNull(),
 
 		name: varchar({
-			length: 255,
+			length: MAX_ITEM_NAME_LENGTH,
 		}).notNull(),
 
 		createdAt: timestamp({

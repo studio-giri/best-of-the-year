@@ -26,6 +26,17 @@ const json = yield* Effect.tryPromise({
 return yield* Schema.decodeUnknown(MySchema)(json);
 ```
 
+## Concise comments
+
+Comments are sharp and short. One line unless the reasoning genuinely needs more.
+
+- Block comments are a single imperative line: `// Store the hash only.`, `// Delete removed items`.
+- Doc comments (`/** */`) get 1–3 lines: what the function does, plus the *why* a reader cannot infer from the code.
+- Say it once. Don't restate the same point in the doc comment and again inline.
+- Keep the load-bearing *why* (a non-obvious constraint, an ADR reference, why an alternative is wrong); cut the narration around it.
+- Plain and direct over literary. No rhetorical asides (`which is a question not worth asking`), no em-dash flourishes stacked on one sentence.
+- Use plain simple to understand english
+
 ## Timeless comments
 
 Comments state durable facts about the code, not its history.

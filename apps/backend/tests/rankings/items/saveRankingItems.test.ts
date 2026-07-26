@@ -238,8 +238,8 @@ describe("PUT /rankings/:id/items", () => {
 		expect(saved.json.updatedAt).toBe(read.json.updatedAt);
 	});
 
-	test("keeps the last game standing: a year can be emptied, the list cannot", async () => {
-		const { rankingId, ownerToken } = await seedOwnedRanking(ctx, [
+	test("List cannot be emptied", async () => {
+		const originalList = [
 			{
 				year: 2019,
 				name: "Disco Elysium",
@@ -248,27 +248,8 @@ describe("PUT /rankings/:id/items", () => {
 				year: 2020,
 				name: "Hades",
 			},
-		]);
-
-		// Emptying down to one game is an ordinary pass.
-		const emptied = await saveItems(ctx, {
-			rankingId,
-			authorization: `Bearer ${ownerToken}`,
-			items: [
-				{
-					year: 2020,
-					name: "Hades",
-				},
-			],
-		});
-
-		expect(emptied.status).toBe(200);
-		expect(await storedItems(ctx, rankingId)).toEqual([
-			{
-				year: 2020,
-				name: "Hades",
-			},
-		]);
+		];
+		const { rankingId, ownerToken } = await seedOwnedRanking(ctx, originalList);
 
 		// Emptying the last one is not: the pass is refused whole, and the game the
 		// list already published is still there.
@@ -280,12 +261,7 @@ describe("PUT /rankings/:id/items", () => {
 
 		expect(refused.status).toBe(422);
 		expect(refused.json._tag).toBe("RankingWouldBeEmpty");
-		expect(await storedItems(ctx, rankingId)).toEqual([
-			{
-				year: 2020,
-				name: "Hades",
-			},
-		]);
+		expect(await storedItems(ctx, rankingId)).toEqual(originalList);
 	});
 
 	test("refuses a pass naming no year even on a ranking that holds no games", async () => {

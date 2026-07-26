@@ -9,20 +9,17 @@ import { ownerTokensTable } from "../db/schema/owner-tokens.table.ts";
 import { rankingsTable } from "../db/schema/rankings.table.ts";
 
 /**
- * Mint an Owner token for a ranking: generate the secret, persist only its
- * SHA-256 hash (a DB read can never recover a usable token), and return the raw
- * token to be handed to the claiming browser exactly once. Any DB failure here
- * is a genuine defect, so it dies rather than surfacing as a domain error.
+ * Mint an Owner token for a ranking. Only its SHA-256 hash is stored, so the raw
+ * token is returned once here and never recoverable from the database.
  */
 export function mintOwnerToken(rankingId: string) {
 	return Effect.gen(function* () {
 		const db = yield* PgDrizzle;
 
-		// Generate a new Owner token: 32 cryptographically-random bytes, base64url-encoded
-		// (~43 chars, opaque to the client).
+		// 32 random bytes, base64url-encoded: ~43 opaque chars.
 		const ownerToken = randomBytes(32).toString("base64url");
 
-		// Insert in database hashed version
+		// Store the hash only.
 		const ownerTokenHash = hashToken(ownerToken);
 		yield* db
 			.insert(ownerTokensTable)
@@ -32,21 +29,17 @@ export function mintOwnerToken(rankingId: string) {
 			})
 			.pipe(Effect.orDie);
 
-		// Non-hashed token is sent back to the user to be saved in browser
+		// Raw token goes back to the browser, which saves it.
 		return ownerToken;
 	});
 }
 
-/**
- * The scheme an Owner token travels under, lowercased for comparison — the
- * scheme name is case-insensitive on the wire.
- */
+// Lowercased: the scheme name is case-insensitive on the wire.
 const BEARER_SCHEME = "bearer ";
 
 /**
- * The token an `Authorization` header presents, or undefined when the header
- * presents no bearer token at all. An empty token is no token: it would hash to
- * a real value and go looking for a row, which is a question not worth asking.
+ * The token an `Authorization` header presents, or undefined for anything else.
+ * An empty token is no token — not worth a database lookup.
  */
 function readBearerToken(
 	authorization: string | undefined,
@@ -60,24 +53,20 @@ function readBearerToken(
 }
 
 /**
- * Resolve the Ranking a presented credential grants edit access to (ADR-003).
- * Edit access is resource-scoped — the question is whether this token grants
- * access to *this* Ranking — so it is answered here rather than by middleware,
- * which has no path param to scope itself by.
+ * Resolve the Ranking a presented token grants edit access to (ADR-003). Access is
+ * resource-scoped, so it lives here rather than in middleware, which has no path param.
  *
- * Existence and access come from one query: the Ranking is joined to the Owner
- * token whose hash matches the presented one, so a Ranking that is gone
- * (`RankingNotFound`) and a Ranking this browser cannot edit (`EditAccessDenied`)
- * are told apart without a second read. Callers get the resolved row, so the
- * Ranking's stored state needs no fetching of its own.
+ * One query answers both questions: a Ranking that is gone (`RankingNotFound`) and one
+ * this browser cannot edit (`EditAccessDenied`) are told apart without a second read.
+ * The resolved row is returned, so callers need no fetch of their own.
  */
 export function resolveOwnedRanking(
 	rankingId: string,
 	authorization: string | undefined,
 ) {
 	return Effect.gen(function* () {
-		// Anything that is not a bearer token is refused before the database is
-		// touched: it can grant nothing, whatever the Ranking's state.
+		// No bearer token grants nothing, whatever the Ranking's state. Refuse
+		// before touching the database.
 		const presentedToken = readBearerToken(authorization);
 		if (presentedToken === undefined) {
 			return yield* Effect.fail(
@@ -87,10 +76,9 @@ export function resolveOwnedRanking(
 			);
 		}
 
-		// Left-join so the Ranking row comes back whether or not the token matches:
-		// a missing row and an unmatched token are different answers, and the join
-		// condition binds the token to this Ranking, so a token minted for another
-		// one cannot match here.
+		// Left-join so the Ranking comes back whether or not the token matches: a
+		// missing row and an unmatched token are different answers. The join binds
+		// the token to this Ranking, so one minted for another cannot match.
 		const db = yield* PgDrizzle;
 		const rows = yield* db
 			.select({

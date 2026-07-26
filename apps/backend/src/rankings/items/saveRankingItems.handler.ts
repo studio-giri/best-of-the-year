@@ -14,20 +14,16 @@ import { findRankingById } from "../find/findRankingById.handler.ts";
 import { resolveOwnedRanking } from "../ownerToken.service.ts";
 
 /**
- * How far past the current year a commit may reach. The server's job is refusing
- * nonsense, not arbitrating which machine's clock is right, so a browser that has
+ * How far past the current year a commit may reach. A browser that has
  * already turned the year over is accepted rather than corrected (ADR-003).
  */
 const CLOCK_TOLERANCE_YEARS = 1;
 
 /**
- * Replace a Ranking's whole list of Items with the end state a commit carries
- * (ADR-003): years named are upserted, years absent are removed, and the
- * Ranking's own row is stamped — all three in one transaction, so a person never
- * meets a half-saved list.
+ * Replace a Ranking's whole list of Items: years named are upserted, years absent
+ * are removed, and the Ranking's own row is stamped, all three in one transaction.
  *
- * Everything that can refuse the commit runs first, ahead of the transaction, so
- * no partial write is reachable from a well-formed request.
+ * All checks are run first, ahead of the transaction, to avoid no partial write.
  */
 export function saveRankingItems(args: {
 	rankingId: string;
@@ -39,21 +35,15 @@ export function saveRankingItems(args: {
 	PgDrizzle
 > {
 	return Effect.gen(function* () {
-		// Prove this credential grants edit access to this Ranking before reading or
-		// writing anything of it.
+		// Check ownership
 		yield* resolveOwnedRanking(args.rankingId, args.authorization);
 
-		// Refuse a pass that would publish no games at all. The judgement is on the
-		// pass alone, never on what the Ranking currently holds: a pass naming none is
-		// refused whether it would empty a full list or re-empty an empty one, which
-		// keeps the rule one comparison rather than a state machine (ADR-003).
+		// Refuse a pass that would publish no games at all.
 		if (args.body.items.length === 0) {
 			return yield* Effect.fail(new RankingWouldBeEmpty());
 		}
 
-		// Refuse the whole pass if it names a year the site does not cover. The span
-		// is read from the clock per request, since a bound derived at import would
-		// freeze at whatever year the process started in.
+		// If a year is outside the allowed coverage, reject
 		const now = yield* Clock.currentTimeMillis;
 		const lastAcceptedYear =
 			new Date(now).getUTCFullYear() + CLOCK_TOLERANCE_YEARS;
@@ -68,15 +58,15 @@ export function saveRankingItems(args: {
 			);
 		}
 
-		// Land the pass as a unit. `$onUpdate` fires only when the row it sits on is
-		// itself written, and this write touches the items — so the Ranking's stamp
-		// is set here explicitly, from the same instant the items carry.
+		// Land the pass as a unit.
+		// `$onUpdate` is set here explicitly so all records hold same date, for consistency.
 		const db = yield* PgDrizzle;
-		const committedAt = new Date(now);
+		const updatedAt = new Date(now);
 		const namedYears = args.body.items.map((item) => item.year);
 		yield* db
 			.transaction((tx) =>
 				Effect.gen(function* () {
+					// Upsert items
 					yield* tx
 						.insert(rankingItemsTable)
 						.values(
@@ -84,6 +74,8 @@ export function saveRankingItems(args: {
 								rankingId: args.rankingId,
 								year: item.year,
 								name: item.name,
+								createdAt: updatedAt,
+								updatedAt,
 							})),
 						)
 						.onConflictDoUpdate({
@@ -93,12 +85,11 @@ export function saveRankingItems(args: {
 							],
 							set: {
 								name: sql`excluded.name`,
-								updatedAt: committedAt,
+								updatedAt,
 							},
 						});
 
-					// Every year the pass left unnamed holds no game once it lands. A pass
-					// always names at least one, so there is always a year to keep.
+					// Delete removed items
 					yield* tx
 						.delete(rankingItemsTable)
 						.where(
@@ -108,18 +99,18 @@ export function saveRankingItems(args: {
 							),
 						);
 
+					// Set main table updatedAt
 					yield* tx
 						.update(rankingsTable)
 						.set({
-							updatedAt: committedAt,
+							updatedAt,
 						})
 						.where(eq(rankingsTable.id, args.rankingId));
 				}),
 			)
 			.pipe(Effect.orDie);
 
-		// Answer with the stored Ranking, read the way a reader reads it, so what the
-		// committing browser now holds is exactly what everyone else will see.
+		// Return updated Ranking
 		return yield* findRankingById(args.rankingId);
 	});
 }

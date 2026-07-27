@@ -16,7 +16,7 @@ export function Footer() {
 					{messages.footerCredit}
 				</a>
 				{" · "}
-				<Link to="/ranking/claim" className="underline">
+				<Link to="/list/claim" className="underline">
 					{messages.createYourOwn}
 				</Link>
 			</p>

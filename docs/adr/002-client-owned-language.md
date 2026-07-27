@@ -14,7 +14,7 @@ English/French localization. This ADR records how Language is carried and resolv
 ## Considered options
 
 - **`localStorage` for the preference** — rejected: invisible to SSR, causing a flash of English and a `<html lang>` hydration mismatch on every load.
-- **Language segment in the URL (`/fr/…`)** — rejected: restructures the route tree for SEO/shareability this app doesn't need, and is wrong for the main shareable surface (a public Ranking should render in the *viewer's* Language, not the author's).
+- **Language segment in the URL (`/fr/…`)** — rejected: restructures the route tree for SEO/shareability this app doesn't need, and is wrong for the main shareable surface (a public List should render in the *viewer's* Language, not the author's).
 - **Storing Language server-side** — rejected: the only per-person server-side preference, contradicting the account-less design, and it buys nothing the cookie doesn't.
 - **A full i18n framework (`react-i18next` et al.)** — rejected: its detector is client-side and doesn't solve SSR detection, and its string-keyed runtime lookups fight this repo's compile-time-typed grain. Overweight for two languages.
 

@@ -1,6 +1,6 @@
 /**
  * Browser-held Owner tokens (ADR-001): the bearer secret that grants this
- * browser owner access to a ranking, keyed by ranking id. Persisted in
+ * browser owner access to a list, keyed by list id. Persisted in
  * localStorage so ownership survives across visits without any account.
  *
  * SSR-safe: localStorage exists only in the browser, so every access guards on
@@ -20,7 +20,7 @@ const STORAGE_KEY = "boty:owner-tokens";
 export class OwnerTokenNotStored extends Data.TaggedError(
 	"OwnerTokenNotStored",
 )<{
-	rankingId: string;
+	listId: string;
 }> {}
 
 /**
@@ -63,23 +63,23 @@ function readTokens(): TokenMap {
 }
 
 /**
- * The Owner token this browser holds for a ranking, or undefined if none.
+ * The Owner token this browser holds for a list, or undefined if none.
  */
-export function getOwnerToken(rankingId: string): string | undefined {
-	return readTokens()[rankingId];
+export function getOwnerToken(listId: string): string | undefined {
+	return readTokens()[listId];
 }
 
 /**
- * True when this browser can open the owner view for a ranking — i.e. it holds
+ * True when this browser can open the owner view for a list — i.e. it holds
  * a token. This is the client-side edit-access grant the route guard reads.
  */
-export function hasOwnerToken(rankingId: string): boolean {
-	return getOwnerToken(rankingId) !== undefined;
+export function hasOwnerToken(listId: string): boolean {
+	return getOwnerToken(listId) !== undefined;
 }
 
 /**
  * Persist the token a successful claim handed back, granting this browser owner
- * access to the ranking from now on.
+ * access to the list from now on.
  *
  * The claim it follows already succeeded server-side by the time we get here, so
  * a storage failure (quota exceeded, storage blocked) is not a retryable request
@@ -87,21 +87,21 @@ export function hasOwnerToken(rankingId: string): boolean {
  * `OwnerTokenNotStored` so the caller handles it on its own path instead of
  * mistaking it for a transient failure and inviting a doomed resubmit.
  */
-export function setOwnerToken(rankingId: string, token: string): void {
+export function setOwnerToken(listId: string, token: string): void {
 	if (typeof window === "undefined") {
 		return;
 	}
 
 	try {
 		const tokens = readTokens();
-		tokens[rankingId] = token;
+		tokens[listId] = token;
 		window.localStorage.setItem(STORAGE_KEY, JSON.stringify(tokens));
 	} catch (error) {
 		console.error("Failed to persist OwnerToken to localStorage", {
 			cause: error,
 		});
 		throw new OwnerTokenNotStored({
-			rankingId,
+			listId,
 		});
 	}
 }

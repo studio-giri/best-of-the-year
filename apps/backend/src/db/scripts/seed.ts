@@ -3,9 +3,9 @@ import { Console, Effect, Layer } from "effect";
 import { Env } from "../../env.ts";
 import { PgClientLive } from "../PgClient.ts";
 import { PgDrizzle, PgDrizzleLive } from "../PgDrizzle.ts";
-import { rankingItemsTable } from "../schema/ranking-items.table.ts";
-import { rankingsTable } from "../schema/rankings.table.ts";
-import { rankingItems, rankings } from "./seed-values.ts";
+import { listItemsTable } from "../schema/list-items.table.ts";
+import { listsTable } from "../schema/lists.table.ts";
+import { listItems, lists } from "./seed-values.ts";
 
 /**
  * The same Effect/sql-pg stack the app uses: PgDrizzle on top of PgClient,
@@ -21,10 +21,10 @@ const program = Effect.gen(function* () {
 	const db = yield* PgDrizzle;
 
 	/**
-	 * Insert seed rankings and their items
+	 * Insert seed lists and their items
 	 */
-	yield* db.insert(rankingsTable).values(rankings);
-	yield* db.insert(rankingItemsTable).values(rankingItems);
+	yield* db.insert(listsTable).values(lists);
+	yield* db.insert(listItemsTable).values(listItems);
 
 	yield* Console.info("Seed successful");
 });

@@ -13,10 +13,10 @@ import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutAboutRouteImport } from './routes/_layout/about'
 import { Route as LayoutRecoverRequestRouteImport } from './routes/_layout/recover/request'
-import { Route as LayoutRankingClaimRouteImport } from './routes/_layout/ranking/claim'
-import { Route as LayoutRankingRankingIdIndexRouteImport } from './routes/_layout/ranking/$rankingId/index'
+import { Route as LayoutListClaimRouteImport } from './routes/_layout/list/claim'
+import { Route as LayoutListListIdIndexRouteImport } from './routes/_layout/list/$listId/index'
 import { Route as LayoutRecoverConsumeTokenRouteImport } from './routes/_layout/recover/consume/$token'
-import { Route as LayoutRankingRankingIdEditRouteImport } from './routes/_layout/ranking/$rankingId/edit'
+import { Route as LayoutListListIdEditRouteImport } from './routes/_layout/list/$listId/edit'
 
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
@@ -37,88 +37,86 @@ const LayoutRecoverRequestRoute = LayoutRecoverRequestRouteImport.update({
   path: '/recover/request',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutRankingClaimRoute = LayoutRankingClaimRouteImport.update({
-  id: '/ranking/claim',
-  path: '/ranking/claim',
+const LayoutListClaimRoute = LayoutListClaimRouteImport.update({
+  id: '/list/claim',
+  path: '/list/claim',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutRankingRankingIdIndexRoute =
-  LayoutRankingRankingIdIndexRouteImport.update({
-    id: '/ranking/$rankingId/',
-    path: '/ranking/$rankingId/',
-    getParentRoute: () => LayoutRoute,
-  } as any)
+const LayoutListListIdIndexRoute = LayoutListListIdIndexRouteImport.update({
+  id: '/list/$listId/',
+  path: '/list/$listId/',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutRecoverConsumeTokenRoute =
   LayoutRecoverConsumeTokenRouteImport.update({
     id: '/recover/consume/$token',
     path: '/recover/consume/$token',
     getParentRoute: () => LayoutRoute,
   } as any)
-const LayoutRankingRankingIdEditRoute =
-  LayoutRankingRankingIdEditRouteImport.update({
-    id: '/ranking/$rankingId/edit',
-    path: '/ranking/$rankingId/edit',
-    getParentRoute: () => LayoutRoute,
-  } as any)
+const LayoutListListIdEditRoute = LayoutListListIdEditRouteImport.update({
+  id: '/list/$listId/edit',
+  path: '/list/$listId/edit',
+  getParentRoute: () => LayoutRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
   '/about': typeof LayoutAboutRoute
-  '/ranking/claim': typeof LayoutRankingClaimRoute
+  '/list/claim': typeof LayoutListClaimRoute
   '/recover/request': typeof LayoutRecoverRequestRoute
-  '/ranking/$rankingId/edit': typeof LayoutRankingRankingIdEditRoute
+  '/list/$listId/edit': typeof LayoutListListIdEditRoute
   '/recover/consume/$token': typeof LayoutRecoverConsumeTokenRoute
-  '/ranking/$rankingId/': typeof LayoutRankingRankingIdIndexRoute
+  '/list/$listId/': typeof LayoutListListIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/about': typeof LayoutAboutRoute
   '/': typeof LayoutIndexRoute
-  '/ranking/claim': typeof LayoutRankingClaimRoute
+  '/list/claim': typeof LayoutListClaimRoute
   '/recover/request': typeof LayoutRecoverRequestRoute
-  '/ranking/$rankingId/edit': typeof LayoutRankingRankingIdEditRoute
+  '/list/$listId/edit': typeof LayoutListListIdEditRoute
   '/recover/consume/$token': typeof LayoutRecoverConsumeTokenRoute
-  '/ranking/$rankingId': typeof LayoutRankingRankingIdIndexRoute
+  '/list/$listId': typeof LayoutListListIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
   '/_layout/about': typeof LayoutAboutRoute
   '/_layout/': typeof LayoutIndexRoute
-  '/_layout/ranking/claim': typeof LayoutRankingClaimRoute
+  '/_layout/list/claim': typeof LayoutListClaimRoute
   '/_layout/recover/request': typeof LayoutRecoverRequestRoute
-  '/_layout/ranking/$rankingId/edit': typeof LayoutRankingRankingIdEditRoute
+  '/_layout/list/$listId/edit': typeof LayoutListListIdEditRoute
   '/_layout/recover/consume/$token': typeof LayoutRecoverConsumeTokenRoute
-  '/_layout/ranking/$rankingId/': typeof LayoutRankingRankingIdIndexRoute
+  '/_layout/list/$listId/': typeof LayoutListListIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
-    | '/ranking/claim'
+    | '/list/claim'
     | '/recover/request'
-    | '/ranking/$rankingId/edit'
+    | '/list/$listId/edit'
     | '/recover/consume/$token'
-    | '/ranking/$rankingId/'
+    | '/list/$listId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/about'
     | '/'
-    | '/ranking/claim'
+    | '/list/claim'
     | '/recover/request'
-    | '/ranking/$rankingId/edit'
+    | '/list/$listId/edit'
     | '/recover/consume/$token'
-    | '/ranking/$rankingId'
+    | '/list/$listId'
   id:
     | '__root__'
     | '/_layout'
     | '/_layout/about'
     | '/_layout/'
-    | '/_layout/ranking/claim'
+    | '/_layout/list/claim'
     | '/_layout/recover/request'
-    | '/_layout/ranking/$rankingId/edit'
+    | '/_layout/list/$listId/edit'
     | '/_layout/recover/consume/$token'
-    | '/_layout/ranking/$rankingId/'
+    | '/_layout/list/$listId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -155,18 +153,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutRecoverRequestRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/ranking/claim': {
-      id: '/_layout/ranking/claim'
-      path: '/ranking/claim'
-      fullPath: '/ranking/claim'
-      preLoaderRoute: typeof LayoutRankingClaimRouteImport
+    '/_layout/list/claim': {
+      id: '/_layout/list/claim'
+      path: '/list/claim'
+      fullPath: '/list/claim'
+      preLoaderRoute: typeof LayoutListClaimRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/ranking/$rankingId/': {
-      id: '/_layout/ranking/$rankingId/'
-      path: '/ranking/$rankingId'
-      fullPath: '/ranking/$rankingId/'
-      preLoaderRoute: typeof LayoutRankingRankingIdIndexRouteImport
+    '/_layout/list/$listId/': {
+      id: '/_layout/list/$listId/'
+      path: '/list/$listId'
+      fullPath: '/list/$listId/'
+      preLoaderRoute: typeof LayoutListListIdIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/recover/consume/$token': {
@@ -176,11 +174,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutRecoverConsumeTokenRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/ranking/$rankingId/edit': {
-      id: '/_layout/ranking/$rankingId/edit'
-      path: '/ranking/$rankingId/edit'
-      fullPath: '/ranking/$rankingId/edit'
-      preLoaderRoute: typeof LayoutRankingRankingIdEditRouteImport
+    '/_layout/list/$listId/edit': {
+      id: '/_layout/list/$listId/edit'
+      path: '/list/$listId/edit'
+      fullPath: '/list/$listId/edit'
+      preLoaderRoute: typeof LayoutListListIdEditRouteImport
       parentRoute: typeof LayoutRoute
     }
   }
@@ -189,21 +187,21 @@ declare module '@tanstack/react-router' {
 interface LayoutRouteChildren {
   LayoutAboutRoute: typeof LayoutAboutRoute
   LayoutIndexRoute: typeof LayoutIndexRoute
-  LayoutRankingClaimRoute: typeof LayoutRankingClaimRoute
+  LayoutListClaimRoute: typeof LayoutListClaimRoute
   LayoutRecoverRequestRoute: typeof LayoutRecoverRequestRoute
-  LayoutRankingRankingIdEditRoute: typeof LayoutRankingRankingIdEditRoute
+  LayoutListListIdEditRoute: typeof LayoutListListIdEditRoute
   LayoutRecoverConsumeTokenRoute: typeof LayoutRecoverConsumeTokenRoute
-  LayoutRankingRankingIdIndexRoute: typeof LayoutRankingRankingIdIndexRoute
+  LayoutListListIdIndexRoute: typeof LayoutListListIdIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAboutRoute: LayoutAboutRoute,
   LayoutIndexRoute: LayoutIndexRoute,
-  LayoutRankingClaimRoute: LayoutRankingClaimRoute,
+  LayoutListClaimRoute: LayoutListClaimRoute,
   LayoutRecoverRequestRoute: LayoutRecoverRequestRoute,
-  LayoutRankingRankingIdEditRoute: LayoutRankingRankingIdEditRoute,
+  LayoutListListIdEditRoute: LayoutListListIdEditRoute,
   LayoutRecoverConsumeTokenRoute: LayoutRecoverConsumeTokenRoute,
-  LayoutRankingRankingIdIndexRoute: LayoutRankingRankingIdIndexRoute,
+  LayoutListListIdIndexRoute: LayoutListListIdIndexRoute,
 }
 
 const LayoutRouteWithChildren =

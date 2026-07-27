@@ -1,4 +1,4 @@
-import { RecoveryLinkRejected } from "@boty/shared/api/rankings/recover/consume/RecoveryLinkRejected.error";
+import { RecoveryLinkRejected } from "@boty/shared/api/lists/recover/consume/RecoveryLinkRejected.error";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Schema } from "effect";
 import { Loader2 } from "lucide-react";
@@ -50,9 +50,9 @@ export function ConsumeRecovery({ token }: Props) {
 			.then(async ({ id, ownerToken }) => {
 				setOwnerToken(id, ownerToken);
 				await navigate({
-					to: "/ranking/$rankingId/edit",
+					to: "/list/$listId/edit",
 					params: {
-						rankingId: id,
+						listId: id,
 					},
 				});
 			})

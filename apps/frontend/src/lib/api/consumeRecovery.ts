@@ -1,5 +1,5 @@
-import type { ConsumeRecoveryBody } from "@boty/shared/api/rankings/recover/consume/ConsumeRecoveryBody.schema";
-import type { ConsumeRecoveryResponse } from "@boty/shared/api/rankings/recover/consume/ConsumeRecoveryResponse.schema";
+import type { ConsumeRecoveryBody } from "@boty/shared/api/lists/recover/consume/ConsumeRecoveryBody.schema";
+import type { ConsumeRecoveryResponse } from "@boty/shared/api/lists/recover/consume/ConsumeRecoveryResponse.schema";
 import { Effect } from "effect";
 import { client } from "./client.ts";
 
@@ -13,7 +13,7 @@ export function consumeRecovery(
 	input: ConsumeRecoveryBody,
 ): Promise<ConsumeRecoveryResponse> {
 	return Effect.runPromise(
-		client.rankings.consumeRecovery({
+		client.lists.consumeRecovery({
 			payload: input,
 		}),
 	);

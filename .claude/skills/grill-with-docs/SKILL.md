@@ -27,7 +27,7 @@ During codebase exploration, also look for existing documentation:
 │       ├── 001-event-sourced-orders.ard.md
 │       └── 0002-postgres-for-write-model.ard.md
 │   └── prd/
-│       └── 001-ranking-ownership-without-sign-up.prd.md
+│       └── 001-list-ownership-without-sign-up.prd.md
 └── src/
 ```
 

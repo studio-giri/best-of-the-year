@@ -1,4 +1,4 @@
-import { RecoveryRejected } from "@boty/shared/api/rankings/recover/RecoveryRejected.error";
+import { RecoveryRejected } from "@boty/shared/api/lists/recover/RecoveryRejected.error";
 import type { Language } from "@boty/shared/language/Language.schema";
 import {
 	cleanup,
@@ -102,7 +102,7 @@ describe("RequestRecovery", () => {
 	});
 
 	// An unknown email is refused inline and the person stays on the form —
-	// no confirmation, no offer to create a new ranking.
+	// no confirmation, no offer to create a new list.
 	test("shows the unknown-email message inline and keeps the form", async () => {
 		mutateAsyncMock.mockRejectedValue(
 			new RecoveryRejected({

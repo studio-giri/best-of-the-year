@@ -1,5 +1,5 @@
-import type { RequestRecoveryBody } from "@boty/shared/api/rankings/recover/RequestRecoveryBody.schema";
-import type { RequestRecoveryResponse } from "@boty/shared/api/rankings/recover/RequestRecoveryResponse.schema";
+import type { RequestRecoveryBody } from "@boty/shared/api/lists/recover/RequestRecoveryBody.schema";
+import type { RequestRecoveryResponse } from "@boty/shared/api/lists/recover/RequestRecoveryResponse.schema";
 import { Effect } from "effect";
 import { client } from "./client.ts";
 
@@ -13,7 +13,7 @@ export function requestRecovery(
 	input: RequestRecoveryBody,
 ): Promise<RequestRecoveryResponse> {
 	return Effect.runPromise(
-		client.rankings.requestRecovery({
+		client.lists.requestRecovery({
 			payload: input,
 		}),
 	);

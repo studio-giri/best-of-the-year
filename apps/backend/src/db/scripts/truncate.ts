@@ -3,9 +3,9 @@ import { sql } from "drizzle-orm";
 import { getTableConfig } from "drizzle-orm/pg-core";
 import { Console, Effect } from "effect";
 import { PgDrizzle } from "../PgDrizzle.ts";
+import { listItemsTable } from "../schema/list-items.table.ts";
+import { listsTable } from "../schema/lists.table.ts";
 import { ownerTokensTable } from "../schema/owner-tokens.table.ts";
-import { rankingItemsTable } from "../schema/ranking-items.table.ts";
-import { rankingsTable } from "../schema/rankings.table.ts";
 import { runDbScript } from "./run-db-script.ts";
 
 const program = runDbScript(
@@ -23,9 +23,9 @@ const program = runDbScript(
 		 * truncation never touches them.
 		 */
 		const tables = [
-			rankingsTable,
+			listsTable,
 			ownerTokensTable,
-			rankingItemsTable,
+			listItemsTable,
 		].map((table) => {
 			const config = getTableConfig(table);
 			return `"${config.schema ?? "public"}"."${config.name}"`;

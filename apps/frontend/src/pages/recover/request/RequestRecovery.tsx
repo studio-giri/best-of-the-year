@@ -1,5 +1,5 @@
-import { validateEmail } from "@boty/shared/api/rankings/claim/claimRules";
-import { RecoveryRejected } from "@boty/shared/api/rankings/recover/RecoveryRejected.error";
+import { validateEmail } from "@boty/shared/api/lists/claim/claimRules";
+import { RecoveryRejected } from "@boty/shared/api/lists/recover/RecoveryRejected.error";
 import { useForm } from "@tanstack/react-form";
 import { Schema } from "effect";
 import { Mail } from "lucide-react";
@@ -14,8 +14,8 @@ import { useRequestRecovery } from "./useRequestRecovery.mutation.ts";
 
 /**
  * Recovery-request form: a single email field, validated up front with the same
- * rule and copy the claim form uses. A ranking-backed email shows the check-inbox
- * confirmation; any email rejection — empty, malformed, or backing no ranking —
+ * rule and copy the claim form uses. A list-backed email shows the check-inbox
+ * confirmation; any email rejection — empty, malformed, or backing no list —
  * comes back as a `RecoveryRejected` code that maps to an inline message, so the
  * person corrects the address without leaving the form.
  */

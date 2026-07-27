@@ -1,7 +1,7 @@
 import { Api } from "@boty/shared/api/Api";
 import { Layer } from "effect";
 import { HttpApiBuilder } from "effect/unstable/httpapi";
-import { HttpRankingsLive } from "./rankings/handlers.ts";
+import { HttpListsLive } from "./lists/handlers.ts";
 
 /**
  * All HTTP route handlers wired against the typed Api definition.
@@ -13,5 +13,5 @@ export const HttpApiHandlersLive = Layer.provide(
 	HttpApiBuilder.layer(Api, {
 		openapiPath: "/openapi.json",
 	}),
-	Layer.mergeAll(HttpRankingsLive),
+	Layer.mergeAll(HttpListsLive),
 );

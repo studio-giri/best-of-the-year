@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { snakeCase, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { rankingsTable } from "./rankings.table.ts";
+import { listsTable } from "./lists.table.ts";
 
 const pgTable = snakeCase.table;
 
@@ -9,15 +9,15 @@ const pgTable = snakeCase.table;
  * a fresh Owner token for the requesting browser. Kept separate from
  * `owner_tokens` because the lifecycles differ — an Owner token is long-lived
  * with no expiry/consumption, a recovery link carries `expiresAt` + `consumedAt`
- * and is spent once. Many-to-one against rankings (cascade) so a ranking can
+ * and is spent once. Many-to-one against lists (cascade) so a list can
  * have several concurrent outstanding links. Only the SHA-256 hash is stored.
  */
 export const recoveryTokensTable = pgTable("recovery_tokens", {
 	id: uuid().primaryKey().default(sql`uuidv7()`),
 
-	rankingId: uuid()
+	listId: uuid()
 		.notNull()
-		.references(() => rankingsTable.id, {
+		.references(() => listsTable.id, {
 			onDelete: "cascade",
 		}),
 

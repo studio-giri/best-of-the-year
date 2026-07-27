@@ -1,0 +1,202 @@
+import { ClaimRejected } from "@boty/shared/api/lists/claim/ClaimRejected.error";
+import type { Language } from "@boty/shared/language/Language.schema";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/react";
+import type { ReactElement, ReactNode } from "react";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { LanguageProvider } from "#/lib/language/LanguageProvider.tsx";
+
+/**
+ * Mock the two side-effecting seams: navigation (needs a router context we do
+ * not spin up) and the claim mutation (would hit the network). The mutation
+ * mock lets each test drive success / username_taken / etc.
+ */
+const navigateMock = vi.fn();
+vi.mock("@tanstack/react-router", () => ({
+	useNavigate: () => navigateMock,
+	// The recovery CTA renders a router Link; a plain anchor is enough here.
+	Link: ({ to, children }: { to: string; children: ReactNode }) => (
+		<a href={to}>{children}</a>
+	),
+}));
+
+const mutateAsyncMock = vi.fn();
+vi.mock("./useClaimList.mutation.ts", () => ({
+	useClaimList: () => ({
+		mutateAsync: mutateAsyncMock,
+		isPending: false,
+	}),
+}));
+
+import { ClaimList } from "./ClaimList.tsx";
+
+// Every screen reads its copy through the LanguageProvider; render inside one,
+// defaulting to English so the existing assertions stand.
+function renderWithLanguage(ui: ReactElement, language: Language = "en") {
+	return render(
+		<LanguageProvider initialLanguage={language}>{ui}</LanguageProvider>,
+	);
+}
+
+function fill(label: string, value: string) {
+	fireEvent.change(screen.getByLabelText(label), {
+		target: {
+			value,
+		},
+	});
+}
+
+function submit() {
+	fireEvent.click(
+		screen.getByRole("button", {
+			name: /lezgoo/i,
+		}),
+	);
+}
+
+beforeEach(() => {
+	navigateMock.mockReset();
+	mutateAsyncMock.mockReset();
+});
+
+afterEach(() => {
+	cleanup();
+	window.localStorage.clear();
+});
+
+describe("ClaimList", () => {
+	test("renders an email field marked required from the start", () => {
+		renderWithLanguage(<ClaimList />);
+		const email = screen.getByLabelText("Email") as HTMLInputElement;
+		const username = screen.getByLabelText("Username") as HTMLInputElement;
+		expect(email.required).toBe(true);
+		expect(username.required).toBe(true);
+	});
+
+	test("blocks submit and shows the message for an invalid email", async () => {
+		renderWithLanguage(<ClaimList />);
+		fill("Email", "foo@");
+		fill("Username", "valid-name");
+		submit();
+
+		expect(await screen.findByText("Email is invalid.")).toBeTruthy();
+		expect(mutateAsyncMock).not.toHaveBeenCalled();
+	});
+
+	test("blocks submit and shows the message for a blank email", async () => {
+		renderWithLanguage(<ClaimList />);
+		fill("Username", "valid-name");
+		submit();
+
+		expect(await screen.findByText("Email cannot be empty.")).toBeTruthy();
+		expect(mutateAsyncMock).not.toHaveBeenCalled();
+	});
+
+	test("blocks submit and shows the message for a too-short username", async () => {
+		renderWithLanguage(<ClaimList />);
+		fill("Email", "me@example.com");
+		fill("Username", "a");
+		submit();
+
+		expect(
+			await screen.findByText("Username must be at least 2 characters."),
+		).toBeTruthy();
+		expect(mutateAsyncMock).not.toHaveBeenCalled();
+	});
+
+	// A valid claim navigates straight to the owner view.
+	// The token is stored inside the mutation, mocked here.
+	test("navigates to the owner view on a successful claim", async () => {
+		mutateAsyncMock.mockResolvedValue({
+			id: "list-123",
+			username: "MyUsername",
+			ownerToken: "tok",
+		});
+
+		renderWithLanguage(<ClaimList />);
+		fill("Email", "me@example.com");
+		fill("Username", "MyUsername");
+		submit();
+
+		await waitFor(() => {
+			expect(navigateMock).toHaveBeenCalledWith({
+				to: "/list/$listId/edit",
+				params: {
+					listId: "list-123",
+				},
+			});
+		});
+	});
+
+	// A server username_taken refusal shows its message inline and the user
+	// stays on the form (no navigation, not routed into recovery).
+	test("shows the taken message inline and stays on the form", async () => {
+		mutateAsyncMock.mockRejectedValue(
+			new ClaimRejected({
+				code: "username_taken",
+			}),
+		);
+
+		renderWithLanguage(<ClaimList />);
+		fill("Email", "me@example.com");
+		fill("Username", "taken-name");
+		submit();
+
+		expect(
+			await screen.findByText("Username taken. Pick another."),
+		).toBeTruthy();
+		expect(navigateMock).not.toHaveBeenCalled();
+		// Only the email case routes toward recovery; the username case stays a
+		// plain inline "choose another" with no recovery link.
+		expect(
+			screen.queryByRole("link", {
+				name: "you can recover access to it.",
+			}),
+		).toBeNull();
+	});
+
+	// A server email_taken refusal shows its message inline AND offers a path
+	// into recovery: a link to /recover/request. The user stays on the form.
+	test("shows the email-taken message with a recovery link and stays on the form", async () => {
+		mutateAsyncMock.mockRejectedValue(
+			new ClaimRejected({
+				code: "email_taken",
+			}),
+		);
+
+		renderWithLanguage(<ClaimList />);
+		fill("Email", "taken@example.com");
+		fill("Username", "valid-name");
+		submit();
+
+		expect(
+			await screen.findByText("This email already has a list. If it's yours,"),
+		).toBeTruthy();
+		const recoveryLink = screen.getByRole("link", {
+			name: "you can recover access to it.",
+		});
+		expect(recoveryLink.getAttribute("href")).toBe("/recover/request");
+		expect(navigateMock).not.toHaveBeenCalled();
+	});
+
+	// A 500 (or any non-ClaimRejected failure) is treated as transient: show the
+	// generic retryable message and keep the user on the form.
+	test("shows a generic retryable message on a server 500 and stays on the form", async () => {
+		mutateAsyncMock.mockRejectedValue(new Error("Internal Server Error"));
+
+		renderWithLanguage(<ClaimList />);
+		fill("Email", "me@example.com");
+		fill("Username", "valid-name");
+		submit();
+
+		expect(
+			await screen.findByText(/Something went wrong, please try again later\./),
+		).toBeTruthy();
+		expect(navigateMock).not.toHaveBeenCalled();
+	});
+});

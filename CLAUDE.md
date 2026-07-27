@@ -30,7 +30,7 @@ The backend uses [Effect](https://effect.website/) (v4 beta). Write idiomatic Ef
 
 API specs (`HttpApi` groups) live in `packages/shared/src/api/` so both sides share one contract: the backend implements them (`HttpApiBuilder.group` in `apps/backend/src/<group>/handlers.ts`), the frontend derives a typed client from them (`HttpApiClient` in `apps/frontend/src/lib/api/client.ts`).
 
-The frontend calls the API exclusively through that derived client, and **`apps/frontend/src/lib/api/` is the only folder that may import the Effect runtime**. Every endpoint gets a Promise-returning helper there (one per file, verb-named: `saveRankingItems.ts`, `claimRanking.ts`); pages, components and hooks call those helpers and deal only in plain Promises and data. Queries wrap the same helper in `queryOptions` (`rankingQueryOptions.ts`).
+The frontend calls the API exclusively through that derived client, and **`apps/frontend/src/lib/api/` is the only folder that may import the Effect runtime**. Every endpoint gets a Promise-returning helper there (one per file, verb-named: `saveListItems.ts`, `claimList.ts`); pages, components and hooks call those helpers and deal only in plain Promises and data. Queries wrap the same helper in `queryOptions` (`listQueryOptions.ts`).
 
 Stated as the rule a reader can check at a glance: outside `lib/api/`, no `import` from `effect` or `effect/**`, except the pure synchronous `Schema`, `Data` and `Types`. Biome enforces this (`noRestrictedImports` override in `apps/frontend/biome.json`), so a violation fails `bun check` rather than waiting for review. Test files are exempt — they mock the client at its Effect-returning seam.
 

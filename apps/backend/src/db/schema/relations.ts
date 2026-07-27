@@ -1,44 +1,44 @@
 import { defineRelations } from "drizzle-orm";
+import { listItemsTable } from "./list-items.table.ts";
+import { listsTable } from "./lists.table.ts";
 import { ownerTokensTable } from "./owner-tokens.table.ts";
-import { rankingItemsTable } from "./ranking-items.table.ts";
-import { rankingsTable } from "./rankings.table.ts";
 import { recoveryTokensTable } from "./recovery-tokens.table.ts";
 
 export const relations = defineRelations(
 	{
-		rankingsTable,
-		rankingItemsTable,
+		listsTable,
+		listItemsTable,
 		ownerTokensTable,
 		recoveryTokensTable,
 	},
 	({
 		one,
 		many,
-		rankingItemsTable: rit,
-		rankingsTable: rt,
+		listItemsTable: rit,
+		listsTable: rt,
 		ownerTokensTable: et,
 		recoveryTokensTable: rct,
 	}) => ({
-		rankingsTable: {
-			items: many.rankingItemsTable(),
+		listsTable: {
+			items: many.listItemsTable(),
 			ownerTokens: many.ownerTokensTable(),
 			recoveryTokens: many.recoveryTokensTable(),
 		},
-		rankingItemsTable: {
-			ranking: one.rankingsTable({
-				from: rit.rankingId,
+		listItemsTable: {
+			list: one.listsTable({
+				from: rit.listId,
 				to: rt.id,
 			}),
 		},
 		ownerTokensTable: {
-			ranking: one.rankingsTable({
-				from: et.rankingId,
+			list: one.listsTable({
+				from: et.listId,
 				to: rt.id,
 			}),
 		},
 		recoveryTokensTable: {
-			ranking: one.rankingsTable({
-				from: rct.rankingId,
+			list: one.listsTable({
+				from: rct.listId,
 				to: rt.id,
 			}),
 		},

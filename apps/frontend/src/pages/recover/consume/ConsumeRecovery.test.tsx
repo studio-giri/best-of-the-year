@@ -1,4 +1,4 @@
-import { RecoveryLinkRejected } from "@boty/shared/api/rankings/recover/consume/RecoveryLinkRejected.error";
+import { RecoveryLinkRejected } from "@boty/shared/api/lists/recover/consume/RecoveryLinkRejected.error";
 import type { Language } from "@boty/shared/language/Language.schema";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import type { ReactElement, ReactNode } from "react";
@@ -15,7 +15,7 @@ import { consumeMessages } from "./messages.ts";
  */
 let tokenStoredAtNavigate: string | undefined;
 const navigateMock = vi.fn(() => {
-	tokenStoredAtNavigate = getOwnerToken("ranking-123");
+	tokenStoredAtNavigate = getOwnerToken("list-123");
 	return Promise.resolve();
 });
 vi.mock("@tanstack/react-router", () => ({
@@ -72,7 +72,7 @@ describe("ConsumeRecovery", () => {
 	// lands in the owner editor — with the store proven to precede the redirect.
 	test("stores the minted token before navigating to the owner editor", async () => {
 		mutateAsyncMock.mockResolvedValue({
-			id: "ranking-123",
+			id: "list-123",
 			ownerToken: "minted-token",
 		});
 
@@ -80,16 +80,16 @@ describe("ConsumeRecovery", () => {
 
 		await waitFor(() => {
 			expect(navigateMock).toHaveBeenCalledWith({
-				to: "/ranking/$rankingId/edit",
+				to: "/list/$listId/edit",
 				params: {
-					rankingId: "ranking-123",
+					listId: "list-123",
 				},
 			});
 		});
 		// The token was already in storage when navigation fired, so the owner
 		// guard sees the grant after the redirect instead of racing it.
 		expect(tokenStoredAtNavigate).toBe("minted-token");
-		expect(getOwnerToken("ranking-123")).toBe("minted-token");
+		expect(getOwnerToken("list-123")).toBe("minted-token");
 	});
 
 	// A transient failure (network / 5xx) falls back to a generic retry with a

@@ -1,4 +1,4 @@
-import type { RecoveryLinkRejectionCode } from "@boty/shared/api/rankings/recover/consume/RecoveryLinkRejectionCode.schema";
+import type { RecoveryLinkRejectionCode } from "@boty/shared/api/lists/recover/consume/RecoveryLinkRejectionCode.schema";
 import { defineMessages } from "#/lib/language/defineMessages.ts";
 
 // The consume screen's copy, per Language: the brief in-progress indication

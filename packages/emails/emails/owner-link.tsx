@@ -66,7 +66,7 @@ export const ownerLinkSubject: Record<Language, string> = {
 
 /**
  * The email carrying an Owner recovery link. One primary action — the link back
- * into the person's ranking — plus a plain-text fallback URL for clients that
+ * into the person's list — plus a plain-text fallback URL for clients that
  * strip buttons. No account, no password: the link is the whole credential, so
  * the copy states its single-use, short-lived nature. Written in the reader's
  * Language, with `<html lang>` set to match.

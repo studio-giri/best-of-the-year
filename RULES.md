@@ -79,13 +79,13 @@ Prefer many small, focused files over large catch-all modules.
 ```text
 src/
 ├── routes/      # framework-owned (TanStack Router), thin wiring ONLY: route definition, loader, param→prop plumbing
-├── pages/       # mirrors the URL tree: pages/home/, pages/game/ranking/ (= /game/$rankingId)
+├── pages/       # mirrors the URL tree: pages/home/, pages/list/{claim,detail,edit}/ (= /list/$listId)
 ├── layout/      # app shell (Layout, Header, Footer) — used by routes, not a page
 ├── ui/          # shared, domain-less primitives (e.g. HorizontalRule)
 └── lib/         # infra (API client)
 ```
 
-- A page folder holds everything the page needs: components, queries, hooks (e.g. `pages/game/ranking/{RankingPage,Ranking,RankingItem,RankingNotFound}.tsx`, `useRanking.query.ts`)
+- A page folder holds everything the page needs: components, queries, hooks (e.g. `pages/list/detail/{ListPage,List,ListNotFound}.tsx`, `useList.query.ts`)
 - **No sibling imports between page folders** — `pages/home/` never imports from `pages/game/`. Wanting to is the promotion signal: move the file to `ui/` (generic primitive) or a purpose-named shared folder, created at that moment, not before (promote on second use)
 - **Routes import pages, never the reverse** — a URL refactor is then a folder move plus one import update
 - No barrel files (`index.ts`) — import files directly

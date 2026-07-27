@@ -12,7 +12,7 @@ A PRD owns **product intent only** — what must be built and why, from the user
 
 1. Explore the repo to understand the current state of the codebase, if you haven't already. Use the project's [glossary](../../../CONTEXT.md) (`CONTEXT.md`) vocabulary throughout the PRD, and respect any ADRs in the area you're touching.
 
-2. Write the PRD using the template below into the folder `docs/prd/` (example: `docs/prd/001-ranking-ownership-without-sign-up.prd.md`)
+2. Write the PRD using the template below into the folder `docs/prd/` (example: `docs/prd/001-list-ownership-without-sign-up.prd.md`)
 
 <prd-template>
 
@@ -26,9 +26,9 @@ The solution to the problem, from the user's perspective.
 
 ## Constraints & Clarifications
 
-Product-side constraints and clarifications the developer gave that shape the solution but aren't captured by the user stories — e.g. hard rules ("one ranking per email"), environmental requirements ("must work on mobile web, JS may be slow"), or boundaries that define scope.
+Product-side constraints and clarifications the developer gave that shape the solution but aren't captured by the user stories — e.g. hard rules ("one list per email"), environmental requirements ("must work on mobile web, JS may be slow"), or boundaries that define scope.
 
-State the constraint, never its technical realization. "One ranking per person" is a product constraint and belongs here; the schema, API contract, token mechanism, or module structure that *enforces* it is architecture — record that in the ADR and reference it from here. No schema, no API contracts, no file paths, no code.
+State the constraint, never its technical realization. "One list per person" is a product constraint and belongs here; the schema, API contract, token mechanism, or module structure that *enforces* it is architecture — record that in the ADR and reference it from here. No schema, no API contracts, no file paths, no code.
 
 ## Requirements
 
@@ -39,8 +39,8 @@ This list should be extremely extensive and cover all aspects of the feature. A 
 These requirements are the source the `prd-to-stories` skill decomposes into Stories: each Story traces back to the requirements it satisfies, and every requirement must be covered by at least one Story. So number them stably and never reuse a number.
 
 <requirements-example>
-- REQ-1: A returning visitor who lost their local session can regain edit access to their own ranking — and only their own.
-- REQ-2: Trying to create a second ranking with an already-used email is refused, with a clear path back to the existing one.
+- REQ-1: A returning visitor who lost their local session can regain edit access to their own list — and only their own.
+- REQ-2: Trying to create a second list with an already-used email is refused, with a clear path back to the existing one.
 </requirements-example>
 
 ## Out of Scope

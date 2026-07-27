@@ -5,7 +5,7 @@ description: Create a concise, easy-to-read PR description in GitHub
 
 Create a GitHub PR for the current branch, written for a reader with no context.
 
-- Title: conventional commit + ticket, e.g. `feat(createRanking): Add error message if username's taken`.
+- Title: conventional commit + ticket, e.g. `feat(createList): Add error message if username's taken`.
 - If any committed file looks unrelated, stop and ask first.
 - If there are unstaged files, stop and ask the user about them.
 - Show the description and get explicit approval before publishing; re-show after any edit.

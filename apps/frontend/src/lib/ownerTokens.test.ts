@@ -13,17 +13,17 @@ afterEach(() => {
 
 describe("ownerTokens", () => {
 	test("round-trips a token through localStorage", () => {
-		setOwnerToken("ranking-1", "secret-token");
-		expect(getOwnerToken("ranking-1")).toBe("secret-token");
-		expect(hasOwnerToken("ranking-1")).toBe(true);
+		setOwnerToken("list-1", "secret-token");
+		expect(getOwnerToken("list-1")).toBe("secret-token");
+		expect(hasOwnerToken("list-1")).toBe(true);
 	});
 
-	test("reports no access for an unknown ranking", () => {
+	test("reports no access for an unknown list", () => {
 		expect(getOwnerToken("never-claimed")).toBeUndefined();
 		expect(hasOwnerToken("never-claimed")).toBe(false);
 	});
 
-	test("keeps tokens for several rankings independently", () => {
+	test("keeps tokens for several lists independently", () => {
 		setOwnerToken("a", "token-a");
 		setOwnerToken("b", "token-b");
 		expect(getOwnerToken("a")).toBe("token-a");
@@ -57,7 +57,7 @@ describe("ownerTokens", () => {
 		});
 		vi.spyOn(console, "error").mockImplementation(() => {});
 
-		expect(() => setOwnerToken("ranking-1", "secret-token")).toThrow(
+		expect(() => setOwnerToken("list-1", "secret-token")).toThrow(
 			OwnerTokenNotStored,
 		);
 	});

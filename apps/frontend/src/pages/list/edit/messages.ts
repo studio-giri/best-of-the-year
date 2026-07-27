@@ -1,22 +1,34 @@
 import { defineMessages } from "#/lib/language/defineMessages.ts";
 
-// List-edit copy, per Language. A year is interpolated by the message itself,
-// so each Language owns its own word order.
+// List-edit copy, per Language. A year, a count or a time is interpolated by the
+// message itself, so each Language owns its own word order and its own plural.
 export const editMessages = defineMessages({
 	en: {
 		denied: "You don't have permission to edit this list.",
 		editingSubtitle: "Editing your list",
+		entriesUnsaved: (count: number) =>
+			count === 1 ? "1 entry unsaved" : `${count} entries unsaved`,
+		lastSavedAt: (time: string) => `Last saved at ${time}`,
 		loading: "Loading your list…",
-		needsOneGame: "A list needs at least one game.",
+		needsOneEntry: "A list needs at least one entry",
+		noChangesToSave: "No changes to save",
 		yearFieldLabel: (year: number) => `Best game of ${year}`,
 		save: "Save all",
+		saving: "Saving…",
 	},
 	fr: {
 		denied: "Tu n'as pas la permission de modifier cette liste.",
 		editingSubtitle: "Modification de ta liste",
+		entriesUnsaved: (count: number) =>
+			count === 1
+				? "1 entrée non enregistrée"
+				: `${count} entrées non enregistrées`,
+		lastSavedAt: (time: string) => `Dernier enregistrement à ${time}`,
 		loading: "Chargement de ta liste…",
-		needsOneGame: "Une liste a besoin d'au moins un jeu.",
+		needsOneEntry: "Une liste a besoin d'au moins une entrée",
+		noChangesToSave: "Aucune modification à enregistrer",
 		yearFieldLabel: (year: number) => `Meilleur jeu de ${year}`,
 		save: "Tout enregistrer",
+		saving: "Enregistrement…",
 	},
 });

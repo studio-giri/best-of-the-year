@@ -81,19 +81,40 @@ function type(year: number, value: string) {
 	});
 }
 
+/**
+ * The one control that commits. Found by role rather than by name: what it is
+ * called changes with what it is doing, and the tests below say so themselves.
+ */
 function commitAction() {
-	return screen.getByRole("button", {
-		name: "Save all",
-	});
+	return screen.getByRole("button");
 }
 
 function commit() {
 	fireEvent.click(commitAction());
 }
 
-/** What the one commit of a pass carried, and the callbacks it was given. */
-function theCommit() {
-	const call = mutateMock.mock.calls[0];
+/**
+ * Ctrl+S, or the Mac's Cmd+S, delivered where the browser delivers it. Answers
+ * whether the browser's own Save Page was called off: `fireEvent` passes on what
+ * `dispatchEvent` answers, which is false once a default has been prevented.
+ */
+function pressSaveShortcut(
+	modifier: "ctrlKey" | "metaKey" = "ctrlKey",
+	init: KeyboardEventInit = {},
+) {
+	const defaultAllowed = fireEvent.keyDown(window, {
+		key: "s",
+		[modifier]: true,
+		...init,
+	});
+	return {
+		browserSaveSuppressed: !defaultAllowed,
+	};
+}
+
+/** What one commit of a pass carried, and the callbacks it was given. */
+function theCommit(index = 0) {
+	const call = mutateMock.mock.calls[index];
 	if (!call) {
 		throw new Error("no commit was taken");
 	}
@@ -101,6 +122,20 @@ function theCommit() {
 		items: call[0],
 		options: call[1],
 	};
+}
+
+/** The whole report line, every clause it currently carries. */
+function reportLine() {
+	const line = announcedReport().parentElement;
+	if (!line) {
+		throw new Error("the report is not rendered");
+	}
+	return line.textContent;
+}
+
+/** The part of the report a screen reader is told about without being asked. */
+function announcedReport() {
+	return screen.getByRole("status");
 }
 
 function seededItem(year: number, name: string) {
@@ -111,12 +146,18 @@ function seededItem(year: number, name: string) {
 	};
 }
 
+// The moments a commit lands, built on the local calendar: the editor reports the
+// clock a person is reading, so a UTC literal would make the expected time depend
+// on the machine running the test.
+const LANDED_AT = new Date(2026, 6, 26, 14, 32, 9);
+const LANDED_AGAIN_AT = new Date(2026, 6, 26, 15, 5, 41);
+
 /** A stored List, as the server answers a commit with it. */
-function savedList(items: List["items"]): List {
+function savedList(items: List["items"], updatedAt = LANDED_AT): List {
 	return {
 		id: LIST_ID,
 		username: "the-username",
-		updatedAt: new Date("2026-07-26T10:00:00.000Z"),
+		updatedAt,
 		items,
 	};
 }
@@ -278,8 +319,14 @@ describe("ListEditForm", () => {
 		test("does not offer the commit, and says why", () => {
 			renderForm();
 
-			expect(commitAction()).toHaveProperty("disabled", true);
-			expect(screen.getByText("A list needs at least one game.")).toBeTruthy();
+			// The reason is tied to the control it withholds, so it is read as the
+			// explanation of that control rather than as loose text beside it.
+			const action = commitAction();
+			expect(action).toHaveProperty("disabled", true);
+			expect(reportLine()).toBe("A list needs at least one entry");
+			expect(action.getAttribute("aria-describedby")).toBe(
+				announcedReport().parentElement?.id,
+			);
 
 			// Withheld means withheld: taking the action anyway sends nothing.
 			commit();
@@ -291,8 +338,9 @@ describe("ListEditForm", () => {
 				seededItem(2020, "Hades"),
 			]);
 
-			// A list holding one game commits like any other, until that game is the
-			// one being cleared.
+			// A list holding one game commits like any other once something about it
+			// has changed, until that game is the one being cleared.
+			type(2020, "Hades II");
 			expect(commitAction()).toHaveProperty("disabled", false);
 			type(2020, "");
 			expect(commitAction()).toHaveProperty("disabled", true);
@@ -301,7 +349,7 @@ describe("ListEditForm", () => {
 			// publishes both changes, the year emptied and the year filled, together.
 			type(2011, "Portal 2");
 			expect(commitAction()).toHaveProperty("disabled", false);
-			expect(screen.queryByText("A list needs at least one game.")).toBeNull();
+			expect(reportLine()).not.toContain("A list needs at least one entry");
 
 			commit();
 			expect(theCommit().items).toEqual([
@@ -311,6 +359,356 @@ describe("ListEditForm", () => {
 				},
 			]);
 		});
+
+		test("says the floor in place of the count of what is unsaved", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			// Clearing the last game is a change like any other, but the report names
+			// the reason the commit is withheld rather than counting it.
+			type(2022, "");
+
+			expect(reportLine()).toBe("A list needs at least one entry");
+		});
+	});
+
+	describe("where the pass stands", () => {
+		test("counts the entries a commit would carry, singular at one", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+				seededItem(2020, "Hades"),
+			]);
+
+			type(2022, "Tunic");
+			expect(reportLine()).toBe("1 entry unsaved");
+
+			// A year emptied and a year filled are changes as much as a year renamed.
+			type(2020, "");
+			type(2011, "Portal 2");
+			expect(reportLine()).toBe("3 entries unsaved");
+		});
+
+		test("stops counting a year typed back to what it was", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			type(2022, "Tunic");
+			expect(reportLine()).toBe("1 entry unsaved");
+
+			type(2022, "Elden Ring");
+			expect(reportLine()).toBe("No changes to save");
+		});
+
+		test("treats a year of spaces as the blank year it is", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			type(2011, "   ");
+
+			// Nothing a commit would carry has moved, so there is nothing to report and
+			// nothing to commit.
+			expect(reportLine()).toBe("No changes to save");
+			expect(commitAction()).toHaveProperty("disabled", true);
+		});
+
+		test("withholds the commit while nothing has changed", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			expect(commitAction()).toHaveProperty("disabled", true);
+			expect(reportLine()).toBe("No changes to save");
+
+			commit();
+			expect(mutateMock).not.toHaveBeenCalled();
+		});
+
+		test("reports no time for a list committed on an earlier visit", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			// The list carries a stored time, but no commit was taken in this visit, so
+			// the report names none.
+			expect(reportLine()).toBe("No changes to save");
+			expect(reportLine()).not.toMatch(/\d\d:\d\d/);
+		});
+
+		test("shows the commit working, refuses a second, and still names the unsaved entries", () => {
+			mutationState = {
+				isPending: true,
+				isError: false,
+			};
+
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+			type(2022, "Tunic");
+
+			// Only ever one request in the air: the control says it is busy and sends
+			// nothing more, while the report keeps naming what is not yet saved.
+			const action = commitAction();
+			expect(action.getAttribute("aria-busy")).toBe("true");
+			expect(action).toHaveProperty("disabled", true);
+			commit();
+			expect(mutateMock).not.toHaveBeenCalled();
+			expect(reportLine()).toBe("1 entry unsaved");
+		});
+
+		test("reports when a commit landed as a fixed clock time", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			type(2022, "Tunic");
+			commit();
+			act(() => {
+				theCommit().options?.onSuccess?.(
+					savedList([
+						seededItem(2022, "Tunic"),
+					]),
+				);
+			});
+
+			// The time comes from the answer, and a settled list says only that.
+			expect(reportLine()).toBe("Last saved at 14:32:09");
+		});
+
+		test("reports the second commit of a visit, not the first", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			type(2022, "Tunic");
+			commit();
+			act(() => {
+				theCommit(0).options?.onSuccess?.(
+					savedList([
+						seededItem(2022, "Tunic"),
+					]),
+				);
+			});
+
+			type(2022, "Tunic Redux");
+			commit();
+			act(() => {
+				theCommit(1).options?.onSuccess?.(
+					savedList(
+						[
+							seededItem(2022, "Tunic Redux"),
+						],
+						LANDED_AGAIN_AT,
+					),
+				);
+			});
+
+			expect(reportLine()).toBe("Last saved at 15:05:41");
+		});
+
+		test("carries the last save and what is unsaved since, at once", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			type(2022, "Tunic");
+			commit();
+			act(() => {
+				theCommit().options?.onSuccess?.(
+					savedList([
+						seededItem(2022, "Tunic"),
+					]),
+				);
+			});
+
+			type(2011, "Portal 2");
+			type(2013, "The Last of Us");
+			type(2015, "Bloodborne");
+
+			expect(reportLine()).toBe("Last saved at 14:32:09 - 3 entries unsaved");
+		});
+
+		test("announces the confirmation and leaves the count to be read", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			// The live region is in the tree from the start: one inserted alongside its
+			// text does not reliably announce.
+			expect(announcedReport().textContent).toBe("");
+
+			type(2022, "Tunic");
+			commit();
+			act(() => {
+				theCommit().options?.onSuccess?.(
+					savedList([
+						seededItem(2022, "Tunic"),
+					]),
+				);
+			});
+			type(2011, "Portal 2");
+
+			// Only the confirmation is announced; entries crossing to unsaved sit
+			// outside the live region.
+			expect(announcedReport().textContent).toBe("Last saved at 14:32:09");
+			expect(reportLine()).toBe("Last saved at 14:32:09 - 1 entry unsaved");
+		});
+	});
+
+	describe("typing while a commit is in flight", () => {
+		test("keeps a year typed into after the commit left, and reports it unsaved", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+				seededItem(2019, "Disco Elysium"),
+			]);
+
+			type(2022, "Tunic");
+			commit();
+			type(2020, "Hades");
+
+			act(() => {
+				theCommit().options?.onSuccess?.(
+					savedList([
+						seededItem(2022, "Tunic"),
+						seededItem(2019, "Disco Elysium (stored)"),
+					]),
+				);
+			});
+
+			// The year typed into keeps what was typed; the year the commit carried and
+			// the year left alone throughout both take the answer, tidying included.
+			expect(fieldFor(2020)).toHaveProperty("value", "Hades");
+			expect(fieldFor(2022)).toHaveProperty("value", "Tunic");
+			expect(fieldFor(2019)).toHaveProperty("value", "Disco Elysium (stored)");
+			expect(reportLine()).toBe("Last saved at 14:32:09 - 1 entry unsaved");
+		});
+
+		test("never rewrites a year still being typed into with the answer's version", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			type(2022, "Tunic");
+			commit();
+			type(2022, "Tunic Redux");
+
+			act(() => {
+				theCommit().options?.onSuccess?.(
+					savedList([
+						seededItem(2022, "Tunic"),
+					]),
+				);
+			});
+
+			expect(fieldFor(2022)).toHaveProperty("value", "Tunic Redux");
+			expect(reportLine()).toBe("Last saved at 14:32:09 - 1 entry unsaved");
+		});
+	});
+
+	describe("the keyboard shortcut", () => {
+		test("takes the same commit the control does", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			type(2022, "Tunic");
+			const { browserSaveSuppressed } = pressSaveShortcut();
+
+			expect(mutateMock).toHaveBeenCalledTimes(1);
+			expect(theCommit().items).toEqual([
+				{
+					year: 2022,
+					name: "Tunic",
+				},
+			]);
+			expect(browserSaveSuppressed).toBe(true);
+		});
+
+		test("answers to the Mac chord as well as the Windows one", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			type(2022, "Tunic");
+			pressSaveShortcut("metaKey");
+
+			expect(mutateMock).toHaveBeenCalledTimes(1);
+		});
+
+		test("commits once for a chord held down rather than once per repeat", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			type(2022, "Tunic");
+			pressSaveShortcut("ctrlKey", {
+				repeat: true,
+			});
+
+			expect(mutateMock).not.toHaveBeenCalled();
+		});
+
+		test("takes no commit the control would not offer, and still swallows the browser's own save", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			// Nothing has changed, so there is nothing to commit — but reaching for the
+			// shortcut is still someone meaning to save their list, not the page.
+			const { browserSaveSuppressed } = pressSaveShortcut();
+
+			expect(mutateMock).not.toHaveBeenCalled();
+			expect(browserSaveSuppressed).toBe(true);
+		});
+
+		test("takes no second commit while one is still in flight", () => {
+			mutationState = {
+				isPending: true,
+				isError: false,
+			};
+
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			type(2022, "Tunic");
+			pressSaveShortcut();
+
+			expect(mutateMock).not.toHaveBeenCalled();
+		});
+
+		test("leaves the shortcut behind when the editor does", () => {
+			renderForm([
+				seededItem(2022, "Elden Ring"),
+			]);
+
+			type(2022, "Tunic");
+			cleanup();
+			pressSaveShortcut();
+
+			expect(mutateMock).not.toHaveBeenCalled();
+		});
+	});
+
+	test("names the commit for what it does, and for what it is doing", () => {
+		renderForm([
+			seededItem(2022, "Elden Ring"),
+		]);
+
+		expect(commitAction().textContent).toBe("Save all");
+
+		mutationState = {
+			isPending: true,
+			isError: false,
+		};
+		cleanup();
+		renderForm([
+			seededItem(2022, "Elden Ring"),
+		]);
+
+		expect(commitAction().textContent).toBe("Saving…");
 	});
 
 	test("announces a refused commit rather than leaving it silent", () => {

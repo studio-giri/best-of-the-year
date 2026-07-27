@@ -24,8 +24,7 @@ on a laptop must not be quietly erased by a phone that had an older copy of it.
 The List is edited in place: the page a person edits is the page readers see,
 one band per year, so a name is judged exactly where it will be met. Every year
 the site covers is already there as a field — nothing to add, nothing to create,
-no empty state — which turns the list into something to complete rather than
-something to build.
+no empty state — so a person picks up wherever they have something to say.
 
 A pass stays private. Typing changes nothing anyone else can see; one deliberate
 action commits the whole list at once, and until then the published List is
@@ -68,7 +67,6 @@ is something a person almost never meets.
 - REQ-4: A year's field sits in the same visual band the published List uses for that year, so a name is judged where readers will meet it.
 - REQ-5: Filling in a previously empty year moves nothing else on screen.
 - REQ-6: Each year's field identifies the year it belongs to for someone who cannot see the screen.
-- REQ-7: A person can see how many of the Covered Years hold a game, out of how many years in total.
 - REQ-8: A year holds at most one game, and the editor offers no way to give a year two.
 - REQ-9: A commit never leaves a List holding no games at all: any year can be emptied, but not the last year still holding a game. The editor does not offer a commit that would empty the list and says why, and such a commit is refused if it is attempted regardless of what the editor offered.
 
@@ -152,8 +150,3 @@ ordinary state of a List nobody has got to yet. Closing the gap properly would
 mean asking for a first game at claim time, which would cost PRD-001 its promise
 that claiming asks for an email and a username and nothing more; that is a higher
 price than the gap charges.
-
-The second-order effect is that the list reads as something to complete. Because
-every covered year is present whether or not it holds a game, a person sees the
-gaps — and a List with gaps invites another pass. That is the same instinct as
-the one-per-person scarcity in PRD-001: the list should feel worth returning to.

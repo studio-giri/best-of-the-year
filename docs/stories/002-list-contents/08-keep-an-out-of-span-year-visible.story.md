@@ -29,7 +29,6 @@ REQ-33
 
 ## Open questions
 
-- Does the filled-count from REQ-7 ("how many of the covered years hold a game, out of how many in total") include an out-of-span year shown here? Counting it makes the filled total exceed the number of covered years; excluding it means a visible, filled band is missing from the tally.
 - Is an out-of-span year marked as unusual in any way, or is it indistinguishable from a covered year?
 
 ## References

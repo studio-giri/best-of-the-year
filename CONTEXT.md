@@ -15,9 +15,12 @@ person, and a person has at most one — its scarcity is deliberate.
 _Avoid_: Ranking, board, chart
 
 **List Item**:
-A single entry in a List: the chosen game for one specific year. At most one
-Item per year within a List.
-_Avoid_: Entry, pick, row
+The chosen game for one specific year. At most one Item per year within a List.
+Person-facing copy calls it an *entry* ("3 entries unsaved"), which stays true of
+a year whose game was removed — the year is not the thing that was edited, what
+it holds is. The code, the schemas and these docs say Item, so the two surfaces
+never blur into one another.
+_Avoid_: Pick, row — and *entry* as the name in code, schemas or docs
 
 **Covered Years**:
 The span of years a List can hold an Item for: 1985 — the arrival of the NES,

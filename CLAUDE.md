@@ -18,7 +18,7 @@ best-of-the-year/
 
 Both apps depend on `@boty/shared` via `workspace:*`; the backend also depends on `@boty/emails`.
 
-Frontend path alias: `#/*` → `./src/*` (use for all internal imports in the frontend).
+Frontend path alias: `#/*` → `./src/*`. Use it for every import that leaves the current directory; never use `../`. Same-directory siblings stay relative (`./listItems.ts`).
 
 # Effect
 

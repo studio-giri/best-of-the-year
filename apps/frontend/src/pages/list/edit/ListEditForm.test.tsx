@@ -36,6 +36,11 @@ vi.mock("./useSaveListItems.mutation.ts", () => ({
 	}),
 }));
 
+// Leaving the editor needs a router around it, which these tests do not mount.
+vi.mock("./useConfirmLeave.ts", () => ({
+	useConfirmLeave: () => {},
+}));
+
 import { ListEditForm } from "./ListEditForm.tsx";
 
 const LIST_ID = "list-1";

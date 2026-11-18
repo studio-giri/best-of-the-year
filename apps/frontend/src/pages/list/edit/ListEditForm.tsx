@@ -12,6 +12,7 @@ import { editMessages } from "./messages.ts";
 import { PassReport } from "./PassReport.tsx";
 import { unsavedYears } from "./unsavedYears.ts";
 import { useCommitShortcut } from "./useCommitShortcut.ts";
+import { useConfirmLeave } from "./useConfirmLeave.ts";
 import { useSaveListItems } from "./useSaveListItems.mutation.ts";
 
 interface Props {
@@ -92,6 +93,13 @@ export function ListEditForm({ listId, items }: Props) {
 	useCommitShortcut({
 		commit: commitPass,
 		offered: !commitWithheld && !saveItems.isPending,
+	});
+
+	// Leaving with unsaved years asks first, so a stray click or a closed tab cannot
+	// drop the pass.
+	useConfirmLeave({
+		hasUnsaved: unsaved.length > 0,
+		question: messages.confirmLeave(unsaved.length),
 	});
 
 	return (

@@ -86,3 +86,25 @@ bun test:e2e                 # backend e2e tests (requires the DB: bun db:up)
 - **Backend** uses Bun's built-in test runner: unit tests are colocated in `src/` (`bun test src`), e2e tests live in `tests/` (`bun test tests`) and hit a real PostgreSQL — start it first with `bun db:up`.
 - **Frontend** uses vitest (`vitest.config.ts`, jsdom): unit tests are colocated in `src/` as `*.test.tsx?`.
 - Inside a package, run tests with `bun run test:unit` — NOT plain `bun test`, which invokes Bun's own test runner regardless of package scripts (wrong runner for the frontend).
+
+# Product vs mechanism
+
+Every decision lives at one of two altitudes. **If a user could notice it, product owns it**: it belongs in the spec or ticket (the PRDs in `docs/prd/` for existing features), stated as observable behavior. Otherwise it is mechanism and belongs in an ADR (`docs/adr/`), with the technical alternatives weighed.
+
+- Decisions that feel technical are often behavioral: "no email verification", "the recovery link works only once", "each browser is authorized independently" are all product.
+- A spec never justifies architecture; an ADR never restates product scope — it links the spec for the what and why, and records only the machine.
+- A decision made while building flows back up: product → the ticket's acceptance criteria (or the PRD), mechanism → the ADR. When unsure which altitude a decision lives at, ask before recording it.
+
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues (`studio-giri/best-of-the-year`), driven with the `gh` CLI; PRDs stay in `docs/prd/` as reference docs. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.

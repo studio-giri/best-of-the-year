@@ -105,6 +105,10 @@ Issues live in GitHub Issues (`studio-giri/best-of-the-year`), driven with the `
 
 Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
 
+### Workflow gate
+
+`ready-for-agent` is the go-ahead to build an issue. Read the issue's label (`gh issue view`) before offering to implement it; for any other state, the next step is `/triage`, which the user runs — point to it. While discussing or filing an issue, stay at the product altitude (observable behavior) and leave files, hooks and code shapes to implementation.
+
 ### Domain docs
 
 Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.

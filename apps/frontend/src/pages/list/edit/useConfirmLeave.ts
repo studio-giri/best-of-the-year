@@ -1,5 +1,5 @@
 import { useBlocker } from "@tanstack/react-router";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 interface Options {
 	hasUnsaved: boolean;
@@ -19,10 +19,26 @@ export function useConfirmLeave({ hasUnsaved, question }: Options) {
 		],
 	);
 
-	// Guard every way out, the tab close included, only while something is unsaved.
+	// Guard navigations inside the site only while something is unsaved. The router's
+	// own tab-close prompt is off: it skips the next unload after a programmatic back,
+	// even one that was cancelled.
 	useBlocker({
 		shouldBlockFn,
-		enableBeforeUnload: true,
+		enableBeforeUnload: false,
 		disabled: !hasUnsaved,
 	});
+
+	// Have the browser ask before the tab is closed or reloaded with unsaved years.
+	useEffect(() => {
+		if (!hasUnsaved) {
+			return;
+		}
+		const onBeforeUnload = (event: BeforeUnloadEvent) => {
+			event.preventDefault();
+		};
+		window.addEventListener("beforeunload", onBeforeUnload);
+		return () => window.removeEventListener("beforeunload", onBeforeUnload);
+	}, [
+		hasUnsaved,
+	]);
 }

@@ -248,6 +248,18 @@ describe("leaving the editor", () => {
 		expect(closeTab().browserAsksToConfirm).toBe(true);
 	});
 
+	test("still has the browser ask before closing after a cancelled back", async () => {
+		window.history.replaceState(null, "", "/elsewhere");
+		window.history.pushState(null, "", "/");
+		const router = await renderEditorPage();
+		confirmSpy.mockReturnValue(false);
+
+		type(2011, "Portal 2");
+		await pressBack(router);
+
+		expect(closeTab().browserAsksToConfirm).toBe(true);
+	});
+
 	test("lets the tab close without asking when nothing is unsaved", async () => {
 		await renderEditorPage();
 

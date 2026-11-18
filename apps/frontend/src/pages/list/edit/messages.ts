@@ -4,6 +4,10 @@ import { defineMessages } from "#/lib/language/defineMessages.ts";
 // message itself, so each Language owns its own word order and its own plural.
 export const editMessages = defineMessages({
 	en: {
+		confirmLeave: (count: number) =>
+			count === 1
+				? "You have 1 unsaved entry. Leave anyway?"
+				: `You have ${count} unsaved entries. Leave anyway?`,
 		denied: "You don't have permission to edit this list.",
 		editingSubtitle: "Editing your list",
 		entriesUnsaved: (count: number) =>
@@ -17,6 +21,10 @@ export const editMessages = defineMessages({
 		saving: "Saving…",
 	},
 	fr: {
+		confirmLeave: (count: number) =>
+			count === 1
+				? "Tu as 1 entrée non enregistrée. Quitter quand même ?"
+				: `Tu as ${count} entrées non enregistrées. Quitter quand même ?`,
 		denied: "Tu n'as pas la permission de modifier cette liste.",
 		editingSubtitle: "Modification de ta liste",
 		entriesUnsaved: (count: number) =>
